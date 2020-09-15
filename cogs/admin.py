@@ -6,10 +6,10 @@ class Admin(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-    
+
     async def cog_check(self, ctx):
         return await self.bot.is_owner
-    
+
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
         """Loads a module."""
@@ -29,7 +29,7 @@ class Admin(commands.Cog):
             await ctx.send(f'{e.__class__.__name__}: {e}')
         else:
             await ctx.send('\N{OK HAND SIGN}')
-    
+
     @commands.group(hidden=True)
     async def reload(self, ctx, *, module):
         """Reloads a module."""
@@ -39,6 +39,7 @@ class Admin(commands.Cog):
             await ctx.send(f'{e.__class__.__name__}: {e}')
         else:
             await ctx.send('\N{OK HAND SIGN}')
+
 
 def setup(bot):
     bot.add_cog(Admin(bot))
