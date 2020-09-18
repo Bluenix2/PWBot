@@ -8,6 +8,7 @@ import config
 
 initial_extensions = (
     'cogs.admin',
+    'cogs.threads',
 )
 
 
