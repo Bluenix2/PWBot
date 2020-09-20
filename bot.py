@@ -17,12 +17,15 @@ class PWBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="?", fetch_offline_members=False)
 
+        self.client_id = config.client_id
+        self.uptime = None
+
         self.settings = settings.Settings()
 
         for extension in initial_extensions:
             try:
                 self.load_extension(extension)
-            except Exception:
+            except commands.ExtensionError:
                 print(f'Failed to load extension {extension}', file=sys.stderr)
                 traceback.print_exc()
 
