@@ -1,5 +1,36 @@
+import enum
+
 import discord
 from discord.ext import commands
+
+from cogs.utils import checks
+
+
+def thread_only():
+    async def predicate(ctx):
+        if ctx.guild is None:
+            return False
+
+        query = "SELECT id FROM threads WHERE id=$1;"
+        record = await ctx.db.fetchrow(query, ctx.channel.id)
+
+        return bool(record)
+    return commands.check(predicate)
+
+
+def thread_author():
+    async def predicate(ctx):
+        print('thread_author')
+        query = "SELECT author FROM threads WHERE id=$1;"
+        record = await ctx.db.fetchval(query, ctx.channel.id)
+
+        return record == ctx.author.id
+    return commands.check(predicate)
+
+
+class ThreadState(enum.Enum):
+    open = 0
+    closed = 1
 
 
 class Threads(commands.Cog):
@@ -10,7 +41,9 @@ class Threads(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.message_id not in (756608926157504633, 756608932641898517):
+        if payload.message_id not in (
+            self.bot.settings.ticket_message, self.bot.settings.report_message
+        ):
             return
 
         # Use raw method to avoid unnecessary API calls
@@ -22,24 +55,21 @@ class Threads(commands.Cog):
         if str(payload.emoji) != '\N{WHITE MEDIUM STAR}':  # Will be changed
             return
 
-        if payload.message_id == 756608926157504633:
+        if payload.message_id == self.bot.settings.ticket_message:
             await self.create_ticket(self.bot.get_user(payload.user_id))
-        elif payload.message_id == 756608932641898517:
+
+        elif payload.message_id == self.bot.settings.report_message:
             await self.create_report(self.bot.get_user(payload.user_id))
 
     async def create_ticket(self, user, issue=""):
-        category = self.bot.get_channel(755833939997884568)
+        """Creates a new ticket under the ticket category."""
+
+        category = self.bot.get_channel(self.bot.settings.ticket_category)
 
         description = """Welcome {0}
 
         Thank you for opening a ticket, what can we help you with?
         Please explain what you need help with and we will get back with you.
-
-        Please use the following command to close the ticket:
-        `-ticket close <reason for closing here>`
-
-        And use the following command to add a user to the ticket:
-        `-ticket add <@user>`
         """
 
         await self._create_thread(
@@ -47,19 +77,15 @@ class Threads(commands.Cog):
         )
 
     async def create_report(self, user, issue=""):
-        category = self.bot.get_channel(756603865805357217)
+        """Creates a new report under the report category."""
+
+        category = self.bot.get_channel(self.bot.settings.report_category)
 
         description = """Welcome {0}
 
         Thank you for reporting, please provide all evidence.
         Examples of good evidence is video proof and screenshots.
         Please also post their or your Steam link.
-
-        Please use the following command to close the report:
-        `-report close <reason for closing here>`
-
-        And use the following command to add a user to the report:
-        `-report add <@user>`
         """
 
         await self._create_thread(
@@ -83,13 +109,16 @@ class Threads(commands.Cog):
             overwrites=overwrites,
         )
 
+        query = "INSERT INTO threads (id, author) VALUES ($1, $2);"
+        await self.bot.pool.execute(query, channel.id, user.id)
+
         await channel.send(user.mention, embed=discord.Embed(
             description=description.format(user.mention),
             colour=discord.Colour.greyple()
         ))
 
     @commands.group(aliases=["ticket", "report"], invoke_without_command=True)
-    async def thread(self, ctx, *, message=None):
+    async def thread(self, ctx, *, message=""):
         """Parent to all ticket commands.
 
         Also opens a ticket to help inexperienced users.
@@ -98,16 +127,42 @@ class Threads(commands.Cog):
         await ctx.invoke(self.thread_create, message=message)
 
     @thread.command(name="create", aliases=["open"])
-    async def thread_create(self, ctx, *, message=None):
+    async def thread_create(self, ctx, *, message=""):
         """Opens a thread, giving both author and mod team access."""
+        # Commands are ugly and in case it contains confidential information
+        await ctx.message.delete()
+
         if ctx.invoked_with.startswith('ticket'):
             await self.create_ticket(ctx.author, message)
+
         elif ctx.invoked_with.startswith('report'):
             await self.create_report(ctx.author, message)
 
+    @thread.command(name="adduser", aliases=["add", "user"])
+    @thread_only()
+    async def thread_adduser(self, ctx, user: discord.User):
+        """Adds a user to the thread."""
+        overwrites = {
+            user: discord.PermissionOverwrite(
+                read_messages=True
+            )
+        }
+        overwrites.update(ctx.channel.category.overwrites)
+
+        description = "Welcome {0}, you were added to this thread."
+        await ctx.send(user.mention, embed=discord.Embed(
+            description=description.format(user.mention),
+            colour=discord.Colour.greyple()
+        ))
+
     @thread.command(name="close")
+    @thread_only()
+    @checks.is_mod()
     async def thread_close(self, ctx):
         """Closes a thread, deleting the channel."""
+        query = "UPDATE threads SET state=$1 WHERE id=$2;"
+        await ctx.db.execute(query, ThreadState.closed.value, ctx.channel.id)
+
         await ctx.channel.delete()
 
 

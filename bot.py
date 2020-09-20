@@ -5,6 +5,7 @@ import traceback
 from discord.ext import commands
 
 import config
+from cogs.utils import context, settings
 
 initial_extensions = (
     'cogs.admin',
@@ -15,6 +16,8 @@ initial_extensions = (
 class PWBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="?", fetch_offline_members=False)
+
+        self.settings = settings.Settings()
 
         for extension in initial_extensions:
             try:
@@ -28,6 +31,15 @@ class PWBot(commands.Bot):
             self.uptime = datetime.datetime.utcnow()
 
         print(f'Ready: {self.user} (ID: {self.user.id})')
+
+    async def process_commands(self, message):
+        ctx = await self.get_context(message, cls=context.Context)
+
+        try:
+            await self.invoke(ctx)
+        finally:
+            # In case we have any outstanding database connections
+            await ctx.release()
 
     def run(self):
         super().run(config.token, reconnect=True)
