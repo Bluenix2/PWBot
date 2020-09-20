@@ -10,6 +10,7 @@ from cogs.utils import context, settings
 initial_extensions = (
     'cogs.admin',
     'cogs.threads',
+    'cogs.lobby',
 )
 
 

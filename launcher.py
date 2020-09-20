@@ -37,6 +37,7 @@ def database():
 
 @database.command(options_metavar='[options]')
 def init():
+    click.echo('Creating tables')
     run = asyncio.get_event_loop().run_until_complete
 
     conn = run(asyncpg.connect(config.postgresql))
