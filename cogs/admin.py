@@ -12,7 +12,7 @@ class Admin(commands.Cog):
 
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
-        """Loads a module."""
+        """Load a module."""
         try:
             self.bot.load_extension(module)
         except commands.ExtensionError as e:
@@ -32,7 +32,7 @@ class Admin(commands.Cog):
 
     @commands.group(hidden=True)
     async def reload(self, ctx, *, module):
-        """Reloads a module."""
+        """Reload a module."""
         try:
             self.bot.reload_extension(module)
         except commands.ExtensionError as e:

@@ -11,7 +11,7 @@ def thread_only():
         if ctx.guild is None:
             return False
 
-        query = "SELECT id FROM threads WHERE id=$1;"
+        query = 'SELECT id FROM threads WHERE id=$1;'
         record = await ctx.db.fetchrow(query, ctx.channel.id)
 
         return bool(record)
@@ -20,8 +20,7 @@ def thread_only():
 
 def thread_author():
     async def predicate(ctx):
-        print('thread_author')
-        query = "SELECT author FROM threads WHERE id=$1;"
+        query = 'SELECT author FROM threads WHERE id=$1;'
         record = await ctx.db.fetchval(query, ctx.channel.id)
 
         return record == ctx.author.id
@@ -49,7 +48,7 @@ class Threads(commands.Cog):
         # Use raw method to avoid unnecessary API calls
         await self.bot.http.remove_reaction(
             payload.channel_id, payload.message_id,
-            payload.emoji, payload.member.id
+            payload.emoji, payload.member.id,
         )
 
         if str(payload.emoji) != '\N{WHITE MEDIUM STAR}':  # Will be changed
@@ -61,9 +60,8 @@ class Threads(commands.Cog):
         elif payload.message_id == self.bot.settings.report_message:
             await self.create_report(self.bot.get_user(payload.user_id))
 
-    async def create_ticket(self, user, issue=""):
-        """Creates a new ticket under the ticket category."""
-
+    async def create_ticket(self, user, issue=''):
+        """Create a new ticket under the ticket category."""
         category = self.bot.get_channel(self.bot.settings.ticket_category)
 
         description = """Welcome {0}
@@ -73,12 +71,11 @@ class Threads(commands.Cog):
         """
 
         await self._create_thread(
-            user, category, "ticket-{0}", description, issue
+            user, category, 'ticket-{0}'.format(issue), description,
         )
 
-    async def create_report(self, user, issue=""):
-        """Creates a new report under the report category."""
-
+    async def create_report(self, user, issue=''):
+        """Create a new report under the report category."""
         category = self.bot.get_channel(self.bot.settings.report_category)
 
         description = """Welcome {0}
@@ -89,36 +86,11 @@ class Threads(commands.Cog):
         """
 
         await self._create_thread(
-            user, category, "report-{0}", description, issue
+            user, category, 'report-{0}'.format(issue), description,
         )
 
-    async def _create_thread(
-        self, user, category, channel_format, description, issue
-    ):
-        """Create a new thread."""
-
-        overwrites = {
-            user: discord.PermissionOverwrite(
-                read_messages=True
-            )
-        }
-        overwrites.update(category.overwrites)
-
-        channel = await category.create_text_channel(
-            name=channel_format.format(issue), sync_permissions=True,
-            overwrites=overwrites,
-        )
-
-        query = "INSERT INTO threads (id, author) VALUES ($1, $2);"
-        await self.bot.pool.execute(query, channel.id, user.id)
-
-        await channel.send(user.mention, embed=discord.Embed(
-            description=description.format(user.mention),
-            colour=discord.Colour.greyple()
-        ))
-
-    @commands.group(aliases=["ticket", "report"], invoke_without_command=True)
-    async def thread(self, ctx, *, message=""):
+    @commands.group(aliases=['ticket', 'report'], invoke_without_command=True)
+    async def thread(self, ctx, *, message=''):
         """Parent to all ticket commands.
 
         Also opens a ticket to help inexperienced users.
@@ -126,9 +98,9 @@ class Threads(commands.Cog):
         # Redirect to opening a ticket
         await ctx.invoke(self.thread_create, message=message)
 
-    @thread.command(name="create", aliases=["open"])
-    async def thread_create(self, ctx, *, message=""):
-        """Opens a thread, giving both author and mod team access."""
+    @thread.command(name='create', aliases=['open'])
+    async def thread_create(self, ctx, *, message=''):
+        """Open a thread, giving both author and mod team access."""
         # Commands are ugly and in case it contains confidential information
         await ctx.message.delete()
 
@@ -138,32 +110,56 @@ class Threads(commands.Cog):
         elif ctx.invoked_with.startswith('report'):
             await self.create_report(ctx.author, message)
 
-    @thread.command(name="adduser", aliases=["add", "user"])
+    @thread.command(name='adduser', aliases=['add', 'user'])
     @thread_only()
     async def thread_adduser(self, ctx, user: discord.User):
-        """Adds a user to the thread."""
+        """Add a user to the thread."""
         overwrites = {
             user: discord.PermissionOverwrite(
-                read_messages=True
-            )
+                read_messages=True,
+            ),
         }
         overwrites.update(ctx.channel.category.overwrites)
 
-        description = "Welcome {0}, you were added to this thread."
+        description = 'Welcome {0}, you were added to this thread.'
         await ctx.send(user.mention, embed=discord.Embed(
             description=description.format(user.mention),
-            colour=discord.Colour.greyple()
+            colour=discord.Colour.greyple(),
         ))
 
-    @thread.command(name="close")
+    @thread.command(name='close')
     @thread_only()
     @checks.is_mod()
     async def thread_close(self, ctx):
-        """Closes a thread, deleting the channel."""
-        query = "UPDATE threads SET state=$1 WHERE id=$2;"
+        """Close a thread, deleting the channel."""
+        query = 'UPDATE threads SET state=$1 WHERE id=$2;'
         await ctx.db.execute(query, ThreadState.closed.value, ctx.channel.id)
 
         await ctx.channel.delete()
+
+    async def _create_thread(
+        self, user, category, channel_name, description,
+    ):
+        """Create a new thread."""
+        overwrites = {
+            user: discord.PermissionOverwrite(
+                read_messages=True,
+            ),
+        }
+        overwrites.update(category.overwrites)
+
+        channel = await category.create_text_channel(
+            name=channel_name, sync_permissions=True,
+            overwrites=overwrites,
+        )
+
+        query = 'INSERT INTO threads (id, author) VALUES ($1, $2);'
+        await self.bot.pool.execute(query, channel.id, user.id)
+
+        await channel.send(user.mention, embed=discord.Embed(
+            description=description.format(user.mention),
+            colour=discord.Colour.greyple(),
+        ))
 
 
 def setup(bot):

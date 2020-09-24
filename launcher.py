@@ -24,7 +24,7 @@ def run_bot():
 @click.group(invoke_without_command=True, options_metavar='[options]')
 @click.pass_context
 def main(ctx):
-    """Launches the bot."""
+    """Launch the bot."""
     if ctx.invoked_subcommand is None:
         run_bot()
 
@@ -56,7 +56,7 @@ def init():
             run(conn.execute(table))
         except Exception:
             click.echo(
-                'Failed to create table\n' + traceback.format_exc(), err=True
+                'Failed to create table\n' + traceback.format_exc(), err=True,
             )
 
 

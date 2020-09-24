@@ -41,16 +41,16 @@ class LobbyManager(commands.Cog):
         if lobby.required_players == len(lobby.players):
             await lobby.message.clear_reactions()
             await lobby.message.channel.send(
-                "You have enough players to start a game! " + ", ".join(
-                    "<@{0}>".format(player) for player in lobby.players
-                )
+                'You have enough players to start a game! ' + ', '.join(
+                    '<@{0}>'.format(player) for player in lobby.players
+                ),
             )
 
-            description = "This lobby reached the desired amount of players"
+            description = 'This lobby reached the desired amount of players'
             await lobby.message.edit(embed=discord.Embed(
-                title="Lobby Full!",
+                title='Lobby Full!',
                 description=description,
-                colour=discord.Colour.orange()
+                colour=discord.Colour.orange(),
             ))
 
     @commands.command()
@@ -59,14 +59,14 @@ class LobbyManager(commands.Cog):
             return
 
         message = await ctx.send(embed=discord.Embed(
-            title="Looking for players!",
-            description="If you are available for a game, react below.",
-            colour=discord.Colour.green()
+            title='Looking for players!',
+            description='If you are available for a game, react below.',
+            colour=discord.Colour.green(),
         ))
 
         self.lobbies.add(Lobby(message, players))
 
-        await message.add_reaction("\N{WHITE MEDIUM STAR}")
+        await message.add_reaction('\N{WHITE MEDIUM STAR}')
 
 
 def setup(bot):

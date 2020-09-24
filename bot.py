@@ -16,7 +16,7 @@ initial_extensions = (
 
 class PWBot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix="?", fetch_offline_members=False)
+        super().__init__(command_prefix='?', fetch_offline_members=False)
 
         self.client_id = config.client_id
         self.uptime = None
