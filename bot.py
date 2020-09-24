@@ -9,6 +9,7 @@ import config
 from cogs.utils import context, settings
 
 initial_extensions = (
+    'cogs.help',
     'cogs.admin',
     'cogs.threads',
     'cogs.lobby',
@@ -23,6 +24,8 @@ class PWBot(commands.Bot):
         self.uptime = None
 
         self.settings = settings.Settings()
+
+        self.remove_command('help')
 
         for extension in initial_extensions:
             try:
