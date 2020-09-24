@@ -40,9 +40,13 @@ class Threads(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.message_id not in (
-            self.bot.settings.ticket_message, self.bot.settings.report_message
-        ):
+        create_thread = None
+        if payload.message_id == self.bot.settings.report_message:
+            create_thread = self.create_report
+        elif payload.message_id == self.bot.settings.ticket_message:
+            create_thread = self.create_ticket
+
+        if create_thread is None:
             return
 
         # Use raw method to avoid unnecessary API calls
@@ -54,11 +58,7 @@ class Threads(commands.Cog):
         if str(payload.emoji) != '\N{WHITE MEDIUM STAR}':  # Will be changed
             return
 
-        if payload.message_id == self.bot.settings.ticket_message:
-            await self.create_ticket(self.bot.get_user(payload.user_id))
-
-        elif payload.message_id == self.bot.settings.report_message:
-            await self.create_report(self.bot.get_user(payload.user_id))
+        await create_thread(self.bot.get_user(payload.user_id))
 
     async def create_ticket(self, user, issue=''):
         """Create a new ticket under the ticket category."""
