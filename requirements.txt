@@ -1,3 +1,4 @@
 discord.py
 click
 asyncpg
+flake8
