@@ -53,7 +53,9 @@ class LobbyManager(commands.Cog):
                 colour=discord.Colour.orange(),
             ))
 
-    @commands.command()
+    @commands.command(
+        brief="Open a waiting lobby",
+        help="Open a waiting lobby, pinging everyone who reacted when full.")
     async def lobby(self, ctx, players: int):
         if players < 5 or players > 8:
             return

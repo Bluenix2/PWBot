@@ -6,10 +6,9 @@ import discord
 from discord.ext import commands
 
 import config
-from cogs.utils import context, settings
+from cogs.utils import context, meta, settings
 
 initial_extensions = (
-    'cogs.help',
     'cogs.admin',
     'cogs.threads',
     'cogs.lobby',
@@ -18,14 +17,18 @@ initial_extensions = (
 
 class PWBot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix='?', fetch_offline_members=False)
+        super().__init__(command_prefix='?', fetch_offline_members=False,
+                         help_command=meta.PWBotHelp(command_attrs={
+                            'brief': 'Displays all commands available',
+                            'help': 'Displays all commands available,\
+                                will display additional info if a command is specified'
+                         })
+                         )
 
         self.client_id = config.client_id
         self.uptime = None
 
         self.settings = settings.Settings()
-
-        self.remove_command('help')
 
         for extension in initial_extensions:
             try:
