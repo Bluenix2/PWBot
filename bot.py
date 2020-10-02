@@ -12,6 +12,7 @@ initial_extensions = (
     'cogs.admin',
     'cogs.threads',
     'cogs.lobby',
+    'cogs.responses',
 )
 
 
