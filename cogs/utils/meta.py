@@ -16,7 +16,8 @@ class PWBotHelp(commands.HelpCommand):
         )
         for command in all_commands:
             embed.add_field(
-                name=self.get_command_signature(command), value=command.brief, inline=False
+                name=self.get_command_signature(command), value=command.brief,
+                inline=False
             )
 
         await self.get_destination().send(embed=embed)
@@ -31,6 +32,26 @@ class PWBotHelp(commands.HelpCommand):
             colour=discord.Colour.blue(),
             )
         )
+
+    async def send_group_help(self, group):
+        all_commands = await self.filter_commands(group.commands, sort=True)
+
+        embed = discord.Embed(
+            title=group.name,
+            description='`{0}` {1}'.format(
+                self.get_command_signature(group),
+                group.help,
+            ),
+            colour=discord.Colour.blue(),
+            )
+
+        for command in all_commands:
+            embed.add_field(
+                name=self.get_command_signature(command), value=command.brief,
+                inline=False
+            )
+
+        await self.get_destination().send(embed=embed)
 
     async def send_error_message(self, error):
         return  # Do nothing
