@@ -37,26 +37,29 @@ def database():
 
 @database.command(options_metavar='[options]')
 def init():
-    click.echo('Creating tables')
+    click.echo('Setting up database')
     run = asyncio.get_event_loop().run_until_complete
 
     conn = run(asyncpg.connect(config.postgresql))
 
-    tables = [
-        """CREATE TABLE IF NOT EXISTS threads (
-            id BIGINT PRIMARY KEY,
-            author BIGINT NOT NULL,
-            state SMALLINT NOT NULL
+    queries = [
+        """CREATE TABLE IF NOT EXISTS tickets (
+            id SMALLINT PRIMARY KEY,
+            channel_id BIGINT NOT NULL,
+            author_id BIGINT NOT NULL,
+            type SMALLINT,
+            issue VARCHAR(90)
         );
         """,
+        """CREATE SEQUENCE IF NOT EXISTS ticket_id OWNED BY tickets.id""",
     ]
 
-    for table in tables:
+    for query in queries:
         try:
-            run(conn.execute(table))
+            run(conn.execute(query))
         except Exception:
             click.echo(
-                'Failed to create table\n' + traceback.format_exc(), err=True,
+                'Failed to execute query\n' + traceback.format_exc(), err=True,
             )
 
 
