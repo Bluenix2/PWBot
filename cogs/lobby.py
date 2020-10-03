@@ -45,6 +45,7 @@ class LobbyManager(commands.Cog):
                     '<@{0}>'.format(player) for player in lobby.players
                 ),
             )
+            self.lobbies.remove(lobby)
 
             description = 'This lobby reached the desired amount of players'
             await lobby.message.edit(embed=discord.Embed(
