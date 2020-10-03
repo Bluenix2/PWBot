@@ -7,7 +7,7 @@ class Responses(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def log(self, ctx):
         await ctx.send('\n'.join((
             '> Can you grab us your Player.log to help us look into and resolve this issue?',
@@ -15,7 +15,7 @@ class Responses(commands.Cog):
             'https://cdn.discordapp.com/attachments/602287744961609749/641424807107493928/Local-Files.gif'
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def voip(self, ctx):
         await ctx.send('\n'.join((
             '** Having problems with your voice in chat? Try this: **',
@@ -30,7 +30,7 @@ class Responses(commands.Cog):
             '`C:\\Users\\%username%\\AppData\\LocalLow\\OtherOcean\\ProjectWinter` so we can help you further.',
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def crash(self, ctx):
         await ctx.send('\n'.join((
             '**If you are experiencing crashes please check the following:**',
@@ -50,7 +50,7 @@ class Responses(commands.Cog):
             'Copy and paste this address into windows explorer to find it:  `C:\\Users\\%username%\\AppData\\LocalLow\\OtherOcean\\ProjectWinter`',
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def disconnect(self, ctx):
         await ctx.send('\n'.join((
             '> If you are having issues with disconnects please ensure you have a good internet connection and change to a wired connection if possible.',
@@ -59,7 +59,7 @@ class Responses(commands.Cog):
             'which can be found here: `C:\\Users\\%username%\\AppData\\LocalLow\\OtherOcean\\ProjectWinter`',
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def input(self, ctx):
         await ctx.send('\n'.join((
             '**Having issues with your cursor being locked? Try the following steps to help fix the issue:**',
@@ -67,7 +67,7 @@ class Responses(commands.Cog):
             '> 2. Uninstall any virtual controller programs you might have, such as Vjoy',
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def rdm(self, ctx):
         await ctx.send('\n'.join((
             '> Due to the nature of the game, "RDM" or "teaming" can be subjective due to lack of information, paranoia, new players, etc.'
@@ -76,7 +76,7 @@ class Responses(commands.Cog):
             "> *The exception to this is Dubem. If you see Dubem in your game feel free to kill him at any time. We don't like Dubem.*",
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def tickethelp(self, ctx):
         await ctx.send('\n'.join((
             '> You can open a ticket in the <#539800467396624384> channel by using the following command:',  # Channel mention
@@ -95,7 +95,7 @@ class Responses(commands.Cog):
             '> Abuse of the ticket system could result in a temporary squelching.',
         )))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def projectsupreme(self, ctx):
         await ctx.send('\n'.join((
             '> No. This is not the Project Supreme Discord Server. This is Project Winter https://store.steampowered.com/app/774861/Project_Winter/',
