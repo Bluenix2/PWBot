@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 
-def is_mod():
+def mod_only():
     async def predicate(ctx):
         permissions = ctx.author.guild_permissions
         return permissions.manage_messages
