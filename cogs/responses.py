@@ -104,6 +104,16 @@ class Responses(commands.Cog):
             '> Gather resources, repair structures, and brave the wilderness together.',
         )))
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+        if message.channel.id != self.bot.settings.suggestions_channel:
+            return
+
+        await message.add_reaction('\N{THUMBS DOWN SIGN}')
+        await message.add_reaction('\N{THUMBS UP SIGN}')
+
 
 def setup(bot):
     bot.add_cog(Responses(bot))
