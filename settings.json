@@ -4,5 +4,9 @@
     "log_channel": 714933057924366337,
     "report_message": 758743730840141905,
     "report_category": 756603865805357217,
-    "suggestions_channel": 714932438249504778
+    "suggestions_channel": 714932438249504778,
+    "reaction_message": 763789920145768489,
+    "roles": {
+        "763791289685639259": 763791576408260618
+    }
 }
