@@ -6,7 +6,8 @@ import discord
 from discord.ext import commands
 
 import config
-from cogs.utils import context, meta, settings
+from cogs import meta
+from cogs.utils import context, settings
 
 initial_extensions = (
     'cogs.admin',
@@ -14,6 +15,7 @@ initial_extensions = (
     'cogs.reports',
     'cogs.lobby',
     'cogs.responses',
+    'cogs.meta'
 )
 
 
@@ -28,7 +30,6 @@ class PWBot(commands.Bot):
                          )
 
         self.client_id = config.client_id
-        self.uptime = None
 
         self.settings = settings.Settings()
 

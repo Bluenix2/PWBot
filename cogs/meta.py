@@ -1,4 +1,7 @@
+from datetime import datetime
+
 import discord
+from dateutil.relativedelta import relativedelta
 from discord.ext import commands
 
 
@@ -55,3 +58,25 @@ class PWBotHelp(commands.HelpCommand):
 
     async def send_error_message(self, error):
         return  # Do nothing
+
+
+class Meta(commands.Cog):
+    """Utilities for the bot itself."""
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(brief='Say how long the has been up for.')
+    async def uptime(self, ctx):
+        delta = relativedelta(
+            datetime.utcnow().replace(microsecond=0),
+            self.bot.uptime.replace(microsecond=0),
+        )
+        await ctx.send(
+            'I have been enslaved for **{} weeks, {} days, {} hours, {} minutes.**'.format(
+                delta.weeks, (delta.days - delta.weeks * 7), delta.hours, delta.minutes
+            )
+        )
+
+
+def setup(bot):
+    bot.add_cog(Meta(bot))
