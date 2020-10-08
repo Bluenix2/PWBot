@@ -129,16 +129,26 @@ class TicketMixin:
             return
 
         if self.create_log:
+            await ctx.send('Locked channel. Creating logs, this my take a while.')
+
+            overwrites = {
+                ctx.guild.default_role: discord.PermissionOverwrite(
+                    read_messages=False,
+                ),
+                self.bot.user: discord.PermissionOverwrite(
+                    read_messages=True,
+                ),
+            }
+            await ctx.channel.edit(overwrites=overwrites)
+
             log = await self._generate_log(ctx.channel, record)
 
             issue = '-' + record['issue'] if record['issue'] else ''
             filename = f"transcript-{record['id']}{issue}.zip"
-            transcript = discord.File(
-                log,
-                filename=filename
-            )
+            transcript = discord.File(log, filename=filename)
 
             channel = self.bot.get_channel(self.log_channel)
+
             # We send the file name so that it's easily searched in discord
             await channel.send(filename, file=transcript)
 
