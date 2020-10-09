@@ -4,6 +4,12 @@ import discord
 from discord.ext import commands
 
 
+def beta_channel_only():
+    async def predicate(ctx):
+        return ctx.channel.id == ctx.bot.settings.beta_channel
+    return commands.check(predicate)
+
+
 class Lobby:
     """Represents a waiting beta lobby."""
 
@@ -91,6 +97,7 @@ class LobbyManager(commands.Cog):
         invoke_without_command=True,
         brief="Open a waiting lobby",
         help="Open a waiting lobby, pinging everyone who reacted when full.")
+    @beta_channel_only()
     async def lobby(self, ctx, players: int = 5):
         lobby = None
         for _lobby in self.lobbies:
