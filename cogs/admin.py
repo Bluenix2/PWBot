@@ -8,7 +8,7 @@ class Admin(commands.Cog):
         self.bot = bot
 
     async def cog_check(self, ctx):
-        return await self.bot.is_owner
+        return await self.bot.is_owner(ctx.author)
 
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
