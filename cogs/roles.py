@@ -14,7 +14,7 @@ class Roles(commands.Cog):
         if payload.message_id != self.bot.settings.reaction_message:
             return
 
-        role_id = self.roles[str(payload.emoji.id)]  # keys can't be ints
+        role_id = self.roles.get(str(payload.emoji.id))  # keys can't be ints
         if not role_id:
             return await self.bot.http.remove_reaction(
                 payload.channel_id, payload.message_id,
@@ -28,7 +28,7 @@ class Roles(commands.Cog):
         if payload.message_id != self.bot.settings.reaction_message:
             return
 
-        role_id = self.roles[str(payload.emoji.id)]  # keys can't be ints
+        role_id = self.roles.get(str(payload.emoji.id))  # keys can't be ints
         if not role_id:
             return
 
