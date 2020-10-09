@@ -50,7 +50,7 @@ class LobbyManager(commands.Cog):
 
     def get_lobby_by_owner(self, owner_id):
         for _lobby in self.lobbies:
-            if _lobby.author.id == owner_id:
+            if _lobby.owner_id == owner_id:
                 return _lobby
 
     @commands.Cog.listener()  # TODO: Add beta channel check
