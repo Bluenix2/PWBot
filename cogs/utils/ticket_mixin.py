@@ -36,6 +36,11 @@ class TicketType(enum.Enum):
     report = 1
 
 
+class TicketState(enum.Enum):
+    open = 0
+    closed = 1
+
+
 class TicketMixin:
     """Central class for managing tickets.
     The following attributes must be defined when subclassing.
@@ -68,6 +73,14 @@ class TicketMixin:
             self._category = self.bot.get_channel(self.category_id)
         return self._category
 
+    async def get_open_by_author(self, author_id):
+        query = 'SELECT channel_id FROM tickets WHERE author_id=$1 AND state=$2 AND type=$3;'
+        channel_id = await self.bot.pool.fetchval(
+            query, author_id, TicketState.open.value, self.ticket_type.value
+        )
+
+        return channel_id
+
     async def on_reaction(self, payload):
         if payload.message_id != self.message_id:
             return
@@ -80,10 +93,24 @@ class TicketMixin:
         if str(payload.emoji) != '\N{WHITE MEDIUM STAR}':  # Will be changed
             return
 
+        open_channel = await self.get_open_by_author(payload.user_id)
+        if open_channel:
+            return await self.bot.http.send_message(
+                open_channel, '<@{0}> you already have an open ticket here'.format(
+                    payload.user_id
+                ))
+
         await self._create_ticket(payload.member, None)
 
     async def on_open_command(self, ctx, issue):
         await ctx.message.delete()
+
+        open_channel = await self.get_open_by_author(ctx.author.id)
+        if open_channel:
+            return await ctx.send('{0} you already have an open ticket: <#{1}>'.format(
+                    ctx.author.mention, open_channel
+                ), delete_after=10
+            )
 
         await self._create_ticket(ctx.author, issue, conn=ctx.db)
 

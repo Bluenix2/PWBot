@@ -48,6 +48,7 @@ def init():
             channel_id BIGINT NOT NULL,
             author_id BIGINT NOT NULL,
             type SMALLINT,
+            state SMALLINT DEFAULT 0,
             issue VARCHAR(90)
         );
         """,
