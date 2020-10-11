@@ -7,10 +7,11 @@ from cogs.utils import checks, ticket_mixin
 class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
     """Cog managing all normal tickets for help."""
     def __init__(self, bot):
+        super().__init__()
+
         self.bot = bot
 
         self.ticket_type = ticket_mixin.TicketType.ticket
-        self._category = None
         self.category_id = self.bot.settings.ticket_category
 
         self.message_id = self.bot.settings.ticket_message
@@ -19,6 +20,8 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         Thank you for opening a ticket, what can we help you with?
         Please explain what you need help with and we will get back with you.
         """
+
+        self.status_channel_id = self.bot.settings.status_channel
 
         self.create_log = True
         self.log_channel_id = self.bot.settings.log_channel

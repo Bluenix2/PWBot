@@ -6,10 +6,11 @@ from cogs.utils import checks, ticket_mixin
 class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
     """Cog managing all report tickets reporting players."""
     def __init__(self, bot):
+        super().__init__()
+
         self.bot = bot
 
         self.ticket_type = ticket_mixin.TicketType.report
-        self._category = None
         self.category_id = self.bot.settings.report_category
 
         self.message_id = self.bot.settings.report_message
@@ -19,6 +20,8 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         Examples of good evidence is video proof and screenshots.
         Please also post their or your Steam link.
         """
+
+        self.status_channel_id = self.bot.settings.status_channel
 
         self.create_log = False
 

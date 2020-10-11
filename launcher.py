@@ -49,6 +49,7 @@ def init():
             author_id BIGINT NOT NULL,
             type SMALLINT,
             state SMALLINT DEFAULT 0,
+            status_message_id BIGINT,
             issue VARCHAR(90)
         );
         """,

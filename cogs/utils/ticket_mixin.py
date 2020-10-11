@@ -55,6 +55,8 @@ class TicketMixin:
     open_message: str
         The content of the message the bot should send, will be formatted
         with a mention of the author.
+    status_channel_id: int
+        The id of the channel where updates and statuses on tickets are kept.
     create_log: bool
         If logs should be created when closing the ticket.
     log_channel_id: Optional[int]
@@ -66,6 +68,8 @@ class TicketMixin:
 
     def __init__(self):
         self._category = None
+        self._status_channel = None
+        self._log_channel = None
 
     @property
     def category(self):
@@ -74,9 +78,15 @@ class TicketMixin:
         return self._category
 
     @property
+    def status_channel(self):
+        if not self._status_channel:
+            self._status_channel = self.bot.get_channel(self.status_channel_id)
+        return self._status_channel
+
+    @property
     def log_channel(self):
         if not self._log_channel:
-            self._log_channel = self.bot.get_channel(self.log_channel)
+            self._log_channel = self.bot.get_channel(self.log_channel_id)
         return self._log_channel
 
     async def get_open_by_author(self, author_id):
@@ -140,9 +150,9 @@ class TicketMixin:
 
         query = """INSERT INTO tickets (
                     id, channel_id, author_id, type, issue
-                ) VALUES ($1, $2, $3, $4, $5);
+                ) VALUES ($1, $2, $3, $4, $5) RETURNING *;
         """
-        await conn.execute(
+        record = await conn.fetchrow(
             query, ticket_id, channel.id, author.id,
             self.ticket_type.value, issue[:90] if issue else None
         )
@@ -152,7 +162,26 @@ class TicketMixin:
             colour=discord.Colour.greyple(),
         ))
 
-        return channel
+        title = '{} #{} - {}'.format(
+            self.ticket_type.name[0].upper() + self.ticket_type.name[1:],
+            record['id'], issue
+        )
+
+        embed = discord.Embed(
+            title=title,
+            colour=discord.Colour.green()
+        )
+
+        embed.set_author(name=author, icon_url=author.avatar_url)
+
+        message = await self.status_channel.send(embed=embed)
+
+        await conn.execute(
+            'UPDATE tickets SET status_message_id=$1 WHERE id=$2',
+            message.id, record['id']
+        )
+
+        return channel, record
 
     async def on_close_command(self, ctx, reason):
         query = 'SELECT * from tickets WHERE channel_id=$1;'
@@ -181,7 +210,21 @@ class TicketMixin:
             transcript = discord.File(log, filename=filename)
 
             # We send the file name so that it's easily searched in discord
-            await self.log_channel.send(filename, file=transcript)
+            log_message = await self.log_channel.send(filename, file=transcript)
+
+            message = await self.status_channel.fetch_message(record['status_message_id'])
+            embed = message.embeds[0]
+
+            embed.description = reason
+            embed.colour = discord.Colour.red()
+
+            embed.set_footer(
+                text=f'{ctx.author} ({ctx.author.id})',
+                icon_url=ctx.author.avatar_url
+            )
+            embed.add_field(name='Log', value=f'[Jump!]({log_message.jump_url})')
+
+            await message.edit(embed=embed)
 
         await ctx.channel.delete(reason=reason)
 
