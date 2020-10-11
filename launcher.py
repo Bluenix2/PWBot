@@ -45,7 +45,7 @@ def init():
     queries = [
         """CREATE TABLE IF NOT EXISTS tickets (
             id SMALLINT PRIMARY KEY,
-            channel_id BIGINT NOT NULL,
+            channel_id BIGINT UNIQUE NOT NULL,
             author_id BIGINT NOT NULL,
             type SMALLINT,
             state SMALLINT DEFAULT 0,
@@ -54,6 +54,7 @@ def init():
         );
         """,
         """CREATE SEQUENCE IF NOT EXISTS ticket_id OWNED BY tickets.id""",
+        """CREATE INDEX tickets_duplicate_idx ON tickets (author_id, state, type);""",
     ]
 
     for query in queries:
