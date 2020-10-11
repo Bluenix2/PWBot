@@ -183,7 +183,9 @@ class TicketMixin:
 
     async def _generate_log(self, channel, record):
         """Create a log archive with transcript and attachments."""
-        messages = [f"""Transcript of ticket {record['id']} "{record['issue']}":\n"""]
+        messages = ["""Transcript of ticket {0} "{1}" opened by user {2}:\n""".format(
+            record['id'], record['issue'], record['author_id'],
+        )]
 
         attachments = []
         async for message in channel.history(oldest_first=True):
