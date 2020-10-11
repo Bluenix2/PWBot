@@ -57,7 +57,7 @@ class TicketMixin:
         with a mention of the author.
     create_log: bool
         If logs should be created when closing the ticket.
-    log_channel: Optional[int]
+    log_channel_id: Optional[int]
         The id of the channel that the log archives will be sent to.
     message_id: Optional[int]
         The id of the message that it should create tickets
@@ -72,6 +72,12 @@ class TicketMixin:
         if not self._category:
             self._category = self.bot.get_channel(self.category_id)
         return self._category
+
+    @property
+    def log_channel(self):
+        if not self._log_channel:
+            self._log_channel = self.bot.get_channel(self.log_channel)
+        return self._log_channel
 
     async def get_open_by_author(self, author_id):
         query = 'SELECT channel_id FROM tickets WHERE author_id=$1 AND state=$2 AND type=$3;'
@@ -174,10 +180,8 @@ class TicketMixin:
             filename = f"transcript-{record['id']}{issue}.zip"
             transcript = discord.File(log, filename=filename)
 
-            channel = self.bot.get_channel(self.log_channel)
-
             # We send the file name so that it's easily searched in discord
-            await channel.send(filename, file=transcript)
+            await self.log_channel.send(filename, file=transcript)
 
         await ctx.channel.delete(reason=reason)
 

@@ -21,7 +21,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         """
 
         self.create_log = True
-        self.log_channel = self.bot.settings.log_channel
+        self.log_channel_id = self.bot.settings.log_channel
 
         self.adduser_message = "Welcome {0}, you were added to this ticket."
 
