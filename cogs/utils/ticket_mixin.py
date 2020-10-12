@@ -112,7 +112,7 @@ class TicketMixin:
         open_channel = await self.get_open_by_author(payload.user_id)
         if open_channel:
             return await self.bot.http.send_message(
-                open_channel, '<@{0}> you already have an open ticket here'.format(
+                open_channel, '<@{0}> you already have an open ticket in here'.format(
                     payload.user_id
                 ))
 
@@ -191,7 +191,7 @@ class TicketMixin:
             return
 
         if self.create_log:
-            await ctx.send('Locked channel. Creating logs, this my take a while.')
+            await ctx.send('Locked the channel. Creating logs, this my take a while.')
 
             overwrites = {
                 ctx.guild.default_role: discord.PermissionOverwrite(

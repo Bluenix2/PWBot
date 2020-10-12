@@ -33,7 +33,7 @@ class Lobby:
 
         self.manager.lobbies.remove(self)
         await self.message.channel.send(
-            'Your lobby was disbanded, feel free to open a new one. <@{0}>'.format(
+            '<@{0}> your lobby was disbanded.'.format(
                 self.owner_id
             )
         )
@@ -59,8 +59,11 @@ class LobbyManager(commands.Cog):
             if _lobby.owner_id == owner_id:
                 return _lobby
 
-    @commands.Cog.listener()  # TODO: Add beta channel check
+    @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
+        if payload.channel_id != self.bot.settings.beta_channel:
+            return
+
         if payload.user_id == self.bot.client_id:     # ignore the bot's reacts
             return
 
@@ -99,10 +102,7 @@ class LobbyManager(commands.Cog):
         help="Open a waiting lobby, pinging everyone who reacted when full.")
     @beta_channel_only()
     async def lobby(self, ctx, players: int = 5):
-        lobby = None
-        for _lobby in self.lobbies:
-            if _lobby.author.id == ctx.author.id:
-                lobby = _lobby
+        lobby = self.get_lobby_by_owner(ctx.author.id)
 
         if lobby:
             return await ctx.send('Please disband your old lobby before opening a new one.')
@@ -120,7 +120,9 @@ class LobbyManager(commands.Cog):
 
         await message.add_reaction('\N{WHITE MEDIUM STAR}')
 
-    @lobby.command(name='disband')
+    @lobby.command(
+        name='disband',
+        brief='Disband an old lobby')
     async def lobby_disband(self, ctx):
         lobby = self.get_lobby_by_owner(ctx.author.id)
         if lobby is None:

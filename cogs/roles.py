@@ -46,7 +46,7 @@ class Roles(commands.Cog):
         )
         embed.add_field(
             name='\N{GLOBE WITH MERIDIANS} Community Translations',
-            value='We are looking to let active community members helps us translate the game.\n **If you want to help please contact a Community Manager**.',
+            value='We are looking to let active community members helps us translate the game.\n**If you want to help please contact a Community Manager**.',
             inline=False
         )
 

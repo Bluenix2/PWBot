@@ -16,7 +16,7 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         self.message_id = self.bot.settings.report_message
         self.open_message = """Welcome {0}
 
-        Thank you for reporting, please provide all evidence.
+        Thank you for reporting, please provide all the evidence.
         Examples of good evidence is video proof and screenshots.
         Please also post their or your Steam link.
         """

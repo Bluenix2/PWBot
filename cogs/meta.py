@@ -65,14 +65,14 @@ class Meta(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(brief='Say how long the has been up for.')
+    @commands.command(brief='Say how long the bot has been up for.')
     async def uptime(self, ctx):
         delta = relativedelta(
             datetime.utcnow().replace(microsecond=0),
             self.bot.uptime.replace(microsecond=0),
         )
         await ctx.send(
-            'I have been enslaved for **{} weeks, {} days, {} hours, {} minutes.**'.format(
+            'I have been working for **{} weeks, {} days, {} hours, {} minutes.**'.format(
                 delta.weeks, (delta.days - delta.weeks * 7), delta.hours, delta.minutes
             )
         )
