@@ -6,15 +6,22 @@ class Roles(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        # A mapping of reaction ids to role ids.
-        self.roles = self.bot.settings.roles
+        # A mapping of reaction unicode characters to role ids.
+        self.roles = {
+            '📣': 765262869239431191,
+            '🎟': 765263058515525633,
+            '🏆': 765263032489738293
+        }
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if payload.message_id != self.bot.settings.reaction_message:
             return
 
-        role_id = self.roles.get(str(payload.emoji.id))  # keys can't be ints
+        if payload.user_id == self.bot.client_id:
+            return
+
+        role_id = self.roles.get(payload.emoji.name)
         if not role_id:
             return await self.bot.http.remove_reaction(
                 payload.channel_id, payload.message_id,
@@ -28,7 +35,7 @@ class Roles(commands.Cog):
         if payload.message_id != self.bot.settings.reaction_message:
             return
 
-        role_id = self.roles.get(str(payload.emoji.id))  # keys can't be ints
+        role_id = self.roles.get(payload.emoji.name)
         if not role_id:
             return
 
