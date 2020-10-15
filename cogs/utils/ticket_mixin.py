@@ -104,10 +104,10 @@ class TicketMixin:
 
         await self.bot.http.remove_reaction(
             payload.channel_id, payload.message_id,
-            payload.emoji, payload.member.id,
+            payload.emoji._as_reaction(), payload.member.id,
         )
 
-        if str(payload.emoji) != '\N{WHITE MEDIUM STAR}':  # Will be changed
+        if payload.emoji.id != 766335107966697474:
             return
 
         open_channel = await self.get_open_by_author(payload.user_id)

@@ -69,7 +69,7 @@ class LobbyManager(commands.Cog):
         if payload.user_id == self.bot.client_id:     # ignore the bot's reacts
             return
 
-        if str(payload.emoji) != '\N{WHITE MEDIUM STAR}':  # TODO: Change
+        if payload.emoji.id != 766335107966697474:
             return
 
         lobby = None
@@ -120,7 +120,7 @@ class LobbyManager(commands.Cog):
 
         self.lobbies.add(Lobby(self, ctx.author.id, message, players))
 
-        await message.add_reaction('\N{WHITE MEDIUM STAR}')
+        await message.add_reaction('<:high5:766335107966697474>')
 
     @lobby.command(
         name='disband',
