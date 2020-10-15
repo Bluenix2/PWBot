@@ -14,7 +14,7 @@ class Roles(commands.Cog):
             '🏆': 765263032489738293
         }
 
-    @commands.command(name='sendrolemessage')
+    @commands.command(name='sendrolemessage', hidden=True)
     async def send_role_message(self, ctx):
         await ctx.message.delete()
 

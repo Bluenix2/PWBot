@@ -30,7 +30,7 @@ class PWBotHelp(commands.HelpCommand):
             title=command.name,
             description='`{0}` {1}'.format(
                 self.get_command_signature(command),
-                command.help,
+                command.help or command.brief,
             ),
             colour=discord.Colour.blue(),
             )
@@ -43,7 +43,7 @@ class PWBotHelp(commands.HelpCommand):
             title=group.name,
             description='`{0}` {1}'.format(
                 self.get_command_signature(group),
-                group.help,
+                group.help or group.brief,
             ),
             colour=discord.Colour.blue(),
             )
