@@ -4,6 +4,7 @@ import os
 import zipfile
 
 import discord
+from cogs.utils import colours
 from discord.ext import commands
 
 
@@ -159,7 +160,7 @@ class TicketMixin:
 
         await channel.send(author.mention, embed=discord.Embed(
             description=self.open_message.format(author.mention),
-            colour=discord.Colour.greyple(),
+            colour=colours.light_blue(),
         ))
 
         title = '{} #{} - {}'.format(
@@ -169,7 +170,7 @@ class TicketMixin:
 
         embed = discord.Embed(
             title=title,
-            colour=discord.Colour.green()
+            colour=colours.cyan()
         )
 
         embed.set_author(name=author, icon_url=author.avatar_url)
@@ -219,7 +220,7 @@ class TicketMixin:
             embed = message.embeds[0]
 
             embed.description = reason
-            embed.colour = discord.Colour.red()
+            embed.colour = colours.apricot()
 
             embed.set_footer(
                 text=f'{ctx.author} ({ctx.author.id})',

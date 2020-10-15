@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+from cogs.utils import colours
+
 
 class Roles(commands.Cog):
     """Manages reaction roles."""
@@ -26,7 +28,7 @@ class Roles(commands.Cog):
         embed = discord.Embed(
             title='Role Management',
             description=description,
-            colour=discord.Colour.greyple()
+            colour=colours.light_blue()
         )
 
         embed.add_field(

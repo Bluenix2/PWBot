@@ -3,6 +3,8 @@ import asyncio
 import discord
 from discord.ext import commands
 
+from cogs.utils import colours
+
 
 def beta_channel_only():
     async def predicate(ctx):
@@ -42,7 +44,7 @@ class Lobby:
         await self.message.edit(embed=discord.Embed(
             title='Lobby Disbanded!',
             description=description,
-            colour=discord.Colour.red(),
+            colour=colours.unvaulted_red(),
         ))
 
 
@@ -93,7 +95,7 @@ class LobbyManager(commands.Cog):
             await lobby.message.edit(embed=discord.Embed(
                 title='Lobby Full!',
                 description=description,
-                colour=discord.Colour.orange(),
+                colour=colours.apricot(),
             ))
 
     @commands.group(
@@ -113,7 +115,7 @@ class LobbyManager(commands.Cog):
         message = await ctx.send(embed=discord.Embed(
             title='Looking for players!',
             description='If you are available for a game, react below.',
-            colour=discord.Colour.green(),
+            colour=colours.cyan(),
         ))
 
         self.lobbies.add(Lobby(self, ctx.author.id, message, players))
