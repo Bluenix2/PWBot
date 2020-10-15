@@ -28,6 +28,9 @@ class PWBotHelp(commands.HelpCommand):
         await self.get_destination().send(embed=embed)
 
     async def send_command_help(self, command):
+        if command.hidden:
+            return
+
         await self.get_destination().send(embed=discord.Embed(
             title=command.name,
             description='`{0}` {1}'.format(
@@ -39,6 +42,9 @@ class PWBotHelp(commands.HelpCommand):
         )
 
     async def send_group_help(self, group):
+        if group.hidden:
+            return
+
         all_commands = await self.filter_commands(group.commands, sort=True)
 
         embed = discord.Embed(
