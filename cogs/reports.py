@@ -31,9 +31,16 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
 
     @commands.group(
         invoke_without_command=True,
+        brief='Manage report tickets, see subcommand: ?report open',
+        help='Manage report tickets')
+    async def report(self, ctx, *, issue=None):
+        await ctx.invoke(self.report_open, issue=issue)
+
+    @report.command(
+        name='open',
         brief='Open a report ticket',
         help='Open a report ticket, giving access to a private channel with mods.')
-    async def report(self, ctx, *, issue=None):
+    async def report_open(self, ctx, *, issue=None):
         await self.on_open_command(ctx, issue)
 
     @report.command(name='close', brief='Close the ticket')

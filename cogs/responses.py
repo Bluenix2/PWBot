@@ -77,25 +77,6 @@ class Responses(commands.Cog):
         )))
 
     @commands.command(hidden=True)
-    async def tickethelp(self, ctx):
-        await ctx.send('\n'.join((
-            '> You can open a ticket in the <#539800467396624384> channel by using the following command:',  # Channel mention
-            '> ```',
-            '> -ticket open <issue>',
-            '> ```\n> ',
-
-            '> So, for example:',
-            '> ```',
-            '> -ticket open My voice comms are not working.',
-            '> ```\n> ',
-
-            '> Upon opening a ticket, you will be immediately connected to a new channel that only you and the moderators can see.'
-            'We will disclose all important information in that channel so we can talk to you directly as a team.\n> ',
-
-            '> Abuse of the ticket system could result in a temporary squelching.',
-        )))
-
-    @commands.command(hidden=True)
     async def projectsupreme(self, ctx):
         await ctx.send('\n'.join((
             '> No. This is not the Project Supreme Discord Server. This is Project Winter https://store.steampowered.com/app/774861/Project_Winter/',
