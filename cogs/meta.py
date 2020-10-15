@@ -80,7 +80,7 @@ class Meta(commands.Cog):
             self.bot.uptime.replace(microsecond=0),
         )
         await ctx.send(
-            'I have been working for **{} weeks, {} days, {} hours, {} minutes.**'.format(
+            'I have been working for **{} weeks, {} days, {} hours, and {} minutes.**'.format(
                 delta.weeks, (delta.days - delta.weeks * 7), delta.hours, delta.minutes
             )
         )

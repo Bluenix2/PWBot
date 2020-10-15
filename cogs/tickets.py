@@ -19,6 +19,8 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
 
         Thank you for opening a ticket, what can we help you with?
         Please explain what you need help with and we will get back with you.
+
+        You may want to post a log for us, this is very helpful. See `?log`.
         """
 
         self.status_channel_id = self.bot.settings.status_channel

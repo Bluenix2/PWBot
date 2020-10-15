@@ -193,7 +193,7 @@ class TicketMixin:
 
         log_message = None
         if self.create_log:
-            await ctx.send('Locked the channel. Creating logs, this my take a while.')
+            await ctx.send('Locked the channel. Creating logs, this may take a while.')
 
             overwrites = {
                 ctx.guild.default_role: discord.PermissionOverwrite(

@@ -24,8 +24,8 @@ class PWBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix='?', fetch_offline_members=False,
                          help_command=meta.PWBotHelp(command_attrs={
-                            'brief': 'Displays all commands available',
-                            'help': 'Displays all commands available,\
+                            'brief': 'Display all commands available',
+                            'help': 'Display all commands available,\
                                 will display additional info if a command is specified'
                          })
                          )

@@ -40,7 +40,7 @@ class Lobby:
             )
         )
 
-        description = 'This lobby was disbanded'
+        description = 'This lobby was disbanded.'
         await self.message.edit(embed=discord.Embed(
             title='Lobby Disbanded!',
             description=description,
@@ -91,7 +91,7 @@ class LobbyManager(commands.Cog):
             )
             self.lobbies.remove(lobby)
 
-            description = 'This lobby reached the desired amount of players'
+            description = 'This lobby reached the desired amount of players.'
             await lobby.message.edit(embed=discord.Embed(
                 title='Lobby Full!',
                 description=description,
@@ -125,6 +125,7 @@ class LobbyManager(commands.Cog):
     @lobby.command(
         name='disband',
         brief='Disband an old lobby')
+    @beta_channel_only()
     async def lobby_disband(self, ctx):
         lobby = self.get_lobby_by_owner(ctx.author.id)
         if lobby is None:
