@@ -51,12 +51,11 @@ class Roles(commands.Cog):
         )
 
         message = await ctx.send(embed=embed)
+        self.bot.settings.reaction_message = message.id
 
         await message.add_reaction('\N{CHEERING MEGAPHONE}')
         await message.add_reaction('\N{ADMISSION TICKETS}')
         await message.add_reaction('\N{TROPHY}')
-
-        self.bot.settings.reaction_message = message.id
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
