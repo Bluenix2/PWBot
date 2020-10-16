@@ -13,12 +13,17 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         self.ticket_type = ticket_mixin.TicketType.report
         self.category_id = self.bot.settings.report_category
 
-        self.open_message = """Welcome {0}
+        self.open_message = '\n'.join((
+            'Welcome {0}\n',
 
-        Thank you for reporting, please provide all the evidence.
-        Examples of good evidence is video proof and screenshots.
-        Please also post their or your Steam link.
-        """
+            'Thank you for reporting, please provide all the evidence.',
+            'Feel free to use the following template: ```',
+            'Username/Steam ID:',
+            'Reason:',
+            'Description of incident:',
+            'Evidence (Video or screenshots):',
+            '```',
+        ))
 
         self.status_channel_id = self.bot.settings.status_channel
 
