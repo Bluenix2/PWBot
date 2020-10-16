@@ -13,7 +13,6 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         self.ticket_type = ticket_mixin.TicketType.report
         self.category_id = self.bot.settings.report_category
 
-        self.message_id = self.bot.settings.report_message
         self.open_message = """Welcome {0}
 
         Thank you for reporting, please provide all the evidence.
@@ -24,6 +23,12 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         self.status_channel_id = self.bot.settings.status_channel
 
         self.create_log = False
+
+    @property
+    def message_id(self):
+        # Defining the attribute directy means it doesn't get changed
+        # when bot.settings.report_message gets changed
+        return self.bot.settings.report_message
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):

@@ -14,7 +14,6 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         self.ticket_type = ticket_mixin.TicketType.ticket
         self.category_id = self.bot.settings.ticket_category
 
-        self.message_id = self.bot.settings.ticket_message
         self.open_message = """Welcome {0}
 
         Thank you for opening a ticket, what can we help you with?
@@ -27,6 +26,12 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
 
         self.create_log = True
         self.log_channel_id = self.bot.settings.log_channel
+
+    @property
+    def message_id(self):
+        # Defining the attribute directy means it doesn't get changed
+        # when bot.settings.ticket_message gets set
+        return self.bot.settings.ticket_message
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
