@@ -102,6 +102,9 @@ class TicketMixin:
         if payload.message_id != self.message_id:
             return
 
+        if payload.user_id == self.bot.client_id:
+            return
+
         await self.bot.http.remove_reaction(
             payload.channel_id, payload.message_id,
             payload.emoji._as_reaction(), payload.member.id,
