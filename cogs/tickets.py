@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from cogs.utils import checks, ticket_mixin
+from cogs.utils import checks, colours, ticket_mixin
 
 
 class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
@@ -82,6 +82,39 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
     @checks.mod_only()
     async def ticket_close(self, ctx, *, reason=None):
         await self.on_close_command(ctx, reason)
+
+    @ticket.command(name='megamode')
+    async def ticket_megamode(self, ctx):
+        await ctx.message.delete()
+        help_channel = ctx.guild.get_channel(self.bot.settings.help_channel)
+
+        if self.bot.settings.ticket_message == 0:
+            await help_channel.set_permissions(ctx.guild.default_role, send_messages=False)
+
+            description = '\n'.join((
+                'We have temporarily limited the help channels at the moment. To get help '
+                'please open a ticket where you will get access to a private channel.',
+                'Simply react below with <:high5:766335107966697474>!'
+            ))
+
+            message = await help_channel.send(embed=discord.Embed(
+                title='Help',
+                description=description,
+                colour=colours.light_blue()
+            ))
+            self.bot.settings.ticket_message = message.id
+
+            await message.add_reaction(':high5:766335107966697474')
+
+        else:
+            await help_channel.set_permissions(ctx.guild.default_role, send_messages=None)
+
+            await self.bot.http.delete_message(
+                help_channel.id,
+                self.bot.settings.ticket_message
+            )
+
+            self.bot.settings.ticket_message = 0
 
 
 def setup(bot):
