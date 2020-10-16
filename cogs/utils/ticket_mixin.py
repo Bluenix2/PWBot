@@ -122,17 +122,19 @@ class TicketMixin:
 
         await self._create_ticket(payload.member, None)
 
-    async def on_open_command(self, ctx, issue):
+    async def on_open_command(self, ctx, issue, *, user=None):
+        author = user or ctx.author
+
         await ctx.message.delete()
 
-        open_channel = await self.get_open_by_author(ctx.author.id)
+        open_channel = await self.get_open_by_author(author.id)
         if open_channel:
             return await ctx.send('{0} you already have an open ticket: <#{1}>'.format(
                     ctx.author.mention, open_channel
                 ), delete_after=10
             )
 
-        await self._create_ticket(ctx.author, issue, conn=ctx.db)
+        await self._create_ticket(author, issue, conn=ctx.db)
 
     async def _create_ticket(self, author, issue, *, conn=None):
         conn = conn or self.bot.pool  # We expect to be in a cog

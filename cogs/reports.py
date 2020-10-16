@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 from cogs.utils import checks, ticket_mixin
@@ -52,6 +53,14 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         help='Open a report ticket, giving access to a private channel with mods.')
     async def report_open(self, ctx, *, issue=None):
         await self.on_open_command(ctx, issue)
+
+    @report.command(
+        name='openas',
+        brief='Open a report ticket for a user',
+        help='Open a report ticket for a user, giving access to a private channel with mods.')
+    @checks.mod_only()
+    async def report_openas(self, ctx, user: discord.User, *, issue=None):
+        await self.on_open_command(ctx, issue, user=user)
 
     @report.command(name='close', brief='Close the ticket')
     @ticket_mixin.ticket_only()
