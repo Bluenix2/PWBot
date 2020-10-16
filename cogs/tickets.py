@@ -84,6 +84,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         await self.on_close_command(ctx, reason)
 
     @ticket.command(name='megamode')
+    @commands.is_owner()
     async def ticket_megamode(self, ctx):
         await ctx.message.delete()
         help_channel = ctx.guild.get_channel(self.bot.settings.help_channel)
