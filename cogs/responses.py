@@ -1,4 +1,7 @@
+import discord
 from discord.ext import commands
+
+from cogs.utils import colours
 
 
 class Responses(commands.Cog):
@@ -6,6 +9,89 @@ class Responses(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.group(
+        invoke_without_command=True,
+        brief='Echo')
+    async def send(self, ctx, *, text):
+        await ctx.message.delete()
+        await ctx.send(text)
+
+    @send.command(
+        name='roles')
+    async def send_roles(self, ctx):
+        await ctx.message.delete()
+
+        description = """To avoid pinging everyone we've created a few roles to ping instead.
+
+        React to this message to assign the appropriate role.
+        If you have any questions feel free to ping a Community Manager
+        """
+        embed = discord.Embed(
+            title='Role Management',
+            description=description,
+            colour=colours.light_blue()
+        )
+
+        embed.add_field(
+            name='\N{CHEERING MEGAPHONE} Announcements',
+            value='Will get pinged in <#489825441075429378> when the game is updated or the developers have important information to share.',
+            inline=False
+        )
+        embed.add_field(
+            name='\N{ADMISSION TICKETS} Events',
+            value='Pinged in <#651109293663191061> or <#489825441075429378> when a new event is created, or event details have been released/updated.',
+            inline=False
+        )
+        embed.add_field(
+            name='\N{TROPHY} Tournaments',
+            value='Pinged in <#647955879844380682> when new community-run tournaments are hosted or information is released/updated.',
+            inline=False
+        )
+        embed.add_field(
+            name='\N{GLOBE WITH MERIDIANS} Community Translations',
+            value='We are looking to let active community members helps us translate the game.\n**If you want to help please contact a Community Manager**.',
+            inline=False
+        )
+
+        message = await ctx.send(embed=embed)
+        self.bot.settings.reaction_message = message.id
+
+        await message.add_reaction('\N{CHEERING MEGAPHONE}')
+        await message.add_reaction('\N{ADMISSION TICKETS}')
+        await message.add_reaction('\N{TROPHY}')
+
+    @send.command(
+        name='report')
+    async def send_report(self, ctx):
+        await ctx.message.delete()
+
+        description = '\n'.join((
+            '*Please make sure you have proof for your report.*\n',
+
+            'Due to the nature of the game, so called "RDM and "teaming" can be subjective due to a lack of information, paranoia '
+            'or simply being new players. But if someone is blatantly doing this to ruin games please report that.\n',
+
+            '**Before opening a report ticket please do the following:**',
+            '1. Report in-game when you can (hit ESC, click Players, select Report).',
+            '2. Record a video or take screenshots.',
+            '3. Get a steam link to their account.\n',
+
+            'To open a report ticket simply react below with <:high5:766335107966697474>!'
+        ))
+
+        embed = discord.Embed(
+            title='Report Player',
+            description=description,
+            colour=colours.light_blue()
+        )
+
+        embed.set_footer(text='We are dedicated to ensure a safe and respective community and all reports will be looked into.')
+
+        message = await ctx.send(embed=embed)
+        self.bot.settings.report_message = message.id
+
+        await message.add_reaction(':high5:766335107966697474')
 
     @commands.command(hidden=True)
     async def log(self, ctx):
