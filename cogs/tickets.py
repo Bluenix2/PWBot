@@ -22,7 +22,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         You may want to post a log for us, this is very helpful. See `?log`.
         """
 
-        self.status_channel_id = self.bot.settings.status_channel
+        self.status_channel_id = self.bot.settings.ticket_status_channel
 
         self.create_log = True
         self.log_channel_id = self.bot.settings.log_channel

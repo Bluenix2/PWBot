@@ -25,7 +25,7 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
             '```',
         ))
 
-        self.status_channel_id = self.bot.settings.status_channel
+        self.status_channel_id = self.bot.settings.report_status_channel
 
         self.create_log = False
 

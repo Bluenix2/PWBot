@@ -1,10 +1,11 @@
 {
     "ticket_message": 766742414643691520,
     "ticket_category": 755833939997884568,
-    "status_channel": 714933044817035275,
+    "ticket_status_channel": 714933044817035275,
     "log_channel": 714933057924366337,
     "report_message": 766741786080051200,
     "report_category": 756603865805357217,
+    "report_status_channel": 714933044817035275,
     "suggestions_channel": 714932438249504778,
     "reaction_message": 766744182442033152,
     "beta_channel": 714933057924366337,
