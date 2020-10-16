@@ -166,9 +166,9 @@ class TicketMixin:
             colour=colours.light_blue(),
         ))
 
-        title = '{} #{} - {}'.format(
+        title = '{} #{}{}'.format(
             self.ticket_type.name[0].upper() + self.ticket_type.name[1:],
-            record['id'], issue
+            record['id'], ' - {}'.format(issue) if issue else ''
         )
 
         embed = discord.Embed(
