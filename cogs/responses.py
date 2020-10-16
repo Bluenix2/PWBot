@@ -77,7 +77,7 @@ class Responses(commands.Cog):
             '2. Record a video or take screenshots.',
             '3. Get a steam link to their account.\n',
 
-            'To open a report ticket simply react below with <:high5:766335107966697474>!'
+            'To open a report ticket simply react below with <:high5:{}>!'.format(self.bot.settings.high5_emoji)
         ))
 
         embed = discord.Embed(
@@ -91,7 +91,7 @@ class Responses(commands.Cog):
         message = await ctx.send(embed=embed)
         self.bot.settings.report_message = message.id
 
-        await message.add_reaction(':high5:766335107966697474')
+        await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
 
     @commands.command(hidden=True)
     async def log(self, ctx):

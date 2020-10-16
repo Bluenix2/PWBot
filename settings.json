@@ -1,12 +1,16 @@
 {
-    "ticket_message": 766699348247314442,
+    "ticket_message": 766742414643691520,
     "ticket_category": 755833939997884568,
     "status_channel": 714933044817035275,
     "log_channel": 714933057924366337,
-    "report_message": 766697734362890301,
+    "report_message": 766741786080051200,
     "report_category": 756603865805357217,
     "suggestions_channel": 714932438249504778,
-    "reaction_message": 765281905909301289,
+    "reaction_message": 766744182442033152,
     "beta_channel": 714933057924366337,
-    "help_channel": 714932456012382309
+    "help_channel": 714932456012382309,
+    "high5_emoji": 766335107966697474,
+    "announcements_role": 765262869239431191,
+    "events_role": 765263058515525633,
+    "tournaments_role": 765263032489738293
 }

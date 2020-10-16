@@ -95,7 +95,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
             description = '\n'.join((
                 'We have temporarily limited the help channels at the moment. To get help '
                 'please open a ticket where you will get access to a private channel.',
-                'Simply react below with <:high5:766335107966697474>!'
+                'Simply react below with <:high5:{}>!'.format(self.bot.settings.high5_emoji)
             ))
 
             message = await help_channel.send(embed=discord.Embed(
@@ -105,7 +105,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
             ))
             self.bot.settings.ticket_message = message.id
 
-            await message.add_reaction(':high5:766335107966697474')
+            await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
 
         else:
             await help_channel.set_permissions(ctx.guild.default_role, send_messages=None)

@@ -110,7 +110,7 @@ class TicketMixin:
             payload.emoji._as_reaction(), payload.member.id,
         )
 
-        if payload.emoji.id != 766335107966697474:
+        if payload.emoji.id != self.bot.settings.high5_emoji:
             return
 
         open_channel = await self.get_open_by_author(payload.user_id)
