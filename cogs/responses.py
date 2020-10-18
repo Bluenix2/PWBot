@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from cogs.utils import colours
+from cogs.utils import checks, colours
 
 
 class Responses(commands.Cog):
@@ -13,12 +13,14 @@ class Responses(commands.Cog):
     @commands.group(
         invoke_without_command=True,
         brief='Echo')
+    @checks.mod_only()
     async def send(self, ctx, *, text):
         await ctx.message.delete()
         await ctx.send(text)
 
     @send.command(
         name='roles')
+    @commands.is_owner()
     async def send_roles(self, ctx):
         await ctx.message.delete()
 
@@ -63,6 +65,7 @@ class Responses(commands.Cog):
 
     @send.command(
         name='report')
+    @commands.is_owner()
     async def send_report(self, ctx):
         await ctx.message.delete()
 
