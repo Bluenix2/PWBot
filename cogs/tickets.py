@@ -70,7 +70,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         brief='Open a help ticket for a user',
         help='Open a help ticket for a user, giving access to a private channel with mods.')
     @checks.mod_only()
-    async def report_openas(self, ctx, user: discord.User, *, issue=None):
+    async def ticket_openas(self, ctx, user: discord.User, *, issue=None):
         await self.on_open_command(ctx, issue, user=user)
 
     @ticket.command(name='adduser', breif='Add a user to the help ticket.')
