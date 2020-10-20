@@ -73,7 +73,7 @@ class Responses(commands.Cog):
         description = '\n'.join((
             '*Please make sure you have proof for your report.*\n',
 
-            'Due to the nature of the game, so called "RDM and "teaming" can be subjective due to a lack of information, paranoia '
+            'Due to the nature of the game, so called "RDM" and "teaming" can be subjective due to a lack of information, paranoia '
             'or simply being new players. But if someone is blatantly doing this to ruin games please report that.\n',
 
             '**Before opening a report ticket please do the following:**',
