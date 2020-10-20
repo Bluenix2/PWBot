@@ -9,12 +9,19 @@ from discord.ext import commands
 
 
 def ticket_only():
+    """Check for channel being a ticket,
+    can only be used on commands inside TicketMixin subclasses
+    becauses it uses the ticket_type attribute.
+    """
     async def predicate(ctx):
         if ctx.guild is None:
             return False
 
-        query = 'SELECT EXISTS ( SELECT 1 FROM tickets WHERE channel_id=$1 LIMIT 1);'
-        record = await ctx.db.fetchval(query, ctx.channel.id)
+        query = """SELECT EXISTS (
+                SELECT 1 FROM tickets WHERE channel_id=$1 AND type=$2 LIMIT 1
+            );
+        """
+        record = await ctx.db.fetchval(query, ctx.channel.id, ctx.cog.ticket_type.value)
 
         return bool(record)
     return commands.check(predicate)
