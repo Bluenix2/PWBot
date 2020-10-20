@@ -8,7 +8,10 @@ from cogs.utils import colours
 
 def beta_channel_only():
     async def predicate(ctx):
-        return ctx.channel.id == ctx.bot.settings.beta_channel
+        return ctx.channel.id in (
+            ctx.bot.settings.beta_channel,
+            ctx.bot.settings.tournaments_channel
+        )
     return commands.check(predicate)
 
 
