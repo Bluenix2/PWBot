@@ -14,13 +14,14 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         self.ticket_type = ticket_mixin.TicketType.ticket
         self.category_id = self.bot.settings.ticket_category
 
-        self.open_message = """Welcome {0}
+        self.open_message = '\n'.join((
+            'Welcome {0}\n',
 
-        Thank you for opening a ticket, what can we help you with?
-        Please explain what you need help with and we will get back with you.
+            'Thank you for opening a ticket, what can we help you with?',
+            'Please explain what you need help with and we will get back with you.\n',
 
-        You may want to post a log for us, this is very helpful. See `?log`.
-        """
+            'You may want to post a log for us, this is very helpful. See `?log`.',
+        ))
 
         self.status_channel_id = self.bot.settings.ticket_status_channel
 

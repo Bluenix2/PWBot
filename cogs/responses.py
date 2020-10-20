@@ -24,11 +24,12 @@ class Responses(commands.Cog):
     async def send_roles(self, ctx):
         await ctx.message.delete()
 
-        description = """To avoid pinging everyone we've created a few roles to ping instead.
+        description = '\n'.join((
+            "To avoid pinging everyone we've created a few roles to ping instead.\n",
 
-        React to this message to assign the appropriate role.
-        If you have any questions feel free to ping a Community Manager
-        """
+            'React to this message to assign the appropriate role.',
+            'If you have any questions feel free to ping a Community Manager',
+        ))
         embed = discord.Embed(
             title='Role Management',
             description=description,
