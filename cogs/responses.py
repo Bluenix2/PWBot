@@ -12,14 +12,15 @@ class Responses(commands.Cog):
 
     @commands.group(
         invoke_without_command=True,
-        brief='Echo')
+        brief='Send a message as the bot')
     @checks.mod_only()
     async def send(self, ctx, *, text):
         await ctx.message.delete()
         await ctx.send(text)
 
     @send.command(
-        name='roles')
+        name='roles',
+        brief='Send initial roles reaction message')
     @commands.is_owner()
     async def send_roles(self, ctx):
         await ctx.message.delete()
@@ -65,7 +66,8 @@ class Responses(commands.Cog):
         await message.add_reaction('\N{TROPHY}')
 
     @send.command(
-        name='report')
+        name='report',
+        brief='Send initial report message')
     @commands.is_owner()
     async def send_report(self, ctx):
         await ctx.message.delete()
