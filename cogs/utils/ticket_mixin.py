@@ -210,14 +210,14 @@ class TicketMixin:
             }
             await ctx.channel.edit(overwrites=overwrites)
 
-            log = await self._generate_log(ctx.channel, record)
+            archive = await self._generate_log(ctx.channel, record)
 
             issue = '-' + record['issue'] if record['issue'] else ''
-            filename = f"transcript-{record['id']}{issue}.zip"
-            transcript = discord.File(log, filename=filename)
+            filename = f"log-{record['id']}{issue}.zip"
+            log = discord.File(archive, filename=filename)
 
             # We send the file name so that it's easily searched in discord
-            log_message = await self.log_channel.send(filename, file=transcript)
+            log_message = await self.log_channel.send(filename, file=log)
 
         query = 'UPDATE tickets SET state=$1 WHERE channel_id=$2'
         await ctx.db.execute(query, TicketState.closed.value, record['channel_id'])
