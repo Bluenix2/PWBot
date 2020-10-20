@@ -32,7 +32,7 @@ class PWBotHelp(commands.HelpCommand):
             return
 
         await self.get_destination().send(embed=discord.Embed(
-            title=command.name,
+            title=command.name[0].upper() + command.name[1:],
             description='`{0}` {1}'.format(
                 self.get_command_signature(command),
                 command.help or command.brief,
@@ -48,7 +48,7 @@ class PWBotHelp(commands.HelpCommand):
         all_commands = await self.filter_commands(group.commands, sort=True)
 
         embed = discord.Embed(
-            title=group.name,
+            title=group.name[0].upper() + group.name[1:],
             description='`{0}` {1}'.format(
                 self.get_command_signature(group),
                 group.help or group.brief,
