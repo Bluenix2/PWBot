@@ -6,7 +6,7 @@ from discord.ext import commands
 from cogs.utils import colours
 
 
-def beta_channel_only():
+def lobby_channel_only():
     async def predicate(ctx):
         return ctx.channel.id in (
             ctx.bot.settings.beta_channel,
@@ -60,13 +60,20 @@ class LobbyManager(commands.Cog):
         self.lobbies = set()
 
     def get_lobby_by_owner(self, owner_id):
-        for _lobby in self.lobbies:
-            if _lobby.owner_id == owner_id:
-                return _lobby
+        for lobby in self.lobbies:
+            if lobby.owner_id == owner_id:
+                return lobby
+
+    def get_lobby_by_message(self, message_id):
+        for lobby in self.lobbies:
+            if lobby.message.id == message_id:
+                return lobby
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.channel_id != self.bot.settings.beta_channel:
+        if payload.channel_id not in (
+                self.bot.settings.beta_channel,
+                self.bot.settings.tournaments_channel):
             return
 
         if payload.user_id == self.bot.client_id:     # ignore the bot's reacts
@@ -75,10 +82,7 @@ class LobbyManager(commands.Cog):
         if payload.emoji.id != self.bot.settings.high5_emoji:
             return
 
-        lobby = None
-        for _lobby in self.lobbies:
-            if _lobby.message.id == payload.message_id:
-                lobby = _lobby
+        lobby = self.get_lobby_by_message(payload.message_id)
 
         if lobby is None:
             return
@@ -101,18 +105,38 @@ class LobbyManager(commands.Cog):
                 colour=colours.apricot(),
             ))
 
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        if payload.channel_id not in (
+                self.bot.settings.beta_channel,
+                self.bot.settings.tournaments_channel):
+            return
+
+        if payload.user_id == self.bot.client_id:
+            return
+
+        if payload.emoji.id != self.bot.settings.high5_emoji:
+            return
+
+        lobby = self.get_lobby_by_message(payload.message_id)
+
+        if lobby is None:
+            return
+
+        lobby.players.remove(payload.user_id)
+
     @commands.group(
         invoke_without_command=True,
         brief="Open a waiting lobby",
         help="Open a waiting lobby, pinging everyone who reacted when full.")
-    @beta_channel_only()
+    @lobby_channel_only()
     async def lobby(self, ctx, players: int = 5):
         lobby = self.get_lobby_by_owner(ctx.author.id)
 
         if lobby:
             return await ctx.send('Please disband your old lobby before opening a new one.')
 
-        if players < 5 or players > 8:
+        if players < 2 or players > 8:
             return
 
         message = await ctx.send(embed=discord.Embed(
@@ -123,12 +147,12 @@ class LobbyManager(commands.Cog):
 
         self.lobbies.add(Lobby(self, ctx.author.id, message, players))
 
-        await message.add_reaction('<:high5:{}>'.format(self.bot.settings.high5_emoji))
+        await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
 
     @lobby.command(
         name='disband',
         brief='Disband an old lobby')
-    @beta_channel_only()
+    @lobby_channel_only()
     async def lobby_disband(self, ctx):
         lobby = self.get_lobby_by_owner(ctx.author.id)
         if lobby is None:
