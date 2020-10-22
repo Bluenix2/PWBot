@@ -80,11 +80,9 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
     async def ticket_adduser(self, ctx, user: discord.User):
         await ctx.channel.set_permissions(user, read_messages=True)
 
-        description = "Welcome {0}, you were added to this ticket."
-        await ctx.send(user.mention, embed=discord.Embed(
-            description=description.format(user.mention),
-            colour=discord.Color.greyple(),
-        ))
+        await ctx.send(
+            "Welcome {0}, you were added to this ticket.".format(user.mention)
+        )
 
     @ticket.command(name='close', breif='Close the ticket, creating an archive')
     @ticket_mixin.ticket_only()
