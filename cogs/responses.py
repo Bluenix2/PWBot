@@ -12,15 +12,30 @@ class Responses(commands.Cog):
 
     @commands.group(
         invoke_without_command=True,
-        brief='Send a message as the bot')
+        hidden=True)
     @checks.mod_only()
     async def send(self, ctx, *, text):
+        """Send a message as the bot.
+        The first word can be a channel to send in that channel.
+        """
         await ctx.message.delete()
-        await ctx.send(text)
+        words = text.split(' ')
+
+        try:
+            channel = await commands.TextChannelConverter().convert(
+                ctx, words[0]
+            )
+        except commands.BadArgument:
+            channel = ctx.channel
+        else:
+            words = words[1:]
+
+        await channel.send(' '.join(words))
 
     @send.command(
         name='roles',
-        brief='Send initial roles reaction message')
+        hidden=True,
+        ignore_extra=False)
     @commands.is_owner()
     async def send_roles(self, ctx):
         await ctx.message.delete()
@@ -67,7 +82,8 @@ class Responses(commands.Cog):
 
     @send.command(
         name='report',
-        brief='Send initial report message')
+        hidden=True,
+        ignore_extra=False)
     @commands.is_owner()
     async def send_report(self, ctx):
         await ctx.message.delete()
