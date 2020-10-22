@@ -44,7 +44,7 @@ class Responses(commands.Cog):
             "To avoid pinging everyone we've created a few roles to ping instead.\n",
 
             'React to this message to assign the appropriate role.',
-            'If you have any questions feel free to ping a Community Manager',
+            'If you have any questions feel free to ping a Community Manager.',
         ))
         embed = discord.Embed(
             title='Role Management',
@@ -69,7 +69,7 @@ class Responses(commands.Cog):
         )
         embed.add_field(
             name='\N{GLOBE WITH MERIDIANS} Community Translations',
-            value='We are looking to let active community members helps us translate the game.\n**If you want to help please contact a Community Manager**.',
+            value='We are looking to let active community members helps us translate the game.\n**If you want to help please contact a Community Manager.**',
             inline=False
         )
 
@@ -95,9 +95,9 @@ class Responses(commands.Cog):
             'or simply being new players. But if someone is blatantly doing this to ruin games please report that.\n',
 
             '**Before opening a report ticket please do the following:**',
-            '1. Report in-game when you can (hit ESC, click Players, select Report).',
-            '2. Record a video or take screenshots.',
-            '3. Get a steam link to their account.\n',
+            '1. Report in-game when you can (hit ESC, click Players, select Report)',
+            '2. Record a video or take screenshots',
+            '3. Get a steam link to their account\n',
 
             'To open a report ticket simply react below with <:high5:{}>!'.format(self.bot.settings.high5_emoji)
         ))
@@ -126,15 +126,15 @@ class Responses(commands.Cog):
     @commands.command(hidden=True)
     async def voip(self, ctx):
         await ctx.send('\n'.join((
-            '** Having problems with your voice in chat? Try this: **',
-            '> 1. Double check the VOIP capture/playback settings, and set these to your proper headset/mic.'
+            '**Having problems with your voice in chat? Try this:**',
+            '> 1. Double check the VOIP capture/playback settings, and set these to your proper headset/mic. '
             "Make sure your recording device is set as the default in Window's Control Panel.",
             '> 2. Ensure you are not using any voice modulating software like Voicemod.',
             '> 3. Ensure you are not behind any firewalls that might block the voice communication.',
             '> 4. Ensure you have the correct **DATE AND TIME** set on your computer.',
             '> 5. Try disabling your IPv6 and reconnecting.\n',
 
-            'If you are still having issues please send us the Player.log file found in'
+            'If you are still having issues please send us the Player.log file found in '
             '`C:\\Users\\%username%\\AppData\\LocalLow\\OtherOcean\\ProjectWinter` so we can help you further.',
         )))
 
@@ -151,11 +151,11 @@ class Responses(commands.Cog):
             '> 6. Ensure you do not have Citrix installed.\n> ',
 
             '> Project Winter is not supported on Mac or lower speced windows machines.'
-            'If your computer does not meet the minimum requirements and your game is crashing,'
+            'If your computer does not meet the minimum requirements and your game is crashing, '
             'you can play through GforceNow (https://www.nvidia.com/en-us/geforce-now/).\n> ',
 
             '> If you are still having issues please send us your Player.log to help us look into and resolve this issue. '
-            'Copy and paste this address into windows explorer to find it:  `C:\\Users\\%username%\\AppData\\LocalLow\\OtherOcean\\ProjectWinter`',
+            'Copy and paste this address into windows explorer to find it: `C:\\Users\\%username%\\AppData\\LocalLow\\OtherOcean\\ProjectWinter`',
         )))
 
     @commands.command(hidden=True)
@@ -178,7 +178,7 @@ class Responses(commands.Cog):
     @commands.command(hidden=True)
     async def rdm(self, ctx):
         await ctx.send('\n'.join((
-            '> Due to the nature of the game, "RDM" or "teaming" can be subjective due to lack of information, paranoia, new players, etc.'
+            '> Due to the nature of the game, "RDM" or "teaming" can be subjective due to lack of information, paranoia, new players, etc. '
             'If someone is blatantly doing this to ruin games and you have proof please post it.\n> ',
 
             "> *The exception to this is Dubem. If you see Dubem in your game feel free to kill him at any time. We don't like Dubem.*",
@@ -188,7 +188,7 @@ class Responses(commands.Cog):
     async def projectsupreme(self, ctx):
         await ctx.send('\n'.join((
             '> No. This is not the Project Supreme Discord Server. This is Project Winter https://store.steampowered.com/app/774861/Project_Winter/',
-            '> Project Winter is an 8 person multiplayer game focusing on social deception and survival.'
+            '> Project Winter is an 8 person multiplayer game focusing on social deception and survival. '
             'Communication and teamwork is essential to the survivors’ ultimate goal of escape.',
             '> Gather resources, repair structures, and brave the wilderness together.',
         )))

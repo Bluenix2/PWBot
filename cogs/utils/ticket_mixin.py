@@ -123,7 +123,7 @@ class TicketMixin:
         open_channel = await self.get_open_by_author(payload.user_id)
         if open_channel:
             return await self.bot.http.send_message(
-                open_channel, '<@{0}> you already have an open ticket in here'.format(
+                open_channel, '<@{0}> you already have an open ticket in here.'.format(
                     payload.user_id
                 ))
 

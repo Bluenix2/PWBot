@@ -74,7 +74,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
     async def ticket_openas(self, ctx, user: discord.User, *, issue=None):
         await self.on_open_command(ctx, issue, user=user)
 
-    @ticket.command(name='adduser', breif='Add a user to the help ticket.')
+    @ticket.command(name='adduser', brief='Add a user to the help ticket.')
     @ticket_mixin.ticket_only()
     @ticket_mixin.author_only()
     async def ticket_adduser(self, ctx, user: discord.User):
@@ -84,7 +84,7 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
             "Welcome {0}, you were added to this ticket.".format(user.mention)
         )
 
-    @ticket.command(name='close', breif='Close the ticket, creating an archive')
+    @ticket.command(name='close', brief='Close the ticket, creating an archive')
     @ticket_mixin.ticket_only()
     @checks.mod_only()
     async def ticket_close(self, ctx, *, reason=None):
