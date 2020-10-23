@@ -358,7 +358,7 @@ class TicketManager(commands.Cog, TicketMixin):
 
     @ticket.command(name='adduser', brief='Add a user to the help ticket.')
     @ticket_only()
-    @author_only()
+    @commands.check_any(author_only(), checks.mod_only())
     async def ticket_adduser(self, ctx, user: discord.User):
         await ctx.channel.set_permissions(user, read_messages=True)
 
