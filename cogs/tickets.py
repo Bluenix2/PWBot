@@ -15,8 +15,6 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
         self.category_id = self.bot.settings.ticket_category
 
         self.open_message = '\n'.join((
-            'Welcome {0}\n',
-
             'Thank you for opening a ticket, what can we help you with?',
             'Please explain what you need help with and we will get back with you.\n',
 

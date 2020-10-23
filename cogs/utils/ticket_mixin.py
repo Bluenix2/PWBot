@@ -61,8 +61,7 @@ class TicketMixin:
     category_id: int
         The id of the category that the tickets will be created in
     open_message: str
-        The content of the message the bot should send, will be formatted
-        with a mention of the author.
+        The content of the message embed the bot should send.
     status_channel_id: int
         The id of the channel where updates and statuses on tickets are kept.
     create_log: bool
@@ -170,10 +169,13 @@ class TicketMixin:
             self.ticket_type.value, issue[:90] if issue else None
         )
 
-        await channel.send(author.mention, embed=discord.Embed(
-            description=self.open_message.format(author.mention),
-            colour=colours.light_blue(),
-        ))
+        await channel.send(
+            'Welcome {0}'.format(author.mention),
+            embed=discord.Embed(
+                description=self.open_message,
+                colour=colours.light_blue(),
+            )
+        )
 
         title = '{} #{}{}'.format(
             self.ticket_type.name[0].upper() + self.ticket_type.name[1:],

@@ -15,8 +15,6 @@ class ReportManager(commands.Cog, ticket_mixin.TicketMixin):
         self.category_id = self.bot.settings.report_category
 
         self.open_message = '\n'.join((
-            'Welcome {0}\n',
-
             'Thank you for reporting, please provide all the evidence.',
             'Feel free to use the following template: ```',
             'Username/Steam ID:',
