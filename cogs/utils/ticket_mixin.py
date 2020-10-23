@@ -157,8 +157,8 @@ class TicketMixin:
 
         channel = await self.category.create_text_channel(
             name='{0}-{1}'.format(ticket_id, issue or self.ticket_type.name),
-            sync_permissions=True,
-            overwrites=overwrites,
+            sync_permissions=True, overwrites=overwrites,
+            reason='Creating ticket #{0}: {1}'.format(ticket_id, issue)
         )
 
         query = """INSERT INTO tickets (
@@ -215,7 +215,10 @@ class TicketMixin:
                     read_messages=True,
                 ),
             }
-            await ctx.channel.edit(overwrites=overwrites)
+            await ctx.channel.edit(
+                overwrites=overwrites,
+                reason='Locking ticket while creating logs as to not disrupt.'
+            )
 
             archive = await self._generate_log(ctx.channel, record)
 
@@ -244,7 +247,9 @@ class TicketMixin:
 
         await message.edit(embed=embed)
 
-        await ctx.channel.delete(reason=reason)
+        await ctx.channel.delete(
+            reason='Closing ticket #{0} because: {1}'.format(record['id'], reason)
+        )
 
     async def _generate_log(self, channel, record):
         """Create a log archive with transcript and attachments."""
