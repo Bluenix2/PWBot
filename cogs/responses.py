@@ -99,7 +99,7 @@ class Responses(commands.Cog):
             '2. Record a video or take screenshots',
             '3. Get a steam link to their account\n',
 
-            'To open a report ticket simply react below with <:high5:{}>!'.format(self.bot.settings.high5_emoji)
+            '**To report a player simply react below with <:high5:{}>!**'.format(self.bot.settings.high5_emoji)
         ))
 
         embed = discord.Embed(

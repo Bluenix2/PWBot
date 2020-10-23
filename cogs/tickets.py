@@ -102,7 +102,9 @@ class TicketManager(commands.Cog, ticket_mixin.TicketMixin):
             description = '\n'.join((
                 'We have temporarily limited the help channels at the moment. To get help '
                 'please open a ticket where you will get access to a private channel.',
-                'Simply react below with <:high5:{}>!'.format(self.bot.settings.high5_emoji)
+                '**To get help simply react below with <:high5:{}>!**'.format(
+                    self.bot.settings.high5_emoji
+                )
             ))
 
             message = await help_channel.send(embed=discord.Embed(
