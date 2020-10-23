@@ -12,7 +12,6 @@ from cogs.utils import context, settings
 initial_extensions = (
     'cogs.admin',
     'cogs.tickets',
-    'cogs.reports',
     'cogs.lobby',
     'cogs.responses',
     'cogs.meta',
