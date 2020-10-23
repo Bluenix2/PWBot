@@ -8,9 +8,9 @@ class Roles(commands.Cog):
 
         # A mapping of reaction unicode characters to role ids.
         self.roles = {
-            '📣': self.bot.settings.announcements_role,
-            '🎟': self.bot.settings.events_role,
-            '🏆': self.bot.settings.tournaments_role
+            '\N{CHEERING MEGAPHONE}': self.bot.settings.announcements_role,
+            '\N{ADMISSION TICKETS}': self.bot.settings.events_role,
+            '\N{TROPHY}': self.bot.settings.tournaments_role
         }
 
     @commands.Cog.listener()
