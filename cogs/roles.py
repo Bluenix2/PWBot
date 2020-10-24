@@ -25,7 +25,7 @@ class Roles(commands.Cog):
         if not role_id:
             return await self.bot.http.remove_reaction(
                 payload.channel_id, payload.message_id,
-                payload.emoji, payload.member.id,
+                payload.emoji._as_reaction(), payload.member.id,
             )
 
         await self.bot.http.add_role(payload.guild_id, payload.user_id, role_id)
