@@ -24,7 +24,7 @@ class Lobby:
         self.required_players = required_players
 
         self.message = message
-        self.players = set()
+        self.players = set((owner_id,))
 
         async def timeout(timeout=21600):
             await asyncio.sleep(timeout)
@@ -87,9 +87,21 @@ class LobbyManager(commands.Cog):
         if lobby is None:
             return
 
+        if payload.user_id == lobby.owner_id and lobby.owner_id in lobby.players:
+            return await self.bot.http.remove_own_reaction(
+                payload.channel_id, payload.message_id,
+                ':high5:{}'.format(self.bot.settings.high5_emoji),
+            )
+
         lobby.players.add(payload.user_id)
 
-        if lobby.required_players == len(lobby.players):
+        if len(lobby.players) == 1:
+            await self.bot.http.remove_own_reaction(
+                payload.channel_id, payload.message_id,
+                ':high5:{}'.format(self.bot.settings.high5_emoji),
+            )
+
+        elif lobby.required_players == len(lobby.players):
             await lobby.message.clear_reactions()
             await lobby.message.channel.send(
                 'You have enough players to start a game! ' + ', '.join(
@@ -124,6 +136,12 @@ class LobbyManager(commands.Cog):
             return
 
         lobby.players.remove(payload.user_id)
+
+        if len(lobby.players) == 0:
+            await self.bot.http.add_reaction(
+                payload.channel_id, payload.message_id,
+                ':high5:{}'.format(self.bot.settings.high5_emoji),
+            )
 
     @commands.group(
         invoke_without_command=True,
