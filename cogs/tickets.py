@@ -372,7 +372,9 @@ class TicketManager(commands.Cog, TicketMixin):
     async def ticket_close(self, ctx, *, reason=None):
         await self.on_close_command(ctx, reason)
 
-    @ticket.command(name='megamode')
+    @ticket.command(
+        name='megamode',
+        brief='Limit help channel and force everyone to open tickets')
     @commands.is_owner()
     async def ticket_megamode(self, ctx):
         await ctx.message.delete()
