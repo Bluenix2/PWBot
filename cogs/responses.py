@@ -116,6 +116,15 @@ class Responses(commands.Cog):
         await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
 
     @commands.command(hidden=True)
+    async def wiki(self, ctx):
+        await ctx.send('\n'.join((
+            'Have a question regarding the cosmetics, roles, items, or basic gameplay of Project Winter?',
+            'Check out the Project Winter Wiki app! See <https://app.projectwinter.wiki/>\n',
+
+            'If you see any errors or have suggestions for the app, feel free to message them to A Bear (nstu#0992)!'
+        )))
+
+    @commands.command(hidden=True)
     async def log(self, ctx):
         await ctx.send('\n'.join((
             '> Can you grab us your Player.log to help us look into and resolve this issue?',
