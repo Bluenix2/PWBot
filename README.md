@@ -35,6 +35,12 @@ token = ''  # Bot's token
 postgresql = 'postgresql://pwbot:yourpw@localhost/pwbot'  # Your PostgreSQL info from above
 ```
 
+Additionally a json file named `settings.json` will be needed.
+This allows the bot to save certain data past restart
+
+See `cogs/utils/settings.py` for keys which need to be defined
+in the json file.
+
 ## Requirements
 
 - Python 3
