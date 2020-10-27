@@ -15,7 +15,8 @@ initial_extensions = (
     'cogs.lobby',
     'cogs.responses',
     'cogs.meta',
-    'cogs.roles'
+    'cogs.roles',
+    'cogs.events'
 )
 
 
