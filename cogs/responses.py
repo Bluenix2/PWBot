@@ -121,8 +121,8 @@ class Responses(commands.Cog):
             'Have a question regarding the cosmetics, roles, items, or basic gameplay of Project Winter?',
             'Check out the Project Winter Wiki app! See <https://app.projectwinter.wiki/>\n',
 
-            'If you see any errors or have suggestions for the app, feel free to message them to A Bear (nstu#0992)!'
-        )))
+            'If you see any errors or have suggestions for the app, feel free to message them to <@126179272632172545>!'
+        )), allowed_mentions=discord.AllowedMentions(users=False))
 
     @commands.command(hidden=True)
     async def log(self, ctx):
