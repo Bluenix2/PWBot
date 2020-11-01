@@ -30,7 +30,7 @@ class Responses(commands.Cog):
         else:
             words = words[1:]
 
-        await channel.send(' '.join(words))
+        await channel.send(' '.join(words), allowed_mentions=discord.AllowedMentions.none())
 
     @send.command(
         name='roles',

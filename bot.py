@@ -23,12 +23,13 @@ initial_extensions = (
 
 class PWBot(commands.Bot):
     def __init__(self):
+        allowed_mentions = discord.AllowedMentions(everyone=False, users=True, roles=False)
         super().__init__(command_prefix='?', fetch_offline_members=False,
                          help_command=meta.PWBotHelp(command_attrs={
                             'brief': 'Display all commands available',
                             'help': 'Display all commands available,\
                                 will display additional info if a command is specified'
-                         })
+                         }, allowed_mentions=allowed_mentions)
                          )
 
         self.client_id = config.client_id
