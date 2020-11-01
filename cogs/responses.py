@@ -13,7 +13,7 @@ class Responses(commands.Cog):
     @commands.group(
         invoke_without_command=True,
         hidden=True)
-    @checks.mod_only()
+    @checks.trusted()
     async def send(self, ctx, *, text):
         """Send a message as the bot.
         The first word can be a channel to send in that channel.
