@@ -30,7 +30,7 @@ Create a new file, `config.py` in the root directory,
 and use the following template:
 
 ```py
-client_id = ''  # Bot's client ID
+client_id = 0  # Bot's client ID
 token = ''  # Bot's token
 postgresql = 'postgresql://pwbot:yourpw@localhost/pwbot'  # Your PostgreSQL info from above
 ```
@@ -47,3 +47,5 @@ in the json file.
 - discord.py
 - asyncpg
 - click
+- flake8
+- dateutil
