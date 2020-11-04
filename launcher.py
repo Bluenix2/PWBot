@@ -53,8 +53,11 @@ def init():
             issue VARCHAR(90)
         );
         """,
-        """CREATE SEQUENCE IF NOT EXISTS ticket_id OWNED BY tickets.id""",
-        """CREATE INDEX tickets_duplicate_idx ON tickets (author_id, state, type);""",
+        """CREATE SEQUENCE IF NOT EXISTS ticket_id OWNED BY tickets.id;""",
+        """CREATE INDEX IF NOT EXISTS tickets_duplicate_idx ON tickets (
+            author_id, state, type
+        );
+        """,
     ]
 
     for query in queries:
