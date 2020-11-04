@@ -27,7 +27,9 @@ class Settings:
         self.help_channel = settings.pop('help_channel')
         self.tournaments_channel = settings.pop('tournaments_channel')
 
-        self.reaction_message = settings.pop('reaction_message', 0)
+        self.role_channel = settings.pop('role_channel')
+        self.pings_message = settings.pop('pings_message', 0)
+        self.language_message = settings.pop('language_message', 0)
 
         self.announcements_role = settings.pop('announcements_role')
         self.events_role = settings.pop('events_role')

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+from cogs import roles
 from cogs.utils import checks, colours
 
 
@@ -33,11 +34,11 @@ class Responses(commands.Cog):
         await channel.send(' '.join(words), allowed_mentions=discord.AllowedMentions.none())
 
     @send.command(
-        name='roles',
+        name='pingroles',
         hidden=True,
         ignore_extra=False)
     @commands.is_owner()
-    async def send_roles(self, ctx):
+    async def send_ping_roles(self, ctx):
         await ctx.message.delete()
 
         description = '\n'.join((
@@ -52,33 +53,23 @@ class Responses(commands.Cog):
             colour=colours.light_blue()
         )
 
-        embed.add_field(
-            name='\N{CHEERING MEGAPHONE} Announcements',
-            value='Will get pinged in <#489825441075429378> when the game is updated or the developers have important information to share.',
-            inline=False
-        )
-        embed.add_field(
-            name='\N{ADMISSION TICKETS} Events',
-            value='Pinged in <#651109293663191061> or <#489825441075429378> when a new event is created, or event details have been released/updated.',
-            inline=False
-        )
-        embed.add_field(
-            name='\N{TROPHY} Tournaments',
-            value='Pinged in <#647955879844380682> when new community-run tournaments are hosted or information is released/updated.',
-            inline=False
-        )
-        embed.add_field(
-            name='\N{GLOBE WITH MERIDIANS} Community Translations',
-            value='We are looking to let active community members helps us translate the game.\n**If you want to help please contact a Community Manager.**',
-            inline=False
-        )
+        records = await ctx.db.fetch('SELECT * FROM roles WHERE type=$1;', roles.RoleType.ping.value)
+
+        if not records:
+            return
+
+        for record in records:
+            embed.add_field(
+                name=record['name'],
+                value=record['description'],
+                inline=False
+            )
 
         message = await ctx.send(embed=embed)
-        self.bot.settings.reaction_message = message.id
+        self.bot.settings.pings_message = message.id
 
-        await message.add_reaction('\N{CHEERING MEGAPHONE}')
-        await message.add_reaction('\N{ADMISSION TICKETS}')
-        await message.add_reaction('\N{TROPHY}')
+        for record in records:
+            await message.add_reaction(record['reaction'].strip('<>'))
 
     @send.command(
         name='report',
@@ -114,6 +105,41 @@ class Responses(commands.Cog):
         self.bot.settings.report_message = message.id
 
         await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
+
+    @send.command(name='languages', hidden=True, ignore_extra=False)
+    @commands.is_owner()
+    async def send_languages(self, ctx):
+        await ctx.message.delete()
+
+        description = '\n'.join((
+            'To help find games in your langauges we have created some roles for *you* to ping instead.',
+            'This does mean that these roles will be pinged a lot, so only assign them to yourself if you are fine with '
+            'getting pinged a lot by members in <#540999156660174878>.\n',
+
+            'React to this message to assign yourself the appropriate role.',
+            'If you have any questions please ping a Community Manager',
+        ))
+
+        embed = discord.Embed(
+            title='Language Roles',
+            description=description,
+            colour=colours.light_blue()
+        )
+
+        records = await ctx.db.fetch('SELECT * FROM roles WHERE type=$1;', roles.RoleType.language.value)
+
+        for record in records:
+            embed.add_field(
+                name=record['name'],
+                value=record['description'],
+                inline=True
+            )
+
+        message = await ctx.send(embed=embed)
+        self.bot.settings.language_message = message.id
+
+        for record in records:
+            await message.add_reaction(record['reaction'].strip('<>'))
 
     @commands.command(hidden=True)
     async def wiki(self, ctx):

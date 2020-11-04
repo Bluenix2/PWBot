@@ -58,6 +58,16 @@ def init():
             author_id, state, type
         );
         """,
+
+        """CREATE TABLE IF NOT EXISTS roles (
+            reaction VARCHAR PRIMARY KEY,
+            name VARCHAR(256),
+            role_id BIGINT UNIQUE NOT NULL,
+            type SMALLINT,
+            description VARCHAR(1024)
+        );
+        """,
+        """CREATE INDEX IF NOT EXISTS roles_idx ON roles (reaction, type);"""
     ]
 
     for query in queries:
