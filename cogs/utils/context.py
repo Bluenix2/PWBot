@@ -1,3 +1,5 @@
+import asyncio
+
 from discord.ext import commands
 
 
@@ -63,3 +65,47 @@ class Context(commands.Context):
         if self._db is not None:
             await self.pool.release(self._db)
             self._db = None
+
+    async def prompt(self, message, *, timeout=30.0, delete_after=True):
+        """Prompt the context with an interactive confirmation dialog.
+
+        Any acquired connection should be released before executing this.
+        """
+        msg = await self.send(message)
+
+        confirmation = None
+
+        def check(payload):
+            # Kind of like global keyword. Allows us to get variables in parent functions
+            nonlocal confirmation
+
+            if payload.message_id != msg.id or payload.user_id != self.author.id:
+                return False
+
+            emoji = str(payload.emoji)
+
+            if emoji == '\N{WHITE HEAVY CHECK MARK}':
+                confirmation = True
+                return True
+
+            elif emoji == '\N{CROSS MARK}':
+                # Flake8 is screaming that we don't use it, but
+                # we do use it. So just to quiet it down.
+                confirmation = False  # noqa: F841
+                return True
+
+            # It wasn't neither of the two emojis
+            return False
+
+        for reaction in ('\N{WHITE HEAVY CHECK MARK}', '\N{CROSS MARK}'):
+            await msg.add_reaction(reaction)
+
+        try:
+            await self.bot.wait_for('raw_reaction_add', check=check, timeout=timeout)
+        except asyncio.TimeoutError:
+            pass
+
+        if delete_after:
+            await msg.delete()
+
+        return confirmation
