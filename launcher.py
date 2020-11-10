@@ -67,7 +67,30 @@ def init():
             description VARCHAR(1024)
         );
         """,
-        """CREATE INDEX IF NOT EXISTS roles_idx ON roles (reaction, type);"""
+        """CREATE INDEX IF NOT EXISTS roles_idx ON roles (reaction, type);""",
+
+        """CREATE SEQUENCE IF NOT EXISTS content_ids;""",
+        # All content for the tags
+        """CREATE TABLE IF NOT EXISTS tag_content (
+            id SMALLINT PRIMARY KEY DEFAULT NEXTVAL('content_ids'),
+            value VARCHAR(2000) NOT NULL,
+            created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
+            uses INT DEFAULT 0
+        );
+        """,
+        """ALTER SEQUENCE content_ids OWNED BY tag_content.id;""",
+        """CREATE SEQUENCE IF NOT EXISTS tag_ids;""",
+        # The pointers to the content, this means there is no distinction
+        # between "aliases", and the "original" tag.
+        """CREATE TABLE IF NOT EXISTS tags (
+            id SMALLINT PRIMARY KEY DEFAULT NEXTVAL('tag_ids'),
+            content_id SMALLINT REFERENCES tag_content (id)
+                ON DELETE CASCADE ON UPDATE NO ACTION,
+            name VARCHAR(50) UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
+        );
+        """,
+        """ALTER SEQUENCE tag_ids OWNED BY tags.id;""",
     ]
 
     for query in queries:

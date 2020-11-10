@@ -109,3 +109,16 @@ class Context(commands.Context):
             await msg.delete()
 
         return confirmation
+
+    async def send_tag(self, name, conn=None):
+        """Fetch a tag from the database, and send it
+        in the current context.
+        """
+        conn = conn or self.db
+
+        content = await self.bot.fetch_tag(name, conn=conn)
+        if content:
+            await self.send(content)
+        else:
+            # Technically not a command, but easier than defining a new error
+            raise commands.CommandNotFound('Tag not found.')

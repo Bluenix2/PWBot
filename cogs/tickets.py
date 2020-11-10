@@ -328,19 +328,7 @@ class TicketManager(commands.Cog, TicketMixin):
         if issue:  # Aid users in opening tickets
             return await ctx.invoke(self.ticket_open, issue=issue)
 
-        await ctx.send('\n'.join((
-            '> You can open a help ticket by using the following command:',
-            '> ```',
-            '> ?ticket open <issue>',
-            '> ```',
-            '> So, for example:',
-            '> ```',
-            '> ?ticket open My voice comms are not working.',
-            '> ```',
-            '> Upon opening a ticket a new private channel with the mods will be created '
-            'where we can securely talk and disclose important information.',
-            '> **Abuse of the ticket system could result in a temporary squelching.**',
-        )))
+        await ctx.send_tag('ticket')
 
     @ticket.command(
         name='open', brief='Open a help ticket',

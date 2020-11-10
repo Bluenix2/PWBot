@@ -3,6 +3,8 @@ import enum
 import discord
 from discord.ext import commands
 
+from cogs.utils import colours
+
 
 class RoleType(enum.Enum):
     ping = 0
@@ -132,6 +134,45 @@ class Roles(commands.Cog):
             conn=ctx.db
         )
 
+    @language.command(name='send', brief='Send the language reaction message')
+    # We already check for owner in our parent
+    async def language_send(self, ctx):
+        await ctx.message.delete()
+
+        description = '\n'.join((
+            'To help find games in your langauges we have created ' +
+            'some roles for *you* to ping instead.',
+            'This does mean that these roles will be pinged a lot, so only assign ' +
+            'them to yourself if you are fine with '
+            'getting pinged a lot by members in <#540999156660174878>.\n',
+
+            'React to this message to assign yourself the appropriate role.',
+            'If you have any questions please ping a Community Manager',
+        ))
+
+        embed = discord.Embed(
+            title='Language Roles',
+            description=description,
+            colour=colours.light_blue()
+        )
+
+        records = await ctx.db.fetch(
+            'SELECT * FROM roles WHERE type=$1;', RoleType.language.value
+        )
+
+        for record in records:
+            embed.add_field(
+                name=record['name'],
+                value=record['description'],
+                inline=True
+            )
+
+        message = await ctx.send(embed=embed)
+        self.bot.settings.language_message = message.id
+
+        for record in records:
+            await message.add_reaction(record['reaction'].strip('<>'))
+
     @commands.group(invoke_without_command=True, brief='Manage ping roles')
     @commands.is_owner()
     async def pings(self, ctx):
@@ -157,6 +198,43 @@ class Roles(commands.Cog):
             emoji, self.bot.settings.pings_message,
             conn=ctx.db
         )
+
+    @pings.command(name='send')
+    # Already checking for bot owner
+    async def pings_send(self, ctx):
+        await ctx.message.delete()
+
+        description = '\n'.join((
+            "To avoid pinging everyone we've created a few roles to ping instead.\n",
+
+            'React to this message to assign the appropriate role.',
+            'If you have any questions feel free to ping a Community Manager.',
+        ))
+        embed = discord.Embed(
+            title='Role Management',
+            description=description,
+            colour=colours.light_blue()
+        )
+
+        records = await ctx.db.fetch(
+            'SELECT * FROM roles WHERE type=$1;', RoleType.ping.value
+        )
+
+        if not records:
+            return
+
+        for record in records:
+            embed.add_field(
+                name=record['name'],
+                value=record['description'],
+                inline=False
+            )
+
+        message = await ctx.send(embed=embed)
+        self.bot.settings.pings_message = message.id
+
+        for record in records:
+            await message.add_reaction(record['reaction'].strip('<>'))
 
 
 def setup(bot):
