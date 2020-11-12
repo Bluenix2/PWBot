@@ -137,6 +137,10 @@ class Roles(commands.Cog):
     @language.command(name='send', brief='Send the language reaction message')
     # We already check for owner in our parent
     async def language_send(self, ctx):
+        prompt = 'Are you sure you would like to send the language reaction message?'
+        if not await ctx.prompt(prompt):
+            return
+
         await ctx.message.delete()
 
         description = '\n'.join((
@@ -202,6 +206,10 @@ class Roles(commands.Cog):
     @pings.command(name='send')
     # Already checking for bot owner
     async def pings_send(self, ctx):
+        prompt = 'Are you sure you would like to send the pings reaction message?'
+        if not await ctx.prompt(prompt):
+            return
+
         await ctx.message.delete()
 
         description = '\n'.join((

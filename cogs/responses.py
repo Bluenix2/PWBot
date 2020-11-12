@@ -38,6 +38,9 @@ class Responses(commands.Cog):
         ignore_extra=False)
     @commands.is_owner()
     async def send_report(self, ctx):
+        if not await ctx.prompt('Are you sure you would like to send the report message here?'):
+            return
+
         await ctx.message.delete()
 
         description = '\n'.join((

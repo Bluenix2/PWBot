@@ -69,10 +69,12 @@ class Tags(commands.Cog):
             await ctx.send('Tag successfully created.')
 
     @tag.command(name='remove', brief='Safely remove a tag, but keep the content.')
-    @checks.confirm(
-        'Are you sure you want to safely remove this tag? This will keep ' +
-        'the content and other aliases.')
     async def tag_remove(self, ctx, name: TagName):
+        prompt = ('Are you sure you want to safely remove this tag? This will keep ' +
+                  'the content and other aliases.')
+        if not await ctx.prompt(prompt):
+            return
+
         await ctx.acquire()
 
         # We really don't want to remove the last tag
@@ -92,9 +94,12 @@ class Tags(commands.Cog):
     @tag.command(
         name='delete', brief='Delete a tag and its content.',
         help='Delete a tag and its content, this will also remove all other aliases.')
-    @checks.confirm(
-        "Are you sure you want to completely remove this tags' content and all other aliases?")
     async def tag_delete(self, ctx, name: TagName):
+        prompt = ("Are you sure you want to completely remove this tags' " +
+                  "content and all other aliases?")
+        if not await ctx.prompt(prompt):
+            return
+
         await ctx.acquire()
 
         content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
