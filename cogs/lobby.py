@@ -28,15 +28,16 @@ class Lobby:
 
         async def timeout(timeout=21600):
             await asyncio.sleep(timeout)
-            await self.disband(True)
+            await self.disband(timeout=True)
 
         self.timeout = asyncio.create_task(timeout())
 
-    async def disband(self, timeout=False):
+    async def disband(self, *, timeout=False):
         if not timeout:
             self.timeout.cancel()
 
         self.manager.lobbies.remove(self)
+        await self.message.clear_reactions()
         await self.message.channel.send(
             '<@{0}> your lobby was disbanded.'.format(
                 self.owner_id
