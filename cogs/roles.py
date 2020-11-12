@@ -71,16 +71,15 @@ class Roles(commands.Cog):
 
         await self.bot.http.remove_role(payload.guild_id, payload.user_id, role_id)
 
-    async def _add_role(self, emoji, role, role_type, field, message_id, *, conn=None):
+    async def _add_role(self, emoji, role, role_type, name, field, message_id, *, conn=None):
         if not conn:
             conn = self.bot.pool
-        name, description = field.split('|')
 
         query = """INSERT INTO roles (
                     reaction, name, role_id, type, description
                 ) VALUES ($1, $2, $3, $4, $5) RETURNING *;
         """
-        record = await conn.fetchrow(query, emoji, name, role.id, role_type.value, description)
+        record = await conn.fetchrow(query, emoji, name, role.id, role_type.value, field)
 
         message = await self.role_channel.fetch_message(message_id)
 
@@ -119,9 +118,9 @@ class Roles(commands.Cog):
         brief='Add a new language role to the embed',
         help='Add a new language role to the embed, field splits by `name|description`.')
     # We already check for owner in our parent
-    async def language_add(self, ctx, emoji, role: discord.Role, *, field):
+    async def language_add(self, ctx, emoji, role: discord.Role, name, *, field):
         await self._add_role(
-            emoji, role, RoleType.language,
+            emoji, role, RoleType.language, name,
             field, self.bot.settings.language_message,
             conn=ctx.db
         )
@@ -130,7 +129,7 @@ class Roles(commands.Cog):
     # We already check for owner in our parent
     async def language_remove(self, ctx, emoji):
         await self._remove_role(
-            emoji, self.bot.settings.language_message,
+            emoji, self.bot.settings.language_message, RoleType.language,
             conn=ctx.db
         )
 
@@ -188,9 +187,9 @@ class Roles(commands.Cog):
         brief='Add a new ping role to the embed',
         help='Add a new ping role to the embed, field will be split by `name|description`.')
     # We already check for owner in the parent command
-    async def pings_add(self, ctx, emoji, role: discord.Role, *, field):
+    async def pings_add(self, ctx, emoji, role: discord.Role, name, *, field):
         await self._add_role(
-            emoji, role, RoleType.ping,
+            emoji, role, RoleType.ping, name,
             field, self.bot.settings.pings_message,
             conn=ctx.db
         )
@@ -199,7 +198,7 @@ class Roles(commands.Cog):
     # We already do a check for bot owner
     async def pings_remove(self, ctx, emoji):
         await self._remove_role(
-            emoji, self.bot.settings.pings_message,
+            emoji, self.bot.settings.pings_message, RoleType.ping,
             conn=ctx.db
         )
 
