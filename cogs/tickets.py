@@ -303,6 +303,7 @@ class TicketManager(commands.Cog, TicketMixin):
             'Please explain what you need help with and we will get back with you.\n',
 
             'You may want to post a log for us, this is very helpful. See `?log`.',
+            'Additionally, a link to your steam profile will help in some situations!',
         ))
 
         self.status_channel_id = self.bot.settings.ticket_status_channel
