@@ -156,7 +156,7 @@ class TicketMixin:
         overwrites.update(self.category.overwrites)
 
         channel = await self.category.create_text_channel(
-            name='{0}-{1}'.format(ticket_id, issue[:90] or author.display_name),
+            name='{0}-{1}'.format(ticket_id, issue[:90] if issue else author.display_name),
             sync_permissions=True, overwrites=overwrites,
             reason='Creating ticket #{0}: {1}'.format(ticket_id, issue)
         )
