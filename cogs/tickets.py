@@ -439,7 +439,7 @@ class ReportManager(commands.Cog, TicketMixin):
         invoke_without_command=True,
         brief='Manage report tickets, see subcommand: ?report open',
         help='Manage report tickets')
-    async def report(self, ctx, *, issue):
+    async def report(self, ctx, *, issue=None):
         await ctx.invoke(self.report_open, issue=issue)
 
     @report.command(
