@@ -104,7 +104,7 @@ class PWBot(commands.Bot):
         query = """SELECT tag_content.value
                    FROM tags
                    INNER JOIN tag_content ON tag_content.id = tags.content_id
-                   WHERE LOWER(tags.name)=LOWER($1) LIMIT 1;
+                   WHERE tags.name=$1 LIMIT 1;
                    """
         return await conn.fetchval(query, name)
 
@@ -132,7 +132,7 @@ class PWBot(commands.Bot):
         conn = conn or self.pool
 
         query = """INSERT INTO tags (content_id, name)
-                   VALUES ($2, LOWER($1))
+                   VALUES ($2, $1)
                    RETURNING id;
                 """
         return await conn.execute(query, name, content_id)

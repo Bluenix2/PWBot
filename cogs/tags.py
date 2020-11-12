@@ -42,7 +42,6 @@ class Tags(commands.Cog):
 
     @tag.command(name='create', brief='Create a new tag and content.')
     async def tag_create(self, ctx, name: TagName, *, content):
-        await ctx.db.acquire()
         try:
             async with (await ctx.db.acquire()).transaction():
                 content_id = await self.bot.create_content(content, conn=ctx.db)

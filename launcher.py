@@ -79,6 +79,7 @@ def init():
         );
         """,
         """ALTER SEQUENCE content_ids OWNED BY tag_content.id;""",
+        """CREATE UNIQUE INDEX IF NOT EXISTS content_id_idx ON content (id);""",
         """CREATE SEQUENCE IF NOT EXISTS tag_ids;""",
         # The pointers to the content, this means there is no distinction
         # between "aliases", and the "original" tag.
@@ -91,6 +92,8 @@ def init():
         );
         """,
         """ALTER SEQUENCE tag_ids OWNED BY tags.id;""",
+        """CREATE UNIQUE INDEX IF NOT EXISTS tags_name_idx ON tags (name);""",
+        """CREATE INDEX IF NOT EXISTS tag_content_id_idx ON tags (content_id);""",
     ]
 
     for query in queries:
