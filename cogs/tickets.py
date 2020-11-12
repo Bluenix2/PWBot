@@ -302,8 +302,9 @@ class TicketManager(commands.Cog, TicketMixin):
             'Thank you for opening a ticket, what can we help you with?',
             'Please explain what you need help with and we will get back with you.\n',
 
-            'You may want to post a log for us, this is very helpful. See `?log`.',
-            'Additionally, a link to your steam profile will help in some situations!',
+            'If you are having technical issues, please post a log. See `?log`.',
+            'Otherwise, if your issue is related to in-game bans or crate purchasing please ' +
+            'post a link to your steam profile.'
         ))
 
         self.status_channel_id = self.bot.settings.ticket_status_channel
