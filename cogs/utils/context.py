@@ -1,5 +1,6 @@
 import asyncio
 
+import discord
 from discord.ext import commands
 
 
@@ -118,7 +119,7 @@ class Context(commands.Context):
 
         content = await self.bot.fetch_tag(name, conn=conn)
         if content:
-            await self.send(content)
+            await self.send(content, allowed_mentions=discord.AllowedMentions.none())
         else:
             # Technically not a command, but easier than defining a new error
             raise commands.CommandNotFound('Tag not found.')
