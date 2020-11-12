@@ -104,9 +104,6 @@ class Tags(commands.Cog):
 
         content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
 
-        await ctx.send(f'Sending content `#{content_id}` one last time:')
-        await ctx.send_tag(name)
-
         await ctx.db.execute('DELETE FROM tag_content WHERE id=$1;', content_id)
 
         await ctx.send('This content and all its tags are now fully removed!')
