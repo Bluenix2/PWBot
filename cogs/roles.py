@@ -113,10 +113,7 @@ class Roles(commands.Cog):
         # This is only meant as a container for the language roles management
         await ctx.send_help('language')  # We send help for this group
 
-    @language.command(
-        name='add',
-        brief='Add a new language role to the embed',
-        help='Add a new language role to the embed, field splits by `name|description`.')
+    @language.command(name='add', brief='Add a new language role to the embed')
     # We already check for owner in our parent
     async def language_add(self, ctx, emoji, role: discord.Role, name, *, field):
         await self._add_role(
@@ -182,10 +179,7 @@ class Roles(commands.Cog):
         # This is only meant as a container for the ping roles management
         await ctx.send_help('pings')  # We send help for this group
 
-    @pings.command(
-        name='add',
-        brief='Add a new ping role to the embed',
-        help='Add a new ping role to the embed, field will be split by `name|description`.')
+    @pings.command(name='add', brief='Add a new ping role to the embed')
     # We already check for owner in the parent command
     async def pings_add(self, ctx, emoji, role: discord.Role, name, *, field):
         await self._add_role(
@@ -202,7 +196,7 @@ class Roles(commands.Cog):
             conn=ctx.db
         )
 
-    @pings.command(name='send')
+    @pings.command(name='send', brief='Send the pings reaction message')
     # Already checking for bot owner
     async def pings_send(self, ctx):
         prompt = 'Are you sure you would like to send the pings reaction message?'
