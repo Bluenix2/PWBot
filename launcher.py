@@ -50,7 +50,7 @@ def init():
             type SMALLINT,
             state SMALLINT DEFAULT 0,
             status_message_id BIGINT,
-            issue VARCHAR(90)
+            issue VARCHAR
         );
         """,
         """CREATE SEQUENCE IF NOT EXISTS ticket_id OWNED BY tickets.id;""",
@@ -79,7 +79,7 @@ def init():
         );
         """,
         """ALTER SEQUENCE content_ids OWNED BY tag_content.id;""",
-        """CREATE UNIQUE INDEX IF NOT EXISTS content_id_idx ON content (id);""",
+        """CREATE UNIQUE INDEX IF NOT EXISTS content_id_idx ON tag_content (id);""",
         """CREATE SEQUENCE IF NOT EXISTS tag_ids;""",
         # The pointers to the content, this means there is no distinction
         # between "aliases", and the "original" tag.
@@ -94,6 +94,32 @@ def init():
         """ALTER SEQUENCE tag_ids OWNED BY tags.id;""",
         """CREATE UNIQUE INDEX IF NOT EXISTS tags_name_idx ON tags (name);""",
         """CREATE INDEX IF NOT EXISTS tag_content_id_idx ON tags (content_id);""",
+    ]
+
+    for query in queries:
+        try:
+            run(conn.execute(query))
+        except Exception:
+            click.echo(
+                'Failed to execute query\n' + traceback.format_exc(), err=True,
+            )
+
+
+@database.command(options_metavar='[options]')
+def migrate():
+    """Migrate from the last version.
+
+    To migrate between multiple version you'll need to run each
+    version's migration in ascending order.
+    """
+    click.echo('Migrating database from v1.0.2 to v1.1.0')
+
+    run = asyncio.get_event_loop().run_until_complete
+
+    conn = run(asyncpg.connect(config.postgresql))
+
+    queries = [
+        """ALTER TABLE tickets ALTER COLUMN issue TYPE VARCHAR(1000);""",
     ]
 
     for query in queries:
