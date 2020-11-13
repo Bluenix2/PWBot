@@ -31,10 +31,6 @@ class Settings:
         self.pings_message = settings.pop('pings_message', 0)
         self.language_message = settings.pop('language_message', 0)
 
-        self.announcements_role = settings.pop('announcements_role')
-        self.events_role = settings.pop('events_role')
-        self.tournaments_role = settings.pop('tournaments_role')
-
         self.high5_emoji = settings.pop('high5_emoji')
 
         # The dict should now be empty, if it's not then that
