@@ -38,7 +38,7 @@ class Settings:
         # we have defined here. We throw an error to help, to remind
         # that we must define it above.
         if settings:  # Empty dictionaries evaluate to False
-            raise KeyError('Too many keys in settings.json file.')
+            raise KeyError(f'Too many keys in settings.json file: {settings}')
 
     def __setattr__(self, name, value):
         """Called when an attribute is set or overwritten,
