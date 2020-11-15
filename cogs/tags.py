@@ -42,9 +42,10 @@ class Tags(commands.Cog):
     async def tag_create(self, ctx, name: TagName, *, content):
         """Create a new tag and content."""
         try:
-            async with (await ctx.db.acquire()).transaction():
-                content_id = await self.bot.create_content(content, conn=ctx.db)
-                await self.bot.create_tag(name, content_id, conn=ctx.db)
+            async with ctx.db.acquire() as conn:
+                async with conn.transaction():
+                    content_id = await self.bot.create_content(content, conn=conn)
+                    await self.bot.create_tag(name, content_id, conn=conn)
         except asyncpg.UniqueViolationError:
             await ctx.send('This tag already exists!')
         except Exception:
