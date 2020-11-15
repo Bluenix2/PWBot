@@ -337,7 +337,7 @@ class TicketManager(commands.Cog, TicketMixin):
 
     @ticket.command(name='openas')
     @checks.mod_only()
-    async def ticket_openas(self, ctx, user: discord.User, *, issue=None):
+    async def ticket_openas(self, ctx, user: discord.Member, *, issue=None):
         """Open a ticket for a member. This can only be used by mods."""
         await self.on_open_command(ctx, issue, user=user)
 
@@ -443,7 +443,7 @@ class ReportManager(commands.Cog, TicketMixin):
 
     @report.command(name='openas')
     @checks.mod_only()
-    async def report_openas(self, ctx, user: discord.User, *, issue=None):
+    async def report_openas(self, ctx, user: discord.Member, *, issue=None):
         """Help a member by opening a report for them."""
         await self.on_open_command(ctx, issue, user=user)
 
