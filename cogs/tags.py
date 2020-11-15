@@ -68,6 +68,19 @@ class Tags(commands.Cog):
         else:
             await ctx.send('Tag successfully created.')
 
+    @tag.command(name='edit')
+    async def tag_edit(self, ctx, name: TagName, *, content):
+        """Override and edit a tag's content."""
+        await ctx.db.acquire()
+
+        content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
+
+        await ctx.db.execute(
+            'UPDATE tag_content SET value=$2 WHERE id=$1', content_id, content
+        )
+
+        await ctx.send('Edited tag content.')
+
     @tag.command(name='remove')
     async def tag_remove(self, ctx, name: TagName):
         """Safely remove a tag, alias. This action keeps the content."""
