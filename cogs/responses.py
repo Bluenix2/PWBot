@@ -72,8 +72,8 @@ class Responses(commands.Cog):
         if message.channel.id != self.bot.settings.suggestions_channel:
             return
 
-        await message.add_reaction('\N{THUMBS DOWN SIGN}')
         await message.add_reaction('\N{THUMBS UP SIGN}')
+        await message.add_reaction('\N{THUMBS DOWN SIGN}')
 
 
 def setup(bot):
