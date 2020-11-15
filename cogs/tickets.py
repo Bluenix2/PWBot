@@ -136,8 +136,8 @@ class TicketMixin:
 
         open_channel = await self.get_open_by_author(author.id)
         if open_channel:
-            return await ctx.send('{0} you already have an open {1}: <#{2}>'.format(
-                    ctx.author.mention, self.ticket_type.name, open_channel
+            return await ctx.send('{0} already has an open {1}: <#{2}>'.format(
+                    author.mention, self.ticket_type.name, open_channel
                 ), delete_after=10
             )
 
