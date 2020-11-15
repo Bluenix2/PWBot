@@ -9,6 +9,9 @@ class Settings:
     otherwise KeyError is raised for having too many keys
     """
     def __init__(self):
+        # If we're just loading the settings inside init
+        self.init = True
+
         with open('settings.json', 'r') as f:
             settings = json.load(f)
 
@@ -40,12 +43,25 @@ class Settings:
         if settings:  # Empty dictionaries evaluate to False
             raise KeyError(f'Too many keys in settings.json file: {settings}')
 
+        # Remove it so that it's not saved when changing other attributes
+        del self.init
+
     def __setattr__(self, name, value):
         """Called when an attribute is set or overwritten,
         so we use this to also save the changes to the settings.json
         """
         # Also actually update the attribute
         self.__dict__[name] = value
+
+        try:
+            # We don't want to save the settings, as we're currently loading
+            if self.init or name == 'init':
+                return
+        except AttributeError:
+            # self.init is not defined, and was removed.
+            # We just don't want it to propagate.
+            pass
+
         # Dump all our attributes
         with open('settings.json', 'w') as f:
             json.dump(self.__dict__, f)
