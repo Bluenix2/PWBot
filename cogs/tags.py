@@ -29,6 +29,11 @@ class Tags(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def _get_content_id(self, name, *, conn=None):
+        conn = conn or self.bot.pool
+
+        return await conn.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
+
     @commands.group(invoke_without_command=True)
     @checks.mod_only()
     async def tag(self, ctx, *, name: TagName):
@@ -58,7 +63,9 @@ class Tags(commands.Cog):
         """Add a new tag, alias to the content."""
         await ctx.db.acquire()
 
-        content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
+        content_id = self._get_content_id(name)
+        if not content_id:
+            return await ctx.send('That is not an existing tag!')
 
         try:
             await self.bot.create_tag(alias, content_id, conn=ctx.db)
@@ -74,7 +81,9 @@ class Tags(commands.Cog):
         """Override and edit a tag's content."""
         await ctx.db.acquire()
 
-        content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
+        content_id = self._get_content_id(name)
+        if not content_id:
+            return await ctx.send('That is not an existing tag!')
 
         await ctx.db.execute(
             'UPDATE tag_content SET value=$2 WHERE id=$1', content_id, content
@@ -93,7 +102,9 @@ class Tags(commands.Cog):
         await ctx.acquire()
 
         # We really don't want to remove the last tag
-        content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
+        content_id = self._get_content_id(name)
+        if not content_id:
+            return await ctx.send('That is not an existing tag!')
 
         query = 'SELECT id, name FROM tags WHERE content_id=$2 AND name<>$1 LIMIT 1;'
         other_tag = await ctx.db.fetchrow(query, name, content_id)
@@ -116,7 +127,9 @@ class Tags(commands.Cog):
 
         await ctx.acquire()
 
-        content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
+        content_id = self._get_content_id(name)
+        if not content_id:
+            return await ctx.send('That is not an existing tag!')
 
         await ctx.db.execute('DELETE FROM tag_content WHERE id=$1;', content_id)
 
