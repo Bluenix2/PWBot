@@ -103,7 +103,7 @@ class Tags(commands.Cog):
             await ctx.send(f"Tag removed, but you can still use `{other_tag['name']}`. ")
         else:
             await ctx.send(
-                f'This is the last alias to content `#{content_id}`, use `?ticket delete`.'
+                f'This is the last alias to content `#{content_id}`, use `?tag delete`!'
             )
 
     @tag.command(name='delete')
