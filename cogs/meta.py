@@ -11,6 +11,11 @@ class PWBotHelp(commands.HelpCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def generate_brief(self, help_doc):
+        """Generate a brief from the help doc string."""
+        # Quite useless function, but good if we want to change the functionality.
+        return help_doc.split('.')[0]
+
     async def send_bot_help(self, mapping):
         bot = self.context.bot
         all_commands = await self.filter_commands(bot.commands, sort=True)
@@ -21,7 +26,8 @@ class PWBotHelp(commands.HelpCommand):
         )
         for command in all_commands:
             embed.add_field(
-                name=self.get_command_signature(command), value=command.brief,
+                name=self.get_command_signature(command),
+                value=command.brief or self.generate_brief(command.help),
                 inline=False
             )
 
@@ -58,7 +64,8 @@ class PWBotHelp(commands.HelpCommand):
 
         for command in all_commands:
             embed.add_field(
-                name=self.get_command_signature(command), value=command.brief,
+                name=self.get_command_signature(command),
+                value=command.brief or self.generate_brief(command.help),
                 inline=False
             )
 
@@ -73,8 +80,9 @@ class Meta(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(brief='Say how long the bot has been up for')
+    @commands.command()
     async def uptime(self, ctx):
+        """Say how long the bot has been running."""
         delta = relativedelta(
             datetime.utcnow().replace(microsecond=0),
             self.bot.uptime.replace(microsecond=0),

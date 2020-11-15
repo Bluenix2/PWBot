@@ -144,12 +144,12 @@ class LobbyManager(commands.Cog):
                 ':high5:{}'.format(self.bot.settings.high5_emoji),
             )
 
-    @commands.group(
-        invoke_without_command=True,
-        brief="Open a waiting lobby",
-        help="Open a waiting lobby, pinging everyone who reacted when full.")
+    @commands.group(invoke_without_command=True)
     @lobby_channel_only()
     async def lobby(self, ctx, players: int = 5):
+        """
+        Open a managed waiting lobby to gather players. This then pings all players when full.
+        """
         lobby = self.get_lobby_by_owner(ctx.author.id)
 
         if lobby:
@@ -168,11 +168,10 @@ class LobbyManager(commands.Cog):
 
         await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
 
-    @lobby.command(
-        name='disband',
-        brief='Disband an old lobby')
+    @lobby.command(name='disband')
     @lobby_channel_only()
     async def lobby_disband(self, ctx):
+        """Disband an old lobby."""
         lobby = self.get_lobby_by_owner(ctx.author.id)
         if lobby is None:
             return

@@ -107,32 +107,36 @@ class Roles(commands.Cog):
 
         await message.clear_reaction(emoji.strip('<>'))
 
-    @commands.group(invoke_without_command=True, brief='Manage language roles')
+    @commands.group(invoke_without_command=True)
     @commands.is_owner()
     async def language(self, ctx):
+        """Manage language roles."""
         # This is only meant as a container for the language roles management
         await ctx.send_help('language')  # We send help for this group
 
-    @language.command(name='add', brief='Add a new language role to the embed')
+    @language.command(name='add')
     # We already check for owner in our parent
     async def language_add(self, ctx, emoji, role: discord.Role, name, *, field):
+        """Add a new language role to the reaction embed."""
         await self._add_role(
             emoji, role, RoleType.language, name,
             field, self.bot.settings.language_message,
             conn=ctx.db
         )
 
-    @language.command(name='remove', brief='Remove a language role from the embed')
+    @language.command(name='remove')
     # We already check for owner in our parent
     async def language_remove(self, ctx, emoji):
+        """Remove a language from the reaction embed."""
         await self._remove_role(
             emoji, self.bot.settings.language_message, RoleType.language,
             conn=ctx.db
         )
 
-    @language.command(name='send', brief='Send the language reaction message')
+    @language.command(name='send')
     # We already check for owner in our parent
     async def language_send(self, ctx):
+        """Send the initial reaction embed for language roles."""
         prompt = 'Are you sure you would like to send the language reaction message?'
         if not await ctx.prompt(prompt):
             return
@@ -173,32 +177,36 @@ class Roles(commands.Cog):
         for record in records:
             await message.add_reaction(record['reaction'].strip('<>'))
 
-    @commands.group(invoke_without_command=True, brief='Manage ping roles')
+    @commands.group(invoke_without_command=True)
     @commands.is_owner()
     async def pings(self, ctx):
+        """Manage ping roles."""
         # This is only meant as a container for the ping roles management
         await ctx.send_help('pings')  # We send help for this group
 
-    @pings.command(name='add', brief='Add a new ping role to the embed')
+    @pings.command(name='add')
     # We already check for owner in the parent command
     async def pings_add(self, ctx, emoji, role: discord.Role, name, *, field):
+        """Add a new ping role to the reaction embed."""
         await self._add_role(
             emoji, role, RoleType.ping, name,
             field, self.bot.settings.pings_message,
             conn=ctx.db
         )
 
-    @pings.command(name='remove', brief='Remove a language role from the embed')
+    @pings.command(name='remove')
     # We already do a check for bot owner
     async def pings_remove(self, ctx, emoji):
+        """Remove a language role from the embed message."""
         await self._remove_role(
             emoji, self.bot.settings.pings_message, RoleType.ping,
             conn=ctx.db
         )
 
-    @pings.command(name='send', brief='Send the pings reaction message')
+    @pings.command(name='send')
     # Already checking for bot owner
     async def pings_send(self, ctx):
+        """Send the initial reaction embed for ping roles."""
         prompt = 'Are you sure you would like to send the pings reaction message?'
         if not await ctx.prompt(prompt):
             return

@@ -22,7 +22,7 @@ class Admin(commands.Cog):
 
     @commands.command(hidden=True)
     async def unload(self, ctx, *, module):
-        """Unloads a module."""
+        """Unload a module."""
         try:
             self.bot.unload_extension(module)
         except commands.ExtensionError as e:

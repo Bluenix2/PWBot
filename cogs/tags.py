@@ -29,19 +29,18 @@ class Tags(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(
-        invoke_without_command=True,
-        brief='Manage tags, forcefully send a tag.',
-        help='Parent command to tag management, forcefully send a tag.')
+    @commands.group(invoke_without_command=True)
     @checks.mod_only()
     async def tag(self, ctx, *, name: TagName):
+        """Forcefully send a tag. Parent command for tag management."""
         try:
             await ctx.send_tag(name)
         except commands.CommandNotFound:
             return  # Do nothing, we don't care
 
-    @tag.command(name='create', brief='Create a new tag and content.')
+    @tag.command(name='create')
     async def tag_create(self, ctx, name: TagName, *, content):
+        """Create a new tag and content."""
         try:
             async with (await ctx.db.acquire()).transaction():
                 content_id = await self.bot.create_content(content, conn=ctx.db)
@@ -53,8 +52,9 @@ class Tags(commands.Cog):
         else:
             await ctx.send('Tag and content successfully created.')
 
-    @tag.command(name='add', brief='Add a new tag/alias', aliases=['alias'])
+    @tag.command(name='add', aliases=['alias'])
     async def tag_add(self, ctx, name: TagName, alias: TagName):
+        """Add a new tag, alias to the content."""
         await ctx.db.acquire()
 
         content_id = await ctx.db.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
@@ -68,8 +68,9 @@ class Tags(commands.Cog):
         else:
             await ctx.send('Tag successfully created.')
 
-    @tag.command(name='remove', brief='Safely remove a tag, but keep the content.')
+    @tag.command(name='remove')
     async def tag_remove(self, ctx, name: TagName):
+        """Safely remove a tag, alias. This action keeps the content."""
         prompt = ('Are you sure you want to safely remove this tag? This will keep ' +
                   'the content and other aliases.')
         if not await ctx.prompt(prompt):
@@ -91,10 +92,9 @@ class Tags(commands.Cog):
                 f'This is the last alias to content `#{content_id}`, use `?ticket delete`.'
             )
 
-    @tag.command(
-        name='delete', brief='Delete a tag and its content.',
-        help='Delete a tag and its content, this will also remove all other aliases.')
+    @tag.command(name='delete')
     async def tag_delete(self, ctx, name: TagName):
+        """Delete a tag, its other aliases, and its content."""
         prompt = ("Are you sure you want to completely remove this tags' " +
                   "content and all other aliases?")
         if not await ctx.prompt(prompt):

@@ -322,51 +322,47 @@ class TicketManager(commands.Cog, TicketMixin):
     async def on_raw_reaction_add(self, payload):
         await self.on_reaction(payload)
 
-    @commands.group(
-        invoke_without_command=True,
-        brief='Manage help tickets, see subcommand: ?ticket open',
-        help='Manage help tickets')
+    @commands.group(invoke_without_command=True)
     async def ticket(self, ctx, *, issue=None):
+        """Open a ticket or send a help message. Parent command for ticket management."""
         if issue:  # Aid users in opening tickets
             return await ctx.invoke(self.ticket_open, issue=issue)
 
         await ctx.send_tag('ticket')
 
-    @ticket.command(
-        name='open', brief='Open a help ticket',
-        help='Open a help ticket, giving access to a private channel with the mods.')
+    @ticket.command(name='open')
     async def ticket_open(self, ctx, *, issue=None):
+        """Open a help ticket."""
         await self.on_open_command(ctx, issue)
 
-    @ticket.command(
-        name='openas',
-        brief='Open a help ticket for a user',
-        help='Open a help ticket for a user, giving access to a private channel with mods.')
+    @ticket.command(name='openas')
     @checks.mod_only()
     async def ticket_openas(self, ctx, user: discord.User, *, issue=None):
+        """Open a ticket for a member. This can only be used by mods."""
         await self.on_open_command(ctx, issue, user=user)
 
-    @ticket.command(name='adduser', brief='Add a user to the help ticket.')
+    @ticket.command(name='adduser')
     @ticket_only()
     @commands.check_any(author_only(), checks.mod_only())
     async def ticket_adduser(self, ctx, user: discord.User):
+        """Add a member to the help ticket."""
         await ctx.channel.set_permissions(user, read_messages=True)
 
         await ctx.send(
             "Welcome {0}, you were added to this ticket.".format(user.mention)
         )
 
-    @ticket.command(name='close', brief='Close the ticket, creating an archive')
+    @ticket.command(name='close')
     @ticket_only()
     @checks.mod_only()
     async def ticket_close(self, ctx, *, reason=None):
+        """Close the ticket and create an archive. The reason should be a summary."""
         await self.on_close_command(ctx, reason)
 
-    @ticket.command(
-        name='megamode',
-        brief='Limit help channel and force everyone to open tickets')
+    @ticket.command(name='megamode')
     @commands.is_owner()
     async def ticket_megamode(self, ctx):
+        """Limit the help channel and force everyone to react and open tickets."""
         await ctx.message.delete()
         help_channel = ctx.guild.get_channel(self.bot.settings.help_channel)
 
@@ -435,32 +431,27 @@ class ReportManager(commands.Cog, TicketMixin):
     async def on_raw_reaction_add(self, payload):
         await self.on_reaction(payload)
 
-    @commands.group(
-        invoke_without_command=True,
-        brief='Manage report tickets, see subcommand: ?report open',
-        help='Manage report tickets')
+    @commands.group(invoke_without_command=True)
     async def report(self, ctx, *, issue=None):
+        """Open a report. Parent command for report ticket management."""
         await ctx.invoke(self.report_open, issue=issue)
 
-    @report.command(
-        name='open',
-        brief='Open a report ticket',
-        help='Open a report ticket, giving access to a private channel with mods.')
+    @report.command(name='open')
     async def report_open(self, ctx, *, issue=None):
+        """Open a report ticket."""
         await self.on_open_command(ctx, issue)
 
-    @report.command(
-        name='openas',
-        brief='Open a report ticket for a user',
-        help='Open a report ticket for a user, giving access to a private channel with mods.')
+    @report.command(name='openas')
     @checks.mod_only()
     async def report_openas(self, ctx, user: discord.User, *, issue=None):
+        """Help a member by opening a report for them."""
         await self.on_open_command(ctx, issue, user=user)
 
-    @report.command(name='close', brief='Close the ticket')
+    @report.command(name='close')
     @ticket_only()
     @checks.mod_only()
     async def report_close(self, ctx, *, reason=None):
+        """Close the report. The reason should be a summary."""
         await self.on_close_command(ctx, reason)
 
 

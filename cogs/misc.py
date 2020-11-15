@@ -9,11 +9,10 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(
-        name="8ball",
-        brief='Ask the magic 8ball a question',
-        help='Ask the magic 8ball a question, and maybe or maybe not, get it answered...')
+    @commands.command(name="8ball")
     async def _8ball(self, ctx, *, question=None):
+        """Ask the magic 8ball a question. Maybe, or maybe not, you'll get it answered..."""
+
         outcomes = {
             'As far as my calculations have gone, yes.': 50,
             'The options do seem to say so, yes.': 50,

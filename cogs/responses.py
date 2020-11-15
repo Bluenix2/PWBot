@@ -10,14 +10,10 @@ class Responses(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(
-        invoke_without_command=True,
-        hidden=True)
+    @commands.group(invoke_without_command=True, hidden=True)
     @checks.trusted()
     async def send(self, ctx, *, text):
-        """Send a message as the bot.
-        The first word can be a channel to send in that channel.
-        """
+        """Send a message as the bot. The first word can be a channel to send in that channel."""
         await ctx.message.delete()
         words = text.split(' ')
 
@@ -32,12 +28,10 @@ class Responses(commands.Cog):
 
         await channel.send(' '.join(words), allowed_mentions=discord.AllowedMentions.none())
 
-    @send.command(
-        name='report',
-        hidden=True,
-        ignore_extra=False)
+    @send.command(name='report', hidden=True, ignore_extra=False)
     @commands.is_owner()
     async def send_report(self, ctx):
+        """Send the report message to be reacted to."""
         if not await ctx.prompt('Are you sure you would like to send the report message here?'):
             return
 
@@ -72,6 +66,7 @@ class Responses(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        """React with thumbs up and down to all suggestions messages."""
         if message.author.bot:
             return
         if message.channel.id != self.bot.settings.suggestions_channel:
