@@ -1,7 +1,9 @@
+import asyncio
 import datetime
 import sys
 import traceback
 
+import asyncpg
 import discord
 from discord.ext import commands
 
@@ -37,6 +39,13 @@ class PWBot(commands.Bot):
         self.client_id = config.client_id
 
         self.settings = settings.Settings()
+
+        loop = asyncio.get_event_loop()
+        try:
+            self.pool = loop.run_until_complete(asyncpg.create_pool(config.postgresql))
+        except Exception:
+            print('Failed set up PostgreSQL pool, exiting')
+            return
 
         for extension in initial_extensions:
             try:

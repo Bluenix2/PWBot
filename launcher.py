@@ -1,5 +1,4 @@
 import asyncio
-import sys
 import traceback
 
 import asyncpg
@@ -10,14 +9,7 @@ from bot import PWBot
 
 
 def run_bot():
-    loop = asyncio.get_event_loop()
-    try:
-        pool = loop.run_until_complete(asyncpg.create_pool(config.postgresql))
-    except Exception:
-        click.echo('Failed set up PostgreSQL pool, exiting', file=sys.stderr)
-        return
     bot = PWBot()
-    bot.pool = pool
     bot.run()
 
 
