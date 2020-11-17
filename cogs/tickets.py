@@ -50,9 +50,8 @@ class TicketState(enum.Enum):
     closed = 1
 
 
-class TicketMixin:
+class _BaseManager(commands.Cog):
     """Central class for managing tickets.
-    Should be subclassed together with a cog.
     The following attributes must be defined when subclassing.
 
     Attributes
@@ -74,7 +73,8 @@ class TicketMixin:
         when reacted to.
         """
 
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
         self._category = None
         self._status_channel = None
         self._log_channel = None
@@ -288,12 +288,10 @@ class TicketMixin:
         )
 
 
-class TicketManager(commands.Cog, TicketMixin):
+class TicketManager(_BaseManager):
     """Cog managing all normal tickets for help."""
-    def __init__(self, bot):
-        super().__init__()
-
-        self.bot = bot
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.ticket_type = TicketType.ticket
         self.category_id = self.bot.settings.ticket_category
@@ -397,12 +395,10 @@ class TicketManager(commands.Cog, TicketMixin):
             self.bot.settings.ticket_message = 0
 
 
-class ReportManager(commands.Cog, TicketMixin):
+class ReportManager(_BaseManager):
     """Cog managing all report tickets for reporting players."""
-    def __init__(self, bot):
-        super().__init__()
-
-        self.bot = bot
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.ticket_type = TicketType.report
         self.category_id = self.bot.settings.report_category
