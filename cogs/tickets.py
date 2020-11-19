@@ -12,7 +12,7 @@ from cogs.utils import checks, colours
 def ticket_only():
     """Check for channel being a ticket,
     can only be used on commands inside TicketMixin subclasses
-    becauses it uses the ticket_type attribute.
+    because it uses the ticket_type attribute.
     """
     async def predicate(ctx):
         if ctx.guild is None:

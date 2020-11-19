@@ -15,7 +15,7 @@ class TagName(commands.clean_content):
             raise commands.BadArgument('Missing tag name.')
 
         if len(converted) > 50:
-            raise commands.BadArgument('Tag name too long, max is 50 charaters.')
+            raise commands.BadArgument('Tag name too long, max is 50 characters.')
 
         # We want to get the first word, to see if it's already a command.
         first_word, _, _ = converted.partition(' ')
