@@ -24,7 +24,7 @@ class Lobby:
         self.required_players = required_players
 
         self.message = message
-        self.players = set((owner_id,))
+        self.players = {owner_id}
 
         async def timeout(timeout=21600):
             await asyncio.sleep(timeout)
