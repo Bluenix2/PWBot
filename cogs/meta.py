@@ -4,7 +4,7 @@ import discord
 from dateutil.relativedelta import relativedelta
 from discord.ext import commands
 
-from cogs.utils import colours
+from cogs.utils import Colour
 
 
 class PWBotHelp(commands.HelpCommand):
@@ -22,7 +22,7 @@ class PWBotHelp(commands.HelpCommand):
 
         embed = discord.Embed(
             title='All commands',
-            colour=colours.light_blue(),
+            colour=Colour.light_blue(),
         )
         for command in all_commands:
             embed.add_field(
@@ -43,7 +43,7 @@ class PWBotHelp(commands.HelpCommand):
                 self.get_command_signature(command),
                 command.help or command.brief,
             ),
-            colour=colours.light_blue(),
+            colour=Colour.light_blue(),
             )
         )
 
@@ -59,7 +59,7 @@ class PWBotHelp(commands.HelpCommand):
                 self.get_command_signature(group),
                 group.help or group.brief,
             ),
-            colour=colours.light_blue(),
+            colour=Colour.light_blue(),
             )
 
         for command in all_commands:

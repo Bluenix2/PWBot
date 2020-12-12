@@ -5,7 +5,7 @@ import time
 import discord
 from discord.ext import commands
 
-from cogs.utils import colours
+from cogs.utils import Colour
 
 
 class ModLogging(commands.Cog):
@@ -54,7 +54,7 @@ class ModLogging(commands.Cog):
         embed = discord.Embed(
             title='Member Kicked',
             description=f'{member} (ID: {member.id})',
-            colour=colours.apricot(),
+            colour=Colour.apricot(),
             timestamp=timestamp,
         )
         embed.set_thumbnail(url=member.avatar_url)
@@ -90,7 +90,7 @@ class ModLogging(commands.Cog):
         embed = discord.Embed(
             title='Member Banned',
             description=f'{user} (ID: {user.id})',
-            colour=colours.unvaulted_red(),
+            colour=Colour.unvaulted_red(),
             timestamp=timestamp,
         )
         embed.set_thumbnail(url=user.avatar_url)
@@ -124,7 +124,7 @@ class ModLogging(commands.Cog):
         embed = discord.Embed(
             title='Member Unbanned',
             description=f'{user} (ID: {user.id})',
-            colour=colours.light_blue(),
+            colour=Colour.light_blue(),
             timestamp=timestamp,
         )
         embed.set_thumbnail(url=user.avatar_url)

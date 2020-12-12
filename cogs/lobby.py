@@ -3,7 +3,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from cogs.utils import colours
+from cogs.utils import Colour
 
 
 def lobby_channel_only():
@@ -48,7 +48,7 @@ class Lobby:
         await self.message.edit(embed=discord.Embed(
             title='Lobby Disbanded!',
             description=description,
-            colour=colours.unvaulted_red(),
+            colour=Colour.unvaulted_red(),
         ))
 
 
@@ -115,7 +115,7 @@ class LobbyManager(commands.Cog):
             await lobby.message.edit(embed=discord.Embed(
                 title='Lobby Full!',
                 description=description,
-                colour=colours.apricot(),
+                colour=Colour.apricot(),
             ))
 
     @commands.Cog.listener()
@@ -161,7 +161,7 @@ class LobbyManager(commands.Cog):
         message = await ctx.send(embed=discord.Embed(
             title='Looking for players!',
             description='If you are available for a game, react below.',
-            colour=colours.cyan(),
+            colour=Colour.cyan(),
         ))
 
         self.lobbies.add(Lobby(self, ctx.author.id, message, players))

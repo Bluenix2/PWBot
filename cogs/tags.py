@@ -1,7 +1,7 @@
 import asyncpg
 from discord.ext import commands
 
-from cogs.utils import checks
+from cogs.utils import is_mod
 
 
 class TagName(commands.clean_content):
@@ -35,7 +35,7 @@ class Tags(commands.Cog):
         return await conn.fetchval('SELECT content_id FROM tags WHERE name=$1', name)
 
     @commands.group(invoke_without_command=True)
-    @checks.mod_only()
+    @is_mod()
     async def tag(self, ctx, *, name: TagName):
         """Forcefully send a tag. Parent command for tag management."""
         try:

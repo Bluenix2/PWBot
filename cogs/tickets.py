@@ -6,7 +6,7 @@ import zipfile
 import discord
 from discord.ext import commands
 
-from cogs.utils import checks, colours
+from cogs.utils import Colour, is_mod
 
 
 def ticket_only():
@@ -174,7 +174,7 @@ class _BaseManager(commands.Cog):
             'Welcome {0}'.format(author.mention),
             embed=discord.Embed(
                 description=self.open_message,
-                colour=colours.light_blue(),
+                colour=Colour.light_blue(),
             )
         )
 
@@ -185,7 +185,7 @@ class _BaseManager(commands.Cog):
 
         embed = discord.Embed(
             title=title,
-            colour=colours.cyan()
+            colour=Colour.cyan()
         )
 
         embed.set_author(name=author, icon_url=author.avatar_url)
@@ -271,7 +271,7 @@ class _BaseManager(commands.Cog):
         embed = message.embeds[0]
 
         embed.description = reason
-        embed.colour = colours.apricot()
+        embed.colour = Colour.apricot()
 
         if log_message:
             embed.add_field(name='Log', value=f'[Jump!]({log_message.jump_url})')
@@ -334,14 +334,14 @@ class TicketManager(_BaseManager):
         await self.on_open_command(ctx, issue)
 
     @ticket.command(name='openas')
-    @checks.mod_only()
+    @is_mod()
     async def ticket_openas(self, ctx, user: discord.Member, *, issue=None):
         """Open a ticket for a member. This can only be used by mods."""
         await self.on_open_command(ctx, issue, user=user)
 
     @ticket.command(name='adduser')
     @ticket_only()
-    @commands.check_any(author_only(), checks.mod_only())
+    @commands.check_any(author_only(), is_mod())
     async def ticket_adduser(self, ctx, user: discord.User):
         """Add a member to the help ticket."""
         await ctx.channel.set_permissions(user, read_messages=True)
@@ -352,7 +352,7 @@ class TicketManager(_BaseManager):
 
     @ticket.command(name='close')
     @ticket_only()
-    @checks.mod_only()
+    @is_mod()
     async def ticket_close(self, ctx, *, reason=None):
         """Close the ticket and create an archive. The reason should be a summary."""
         await self.on_close_command(ctx, reason)
@@ -378,7 +378,7 @@ class TicketManager(_BaseManager):
             message = await help_channel.send(embed=discord.Embed(
                 title='Help',
                 description=description,
-                colour=colours.light_blue()
+                colour=Colour.light_blue()
             ))
             self.bot.settings.ticket_message = message.id
 
@@ -438,14 +438,14 @@ class ReportManager(_BaseManager):
         await self.on_open_command(ctx, issue)
 
     @report.command(name='openas')
-    @checks.mod_only()
+    @is_mod()
     async def report_openas(self, ctx, user: discord.Member, *, issue=None):
         """Help a member by opening a report for them."""
         await self.on_open_command(ctx, issue, user=user)
 
     @report.command(name='close')
     @ticket_only()
-    @checks.mod_only()
+    @is_mod()
     async def report_close(self, ctx, *, reason=None):
         """Close the report. The reason should be a summary."""
         await self.on_close_command(ctx, reason)

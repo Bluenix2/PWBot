@@ -3,7 +3,7 @@ import enum
 import discord
 from discord.ext import commands
 
-from cogs.utils import colours
+from cogs.utils import Colour
 
 
 class RoleType(enum.Enum):
@@ -157,7 +157,7 @@ class Roles(commands.Cog):
         embed = discord.Embed(
             title='Language Roles',
             description=description,
-            colour=colours.light_blue()
+            colour=Colour.light_blue()
         )
 
         records = await ctx.db.fetch(
@@ -222,7 +222,7 @@ class Roles(commands.Cog):
         embed = discord.Embed(
             title='Role Management',
             description=description,
-            colour=colours.light_blue()
+            colour=Colour.light_blue()
         )
 
         records = await ctx.db.fetch(

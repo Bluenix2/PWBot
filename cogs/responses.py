@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from cogs.utils import checks, colours
+from cogs.utils import Colour, is_trusted
 
 
 class Responses(commands.Cog):
@@ -11,7 +11,7 @@ class Responses(commands.Cog):
         self.bot = bot
 
     @commands.group(invoke_without_command=True, hidden=True)
-    @checks.trusted()
+    @is_trusted()
     async def send(self, ctx, *, text):
         """Send a message as the bot. The first word can be a channel to send in that channel."""
         await ctx.message.delete()
@@ -54,7 +54,7 @@ class Responses(commands.Cog):
         embed = discord.Embed(
             title='Report Player',
             description=description,
-            colour=colours.light_blue()
+            colour=Colour.light_blue()
         )
 
         embed.set_footer(text='We are dedicated to ensure a safe and respective community and all reports will be looked into.')

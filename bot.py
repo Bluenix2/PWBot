@@ -8,8 +8,7 @@ import discord
 from discord.ext import commands
 
 import config
-from cogs import meta
-from cogs.utils import context, settings
+from cogs import meta, utils
 
 initial_extensions = (
     'cogs.admin',
@@ -40,7 +39,7 @@ class PWBot(commands.Bot):
 
         self.client_id = config.client_id
 
-        self.settings = settings.Settings()
+        self.settings = utils.Settings()
 
         loop = asyncio.get_event_loop()
         try:
@@ -101,7 +100,7 @@ class PWBot(commands.Bot):
                 self.dispatch('command_error', ctx, exc)
 
     async def process_commands(self, message):
-        ctx = await self.get_context(message, cls=context.Context)
+        ctx = await self.get_context(message, cls=utils.Context)
 
         try:
             await self.invoke(ctx)
