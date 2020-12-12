@@ -22,26 +22,21 @@ class ModLogging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
+        timestamp = datetime.datetime.utcnow()
+
         if member.joined_at is None:
             return
 
-        # Like above we want to try to find the audit log for the action.
-        # Difference here is that there is no garuantee to find any entry at all,
-        # whereas above you *should* always find a log.
-
-        # Before the wait and audit log stuff
-        timestamp = datetime.datetime.utcnow()
-
-        # Give Discord some time to update, like a grace perioud.
         await asyncio.sleep(1)
 
         log = None
         limit_timestamp = datetime.datetime.utcfromtimestamp(time.time() - 60)
 
-        # This has a little bit higher treshold than the ban.
+        # This has a little bit higher treshold because there is no garuantee to find the log.
         guild = member.guild
         async for entry in guild.audit_logs(action=discord.AuditLogAction.kick, limit=25):
             if member.joined_at > entry.created_at or entry.created_at < limit_timestamp:
+                # We've missed it, or it's not there
                 break
 
             if entry.target == member:
@@ -71,12 +66,9 @@ class ModLogging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
-        # We want to find the audit log for the action, to get all info.
 
-        # Before the wait and audit log stuff
         timestamp = datetime.datetime.utcnow()
 
-        # We give Discord some time to update its audit logs, to ensure it's there
         await asyncio.sleep(1)
 
         log = None
@@ -110,7 +102,6 @@ class ModLogging(commands.Cog):
     async def on_member_unban(self, guild, user):
         timestamp = datetime.datetime.utcnow()
 
-        # Let's give Discord some grace perioud to update its audit logs.
         await asyncio.sleep(1)
 
         log = None
