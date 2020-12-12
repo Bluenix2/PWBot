@@ -36,6 +36,7 @@ class Settings:
         self.language_message = settings.pop('language_message', 0)
 
         self.high5_emoji = settings.pop('high5_emoji')
+        self.timed_out_role = settings.pop('timed_out_role')
 
         # The dict should now be empty, if it's not then that
         # means that there are more keys in the settings json than

@@ -65,8 +65,84 @@ class ModLogging(commands.Cog):
         await self.automod_channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_member_ban(self, guild, user):
+    async def on_member_update(self, before, after):  # noqa: C901
+        timestamp = datetime.datetime.utcnow()
 
+        # Filter out all other changes than role updates
+        if before.status != after.status:
+            return
+        elif before.activities != after.activities:
+            return
+        elif before.nick != after.nick:
+            return
+
+        role = self.bot.settings.timed_out_role
+
+        # We're touching some internal lib implementation for performance.
+        # This will match if both has it, or doesn't. As in, some other role changed.
+        if before._roles.has(role) == after._roles.has(role) and before is not after:
+            return
+
+        await asyncio.sleep(1)
+
+        log = None
+        limit_timestamp = datetime.datetime.utcfromtimestamp(time.time() - 60)
+
+        entries = after.guild.audit_logs(
+            action=discord.AuditLogAction.member_role_update, limit=25
+        )
+        async for entry in entries:
+            if entry.target == after and entry.created_at > limit_timestamp:
+                log = entry
+                break
+
+        if not log and before is after:
+            # There will be no way to figure out if it was added or removed
+            return
+
+        def has_role(roles):
+            for item in roles:
+                if item.id == role:
+                    return True
+            return False
+
+        title = None
+        colour = None
+
+        before_has = has_role(log.before.roles) if log else before._roles.has(role)
+        after_has = has_role(log.after.roles) if log else after._roles.has(role)
+
+        if not before_has and after_has:
+            title = 'Member Timed Out'
+            colour = Colour.apricot()
+        elif before_has and not after_has:
+            title = 'Member Un-timed Out'
+            colour = Colour.light_blue()
+
+        if title is None or colour is None:
+            return
+
+        embed = discord.Embed(
+            title=title,
+            description=f'{after} (ID: {after.id})',
+            colour=colour,
+            timestamp=timestamp,
+        )
+        embed.set_thumbnail(url=after.avatar_url)
+
+        if log:
+            embed.set_author(
+                name=f'{log.user.display_name} (ID: {log.user.id})',
+                icon_url=log.user.avatar_url
+            )
+
+            if log.reason:
+                embed.add_field(name='Reason', value=log.reason)
+
+        await self.automod_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
         timestamp = datetime.datetime.utcnow()
 
         await asyncio.sleep(1)
