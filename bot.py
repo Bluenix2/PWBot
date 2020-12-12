@@ -15,6 +15,7 @@ initial_extensions = (
     'cogs.admin',
     'cogs.events',
     'cogs.lobby',
+    'cogs.logging',
     'cogs.meta',
     'cogs.misc',
     'cogs.responses',
@@ -26,7 +27,8 @@ initial_extensions = (
 
 class PWBot(commands.Bot):
     def __init__(self):
-        intents = discord.Intents(guilds=True, messages=True, reactions=True)
+        intents = discord.Intents(guilds=True, messages=True, reactions=True,
+                                  bans=True, members=True)
         allowed_mentions = discord.AllowedMentions(everyone=False, users=True, roles=False)
         super().__init__(command_prefix='?', fetch_offline_members=False,
                          help_command=meta.PWBotHelp(command_attrs={

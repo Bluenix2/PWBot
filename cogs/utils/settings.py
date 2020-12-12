@@ -29,6 +29,7 @@ class Settings:
         self.beta_channel = settings.pop('beta_channel')
         self.help_channel = settings.pop('help_channel')
         self.tournaments_channel = settings.pop('tournaments_channel')
+        self.automod_channel = settings.pop('automod_channel')
 
         self.role_channel = settings.pop('role_channel')
         self.pings_message = settings.pop('pings_message', 0)
