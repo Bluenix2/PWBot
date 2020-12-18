@@ -6,12 +6,9 @@ from discord.ext import commands
 from cogs.utils import Colour
 
 
-def lobby_channel_only():
+def is_beta_channel():
     async def predicate(ctx):
-        return ctx.channel.id in (
-            ctx.bot.settings.beta_channel,
-            ctx.bot.settings.tournaments_channel
-        )
+        return ctx.channel.id == ctx.bot.settings.beta_channel
     return commands.check(predicate)
 
 
@@ -26,15 +23,15 @@ class Lobby:
         self.message = message
         self.players = {owner_id}
 
-        async def timeout(timeout=21600):
-            await asyncio.sleep(timeout)
+        async def timeout():
+            await asyncio.sleep(21600)
             await self.disband(timeout=True)
 
         self.timeout = asyncio.create_task(timeout())
 
     async def disband(self, *, timeout=False):
         if not timeout:
-            self.timeout.cancel()
+            self.timeout.cancel()  # Cancel the timeout task
 
         self.manager.lobbies.remove(self)
         await self.message.clear_reactions()
@@ -72,12 +69,10 @@ class LobbyManager(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.channel_id not in (
-                self.bot.settings.beta_channel,
-                self.bot.settings.tournaments_channel):
+        if payload.channel_id == self.bot.settings.beta_channel:
             return
 
-        if payload.user_id == self.bot.client_id:     # ignore the bot's reacts
+        if payload.user_id == self.bot.client_id:
             return
 
         if payload.emoji.id != self.bot.settings.high5_emoji:
@@ -120,9 +115,7 @@ class LobbyManager(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
-        if payload.channel_id not in (
-                self.bot.settings.beta_channel,
-                self.bot.settings.tournaments_channel):
+        if payload.channel_id == self.bot.settings.beta_channel:
             return
 
         if payload.user_id == self.bot.client_id:
@@ -145,7 +138,7 @@ class LobbyManager(commands.Cog):
             )
 
     @commands.group(invoke_without_command=True)
-    @lobby_channel_only()
+    @is_beta_channel()
     async def lobby(self, ctx, players: int = 5):
         """
         Open a managed waiting lobby to gather players. This then pings all players when full.
@@ -169,7 +162,7 @@ class LobbyManager(commands.Cog):
         await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
 
     @lobby.command(name='disband')
-    @lobby_channel_only()
+    @is_beta_channel()
     async def lobby_disband(self, ctx):
         """Disband an old lobby."""
         lobby = self.get_lobby_by_owner(ctx.author.id)
