@@ -151,11 +151,12 @@ class LobbyManager(commands.Cog):
         if players < 2 or players > 8:
             return
 
-        message = await ctx.send(embed=discord.Embed(
+        beta_mention = f'<@&{self.bot.settings.beta_role}>'
+        message = await ctx.send(beta_mention, embed=discord.Embed(
             title='Looking for players!',
             description='If you are available for a game, react below.',
             colour=Colour.cyan(),
-        ))
+        ), allowed_mentions=discord.AllowedMentions(everyone=True, roles=True))
 
         self.lobbies.add(Lobby(self, ctx.author.id, message, players))
 
