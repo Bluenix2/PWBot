@@ -93,6 +93,14 @@ class Meta(commands.Cog):
             )
         )
 
+    @commands.command()
+    @commands.is_owner()
+    async def status(self, ctx, *, message=None):
+        """Change the status of the bot, set a specific game activity."""
+        game = discord.Game(message) if message else None
+        await self.bot.change_presence(activity=game)
+        await ctx.send('Changed status message.')
+
 
 def setup(bot):
     bot.add_cog(Meta(bot))
