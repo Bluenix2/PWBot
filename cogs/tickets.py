@@ -141,7 +141,17 @@ class _BaseManager(commands.Cog):
                 ), delete_after=10
             )
 
-        await self._create_ticket(author, issue, conn=ctx.db)
+        channel, record = await self._create_ticket(author, issue, conn=ctx.db)
+
+        # Only for tickets, reports should stay anonymous
+        if self.ticket_type == TicketType.ticket:
+            await ctx.send('Opened ticket #{} in {} for {}.'.format(
+                record['id'], channel.mention, author.mention
+            ), allowed_mentions=discord.AllowedMentions(users=False))
+        else:
+            await ctx.send('Opened {} #{} in {}.'.format(
+                self.ticket_type.name, record['id'], channel.mention
+            ))
 
     async def _create_ticket(self, author, issue, *, conn=None):
         conn = conn or self.bot.pool  # We expect to be in a cog
