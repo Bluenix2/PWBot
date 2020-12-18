@@ -2,7 +2,7 @@ import discord
 
 
 class Colour(discord.Colour):
-    """Custom Clour class with additional colours
+    """Custom Colour class with additional colours
     taken from the game.
     """
 

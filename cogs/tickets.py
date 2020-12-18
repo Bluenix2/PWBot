@@ -312,7 +312,7 @@ class TicketManager(_BaseManager):
 
     @property
     def message_id(self):
-        # Defining the attribute directy means it doesn't get changed
+        # Defining the attribute directly means it doesn't get changed
         # when bot.settings.ticket_message gets set, this is a work-around
         return self.bot.settings.ticket_message
 
@@ -419,7 +419,7 @@ class ReportManager(_BaseManager):
 
     @property
     def message_id(self):
-        # Defining the attribute directy means it doesn't get changed
+        # Defining the attribute directly means it doesn't get changed
         # when bot.settings.report_message gets set, this is a work-around
         return self.bot.settings.report_message
 

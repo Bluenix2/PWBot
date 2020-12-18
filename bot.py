@@ -122,7 +122,7 @@ class PWBot(commands.Bot):
     async def create_content(self, content, *, conn=None):
         """Create and insert content into the database, returns the created id
         so that it can be used to create a tag. This does not handle any errors
-        that may occurr while inserting.
+        that may occur while inserting.
 
         It is recommended that `conn` is through a transaction.
         """

@@ -32,7 +32,7 @@ class ModLogging(commands.Cog):
         log = None
         limit_timestamp = datetime.datetime.utcfromtimestamp(time.time() - 60)
 
-        # This has a little bit higher treshold because there is no garuantee to find the log.
+        # This has a little bit higher treshold because there is no guarantee to find the log.
         guild = member.guild
         async for entry in guild.audit_logs(action=discord.AuditLogAction.kick, limit=25):
             if member.joined_at > entry.created_at or entry.created_at < limit_timestamp:
