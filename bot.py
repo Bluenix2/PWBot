@@ -16,8 +16,8 @@ initial_extensions = (
     'cogs.logging',
     'cogs.meta',
     'cogs.misc',
-    'cogs.responses',
     'cogs.roles',
+    'cogs.suggestions',
     'cogs.tags',
     'cogs.tickets',
 )

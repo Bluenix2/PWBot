@@ -1,8 +1,8 @@
 from discord.ext import commands
 
 
-class Responses(commands.Cog):
-    """Cog for common responses to issues."""
+class Suggestions(commands.Cog):
+    """Cog for handling the suggestions voting, isolated for easy unloading."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -20,4 +20,4 @@ class Responses(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Responses(bot))
+    bot.add_cog(Suggestions(bot))
