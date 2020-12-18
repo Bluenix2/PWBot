@@ -46,7 +46,7 @@ class Settings:
         # we have defined here. We throw an error to help, to remind
         # that we must define it above.
         if settings:  # Empty dictionaries evaluate to False
-            raise KeyError(f'Too many keys in settings.json file: {settings}')
+            raise RuntimeError(f'Too many keys in settings.json file: {settings}')
 
         # Remove it so that it's not saved when changing other attributes
         del self.init
