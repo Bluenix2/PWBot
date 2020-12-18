@@ -61,13 +61,7 @@ class PWBot(commands.Bot):
         print(f'Ready: {self.user} (ID: {self.user.id})')
 
     async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.author.send('This command cannot be used in private messages.')
-
-        elif isinstance(error, commands.DisabledCommand):
-            await ctx.author.send('Sorry, this command cannot be used at the moment.')
-
-        elif isinstance(error, commands.CommandInvokeError):
+        if isinstance(error, commands.CommandInvokeError):
             original = error.original
             if not isinstance(original, discord.HTTPException):
                 print(f'Inside command {ctx.command.qualified_name}:', file=sys.stderr)
