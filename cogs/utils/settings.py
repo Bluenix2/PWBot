@@ -29,6 +29,7 @@ class Settings:
         self.beta_channel = settings.pop('beta_channel')
         self.help_channel = settings.pop('help_channel')
         self.tournaments_channel = settings.pop('tournaments_channel')
+        self.event_channel = settings.pop('event_channel')
         self.automod_channel = settings.pop('automod_channel')
 
         self.role_channel = settings.pop('role_channel')
@@ -36,6 +37,7 @@ class Settings:
         self.language_message = settings.pop('language_message', 0)
 
         self.high5_emoji = settings.pop('high5_emoji')
+        self.survivor_emoji = settings.pop('survivor_emoji')
         self.timed_out_role = settings.pop('timed_out_role')
         self.beta_role = settings.pop('beta_role')
 

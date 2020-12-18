@@ -12,7 +12,6 @@ from cogs import meta, utils
 
 initial_extensions = (
     'cogs.admin',
-    'cogs.events',
     'cogs.lobby',
     'cogs.logging',
     'cogs.meta',
