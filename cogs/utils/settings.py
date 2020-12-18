@@ -41,6 +41,10 @@ class Settings:
         self.timed_out_role = settings.pop('timed_out_role')
         self.beta_role = settings.pop('beta_role')
 
+        self.update_when_message = settings.pop(
+            'update_when_message', 'The update was delayed because you asked for it.'
+        )
+
         # The dict should now be empty, if it's not then that
         # means that there are more keys in the settings json than
         # we have defined here. We throw an error to help, to remind
