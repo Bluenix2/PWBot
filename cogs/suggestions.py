@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -15,8 +16,11 @@ class Suggestions(commands.Cog):
         if message.channel.id != self.bot.settings.suggestions_channel:
             return
 
-        await message.add_reaction('\N{THUMBS UP SIGN}')
-        await message.add_reaction('\N{THUMBS DOWN SIGN}')
+        try:
+            await message.add_reaction('\N{THUMBS UP SIGN}')
+            await message.add_reaction('\N{THUMBS DOWN SIGN}')
+        except discord.errors.NotFound:
+            return
 
 
 def setup(bot):
