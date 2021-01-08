@@ -84,7 +84,7 @@ class Roles(commands.Cog):
         message = await self.role_channel.fetch_message(message_id)
 
         message.embeds[0].add_field(
-            name=record['name'],
+            name=record['reaction'] + ' ' + record['name'],
             value=record['description'],
             inline=True
         )
@@ -100,7 +100,9 @@ class Roles(commands.Cog):
         record = await conn.fetchrow(query, emoji, role_type.value)
         message = await self.role_channel.fetch_message(message_id)
 
-        index = [em.name for em in message.embeds[0].fields].index(record['name'])
+        index = [em.name for em in message.embeds[0].fields].index(
+            record['reaction'] + ' ' + record['name']
+        )
         message.embeds[0].remove_field(index)
 
         await message.edit(embed=message.embeds[0])
@@ -166,7 +168,7 @@ class Roles(commands.Cog):
 
         for record in records:
             embed.add_field(
-                name=record['name'],
+                name=record['reaction'] + ' ' + record['name'],
                 value=record['description'],
                 inline=True
             )
@@ -234,7 +236,7 @@ class Roles(commands.Cog):
 
         for record in records:
             embed.add_field(
-                name=record['name'],
+                name=record['reaction'] + ' ' + record['name'],
                 value=record['description'],
                 inline=False
             )
