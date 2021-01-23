@@ -17,7 +17,8 @@ class UpdateWhen(commands.Cog):
         if message.content.startswith('?updatewhen'):
             return
 
-        if 'update' in message.content and 'when' in message.content:
+        content_lower = message.content.lower()
+        if 'update' in content_lower and 'when' in content_lower:
             await message.channel.send(self.bot.settings.update_when_message)
 
     @commands.command()
