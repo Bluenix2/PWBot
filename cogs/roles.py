@@ -9,6 +9,7 @@ from cogs.utils import Colour
 class RoleType(enum.Enum):
     ping = 0
     language = 1
+    platform = 2
 
 
 class Roles(commands.Cog):
@@ -25,6 +26,7 @@ class Roles(commands.Cog):
         return {
             self.bot.settings.pings_message: RoleType.ping,
             self.bot.settings.language_message: RoleType.language,
+            self.bot.settings.platform_message: RoleType.platform,
         }
 
     @property
@@ -243,6 +245,75 @@ class Roles(commands.Cog):
 
         message = await ctx.send(embed=embed)
         self.bot.settings.pings_message = message.id
+
+        for record in records:
+            await message.add_reaction(record['reaction'].strip('<>'))
+
+    @commands.group(invoke_without_command=True)
+    @commands.is_owner()
+    async def platforms(self, ctx):
+        """Manage platform roles."""
+        # This is only meant as a container for the platform roles management
+        await ctx.send_help('platforms')  # We send help for this group
+
+    @platforms.command(name='add')
+    # We already check for owner in the parent command
+    async def platforms_add(self, ctx, emoji, role: discord.Role, name, *, field):
+        """Add a new platform role to the reaction embed."""
+        await self._add_role(
+            emoji, role, RoleType.platform, name,
+            field, self.bot.settings.platform_message,
+            conn=ctx.db
+        )
+
+    @platforms.command(name='remove')
+    # We already do a check for bot owner
+    async def platforms_remove(self, ctx, emoji):
+        """Remove a platform role from the embed message."""
+        await self._remove_role(
+            emoji, self.bot.settings.platform_message, RoleType.platform,
+            conn=ctx.db
+        )
+
+    @platforms.command(name='send')
+    # Already checking for bot owner
+    async def platforms_send(self, ctx):
+        """Send the initial reaction embed for platform roles."""
+        prompt = 'Are you sure you would like to send the platforms reaction message?'
+        if not await ctx.prompt(prompt):
+            return
+
+        await ctx.message.delete()
+
+        description = '\n'.join((
+            "To help us provide accurate help we've created platform-specific" +
+            'help channels and roles.\n',
+
+            'React to this message to assign the appropriate role.',
+            'If you have any questions contact a Community Manager.',
+        ))
+        embed = discord.Embed(
+            title='Platform Roles',
+            description=description,
+            colour=Colour.light_blue()
+        )
+
+        records = await ctx.db.fetch(
+            'SELECT * FROM roles WHERE type=$1;', RoleType.platform.value
+        )
+
+        if not records:
+            return
+
+        for record in records:
+            embed.add_field(
+                name=record['reaction'] + ' ' + record['name'],
+                value=record['description'],
+                inline=False
+            )
+
+        message = await ctx.send(embed=embed)
+        self.bot.settings.platform_message = message.id
 
         for record in records:
             await message.add_reaction(record['reaction'].strip('<>'))

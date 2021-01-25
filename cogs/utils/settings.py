@@ -35,6 +35,7 @@ class Settings:
         self.role_channel = settings.pop('role_channel')
         self.pings_message = settings.pop('pings_message', 0)
         self.language_message = settings.pop('language_message', 0)
+        self.platform_message = settings.pop('platform_message', 0)
 
         self.high5_emoji = settings.pop('high5_emoji')
         self.survivor_emoji = settings.pop('survivor_emoji')
