@@ -25,7 +25,7 @@ class LFG(commands.Cog):
 
         def check(msg):
             permissions = msg.author.guild_permissions
-            return permissions.manage_roles
+            return not permissions.manage_roles
 
         await channel.purge(check=check)
 
