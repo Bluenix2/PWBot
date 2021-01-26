@@ -31,6 +31,7 @@ class Settings:
         self.tournaments_channel = settings.pop('tournaments_channel')
         self.event_channel = settings.pop('event_channel')
         self.automod_channel = settings.pop('automod_channel')
+        self.lfg_channel = settings.pop('lfg_channel')
 
         self.role_channel = settings.pop('role_channel')
         self.pings_message = settings.pop('pings_message', 0)
