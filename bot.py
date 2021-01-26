@@ -18,6 +18,7 @@ initial_extensions = (
     'cogs.meta',
     'cogs.misc',
     'cogs.roles',
+    'cogs.streams',
     'cogs.suggestions',
     'cogs.tags',
     'cogs.tickets',
