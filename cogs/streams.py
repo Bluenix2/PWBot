@@ -18,6 +18,11 @@ class Streams(commands.Cog):
         if 'twitch.tv' not in message.content:
             return
 
+        await message.guild.chunk()
+
+        if message.author.guild_permissions.manage_roles:
+            return
+
         await message.delete(delay=14400)
 
 
