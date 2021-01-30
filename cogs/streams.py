@@ -10,20 +10,26 @@ class Streams(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.channel.id != self.bot.settings.streams_channel:
+        self.clear_channel.start()
+
+    def cog_unload(self):
+        self.clear_channel.cancel()
+
+    @tasks.loop(hours=168.0)
+    async def clear_channel(self):
+        """Clear the streams channel every week."""
+        channel = self.bot.get_channel(self.bot.settings.streams_channel)
+
+        if channel is None:
             return
 
-        if 'twitch.tv' not in message.content:
-            return
+        await channel.guild.chunk()
 
-        await message.guild.chunk()
+        def check(msg):
+            permissions = msg.author.guild_permissions
+            return not permissions.manage_roles
 
-        if message.author.guild_permissions.manage_roles:
-            return
-
-        await message.delete(delay=14400)
+        await channel.purge(check=check)
 
 
 def setup(bot):
