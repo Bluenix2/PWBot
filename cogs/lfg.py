@@ -24,6 +24,8 @@ class LFG(commands.Cog):
         await channel.guild.chunk()
 
         def check(msg):
+            if not isinstance(msg.author, discord.Member):
+                return False
             permissions = msg.author.guild_permissions
             return not permissions.manage_roles
 
