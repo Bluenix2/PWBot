@@ -27,7 +27,7 @@ class Streams(commands.Cog):
 
         def check(msg):
             if not isinstance(msg.author, discord.Member):
-                return False
+                return True
             permissions = msg.author.guild_permissions
             return not permissions.manage_roles
 
