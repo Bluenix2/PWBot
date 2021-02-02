@@ -43,6 +43,8 @@ class Settings:
         self.survivor_emoji = settings.pop('survivor_emoji')
         self.timed_out_role = settings.pop('timed_out_role')
         self.beta_role = settings.pop('beta_role')
+        self.pc_channel = settings.pop('pc_channel')
+        self.xbox_channel = settings.pop('xbox_channel')
 
         self.update_when_message = settings.pop(
             'update_when_message', 'The update was delayed because you asked for it.'

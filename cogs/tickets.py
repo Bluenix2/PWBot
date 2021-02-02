@@ -129,7 +129,7 @@ class _BaseManager(commands.Cog):
 
         await self._create_ticket(payload.member, None)
 
-    async def on_open_command(self, ctx, issue, *, user=None):
+    async def on_open_command(self, ctx, issue, *, prefix=None, user=None):
         author = user or ctx.author
 
         await ctx.message.delete()
@@ -141,7 +141,7 @@ class _BaseManager(commands.Cog):
                 ), delete_after=10
             )
 
-        channel, record = await self._create_ticket(author, issue, conn=ctx.db)
+        channel, record = await self._create_ticket(author, issue, prefix=prefix, conn=ctx.db)
 
         # Only for tickets, reports should stay anonymous
         if self.ticket_type == TicketType.ticket:
@@ -153,7 +153,7 @@ class _BaseManager(commands.Cog):
                 self.ticket_type.name, record['id'], channel.mention
             ))
 
-    async def _create_ticket(self, author, issue, *, conn=None):
+    async def _create_ticket(self, author, issue, *, prefix=None, conn=None):
         conn = conn or self.bot.pool  # We expect to be in a cog
 
         ticket_id = await conn.fetchval("SELECT nextval('ticket_id');")
@@ -166,7 +166,9 @@ class _BaseManager(commands.Cog):
         overwrites.update(self.category.overwrites)
 
         channel = await self.category.create_text_channel(
-            name='{0}-{1}'.format(ticket_id, issue[:90] if issue else author.display_name),
+            name='{0}-{1}-{2}'.format(
+                prefix or '', ticket_id, issue[:90] if issue else author.display_name
+            ),
             sync_permissions=True, overwrites=overwrites,
             reason='Creating ticket #{0}: {1}'.format(ticket_id, issue)
         )
@@ -183,13 +185,15 @@ class _BaseManager(commands.Cog):
         await channel.send(
             'Welcome {0}'.format(author.mention),
             embed=discord.Embed(
-                description=self.open_message,
+                description=await self.bot.fetch_tag(
+                    (prefix + '-' + self.ticket_type.name) if prefix else self.ticket_type.name),
                 colour=Colour.light_blue(),
             )
         )
 
         title = '{} #{}{}'.format(
-            self.ticket_type.name[0].upper() + self.ticket_type.name[1:],
+            (prefix[0].upper() + prefix[1:]) if prefix else '' +
+            (self.ticket_type.name[0].upper() + self.ticket_type.name[1:]),
             record['id'], ' - {}'.format(issue[:235]) if issue else ''
         )
 
@@ -341,7 +345,25 @@ class TicketManager(_BaseManager):
     @ticket.command(name='open')
     async def ticket_open(self, ctx, *, issue=None):
         """Open a help ticket."""
-        await self.on_open_command(ctx, issue)
+        if self.bot.settings.pc_channel == ctx.channel.id:
+            prefix = 'pc'
+        elif self.bot.settings.xbox_channel == ctx.channel.id:
+            prefix = 'xbox'
+        else:
+            prefix = ''
+        await self.on_open_command(ctx, issue, prefix=prefix)
+
+    @ticket.command(name='pc')
+    @is_mod()
+    async def ticket_pc(self, ctx, user: discord.Member, *, issue=None):
+        """Open a Pc ticket for a member. This can only be used by mods."""
+        await self.on_open_command(ctx, issue, prefix='pc', user=user)
+
+    @ticket.command(name='xbox')
+    @is_mod()
+    async def ticket_xbox(self, ctx, user: discord.Member, *, issue=None):
+        """Open a Xbox ticket for a member. This can only be used by mods."""
+        await self.on_open_command(ctx, issue, prefix='xbox', user=user)
 
     @ticket.command(name='openas')
     @is_mod()
