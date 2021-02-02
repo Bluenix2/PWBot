@@ -63,7 +63,7 @@ class Tags(commands.Cog):
         """Add a new tag, alias to the content."""
         await ctx.db.acquire()
 
-        content_id = self._get_content_id(name)
+        content_id = await self._get_content_id(name)
         if not content_id:
             return await ctx.send('That is not an existing tag!')
 
@@ -81,7 +81,7 @@ class Tags(commands.Cog):
         """Override and edit a tag's content."""
         await ctx.db.acquire()
 
-        content_id = self._get_content_id(name)
+        content_id = await self._get_content_id(name)
         if not content_id:
             return await ctx.send('That is not an existing tag!')
 
