@@ -369,7 +369,13 @@ class TicketManager(_BaseManager):
     @is_mod()
     async def ticket_openas(self, ctx, user: discord.Member, *, issue=None):
         """Open a ticket for a member. This can only be used by mods."""
-        await self.on_open_command(ctx, issue, user=user)
+        if self.bot.settings.pc_channel == ctx.channel.id:
+            prefix = 'pc'
+        elif self.bot.settings.xbox_channel == ctx.channel.id:
+            prefix = 'xbox'
+        else:
+            prefix = ''
+        await self.on_open_command(ctx, issue, prefix=prefix, user=user)
 
     @ticket.command(name='adduser')
     @ticket_only()
