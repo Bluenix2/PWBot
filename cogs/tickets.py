@@ -186,7 +186,8 @@ class _BaseManager(commands.Cog):
             'Welcome {0}'.format(author.mention),
             embed=discord.Embed(
                 description=await self.bot.fetch_tag(
-                    (prefix + '-' + self.ticket_type.name) if prefix else self.ticket_type.name),
+                    prefix + '-' + self.ticket_type.name
+                ) if prefix else self.open_message,
                 colour=Colour.light_blue(),
             )
         )
