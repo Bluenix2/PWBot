@@ -221,7 +221,7 @@ class _BaseManager(commands.Cog):
         )]
 
         attachments = []
-        async for message in channel.history(oldest_first=True):
+        async for message in channel.history(limit=None, oldest_first=True):
             messages.append(
                 "[{0}] {1.author} ({1.author.id}){2}: {1.content}".format(
                     message.created_at.strftime('%Y %b %d %H:%M:%S'),

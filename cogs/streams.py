@@ -31,7 +31,7 @@ class Streams(commands.Cog):
             permissions = msg.author.guild_permissions
             return not permissions.manage_roles
 
-        await channel.purge(check=check)
+        await channel.purge(limit=None, check=check)
 
 
 def setup(bot):
