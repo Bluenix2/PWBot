@@ -7,6 +7,9 @@ class UpdateWhen(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def cog_check(self, ctx):
+        return await self.bot.is_owner(ctx.author)
+
     @commands.Cog.listener()
     async def on_message(self, message):
         """Detect "update when" and send a message."""
