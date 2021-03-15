@@ -22,6 +22,7 @@ initial_extensions = (
     'cogs.suggestions',
     'cogs.tags',
     'cogs.tickets',
+    'cogs.weather',
 )
 
 
@@ -41,6 +42,7 @@ class PWBot(commands.Bot):
         self.client_id = config.client_id
 
         self.settings = utils.Settings()
+        self.weather_key = config.weather_key
 
         loop = asyncio.get_event_loop()
         try:
