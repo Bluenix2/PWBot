@@ -29,6 +29,22 @@ class Lobby:
 
         self.timeout = asyncio.create_task(timeout())
 
+    async def start(self):
+        self.manager.lobbies.remove(self)
+        await self.message.clear_reactions()
+        await self.message.channel.send(
+            'You have enough players to start a game! ' + ', '.join(
+                '<@{0}>'.format(player) for player in self.players
+            ),
+        )
+
+        description = 'This lobby reached the desired amount of players.'
+        await self.message.edit(embed=discord.Embed(
+            title='Lobby Full!',
+            description=description,
+            colour=Colour.apricot(),
+        ))
+
     async def disband(self, *, timeout=False):
         if not timeout:
             self.timeout.cancel()  # Cancel the timeout task
@@ -98,20 +114,7 @@ class LobbyManager(commands.Cog):
             )
 
         elif lobby.required_players == len(lobby.players):
-            await lobby.message.clear_reactions()
-            await lobby.message.channel.send(
-                'You have enough players to start a game! ' + ', '.join(
-                    '<@{0}>'.format(player) for player in lobby.players
-                ),
-            )
-            self.lobbies.remove(lobby)
-
-            description = 'This lobby reached the desired amount of players.'
-            await lobby.message.edit(embed=discord.Embed(
-                title='Lobby Full!',
-                description=description,
-                colour=Colour.apricot(),
-            ))
+            await lobby.start()
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
@@ -161,6 +164,16 @@ class LobbyManager(commands.Cog):
         self.lobbies.add(Lobby(self, ctx.author.id, message, players))
 
         await message.add_reaction(':high5:{}'.format(self.bot.settings.high5_emoji))
+
+    @lobby.command(name='start')
+    @is_beta_channel()
+    async def lobby_start(self, ctx):
+        """Start a lobby and ping all players."""
+        lobby = self.get_lobby_by_owner(ctx.author.id)
+        if lobby is None:
+            return
+
+        await lobby.start()
 
     @lobby.command(name='disband')
     @is_beta_channel()
