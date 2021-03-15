@@ -69,7 +69,7 @@ class LobbyManager(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.channel_id == self.bot.settings.beta_channel:
+        if payload.channel_id != self.bot.settings.beta_channel:
             return
 
         if payload.user_id == self.bot.client_id:
@@ -115,7 +115,7 @@ class LobbyManager(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
-        if payload.channel_id == self.bot.settings.beta_channel:
+        if payload.channel_id != self.bot.settings.beta_channel:
             return
 
         if payload.user_id == self.bot.client_id:
