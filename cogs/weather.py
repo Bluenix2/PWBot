@@ -37,7 +37,7 @@ class UpdateWeather(commands.Cog):
         return self.weather
 
     def caclulate_direction(self, degree):
-        directions = ['N', 'NE' 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
+        directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
         return directions[round((degree % 360) / 45)]
 
     @commands.Cog.listener()
