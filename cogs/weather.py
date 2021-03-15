@@ -1,3 +1,5 @@
+import asyncio
+
 import aiohttp
 from discord.ext import commands
 
@@ -11,17 +13,28 @@ class UpdateWeather(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        self.weather = None
         self.city_code = 6354959  # Newfoundland and Labrador
 
     async def cog_check(self, ctx):
         return await self.bot.is_owner(ctx.author)
 
     async def fetch_weather(self):
+        if self.weather is not None:
+            return self.weather
+
         params = {'id': self.city_code, 'appid': self.bot.weather_key, 'units': 'metric'}
         endpoint = 'https://api.openweathermap.org/data/2.5/weather'
         async with aiohttp.ClientSession() as session:
             async with session.get(endpoint, params=params) as response:
-                return await response.json()
+                self.weather = await response.json()
+
+        async def cache():
+            await asyncio.sleep(1200)
+            self.weather = None
+
+        asyncio.create_task(cache())
+        return self.weather
 
     def caclulate_direction(self, degree):
         directions = ['N', 'NE' 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
