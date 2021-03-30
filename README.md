@@ -41,6 +41,8 @@ This allows the bot to save certain data past restart
 See `cogs/utils/settings.py` for keys which need to be defined
 in the json file.
 
+Name the Google Sheets API key json file `gsheets.json` and place it under cogs.
+
 ## Requirements
 
 - Python 3

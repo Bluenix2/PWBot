@@ -3,3 +3,4 @@ click
 asyncpg
 flake8
 python-dateutil
+pygsheets
