@@ -70,8 +70,23 @@ class PWBot(commands.Bot):
             commands.CommandNotFound,
             commands.CheckFailure
         )
-        if not isinstance(error, ignored_errors):
-            await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+        if isinstance(error, ignored_errors):
+            return
+
+        if isinstance(error, commands.CommandInvokeError):
+            original = error.original
+            if isinstance(original, discord.HTTPException):
+                return
+
+            tb = ''.join(traceback.format_exception(
+                type(original), original, original.__traceback__
+            ))
+
+            print(f'Inside command {ctx.command.qualified_name}:', file=sys.stderr)
+            traceback.print_tb(original.__traceback__)
+            print(f'{original.__class__.__name__}: {original}', file=sys.stderr)
+
+            await ctx.send(f'```py\n{tb}\n```')
 
     async def invoke(self, ctx):
         # This is copied from commands.Bot.invoke, we still want to execute commands like usual
