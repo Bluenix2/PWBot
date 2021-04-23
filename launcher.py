@@ -104,14 +104,21 @@ def migrate():
     To migrate between multiple version you'll need to run each
     version's migration in ascending order.
     """
-    click.echo('Migrating database from v1.0.2 to v1.1.0')
+    click.echo('Migrating database.')
 
     run = asyncio.get_event_loop().run_until_complete
 
     conn = run(asyncpg.connect(config.postgresql))
 
     queries = [
-        """ALTER TABLE tickets ALTER COLUMN issue TYPE VARCHAR(1000);""",
+        """CREATE TABLE suggestions (
+            message_id BIGINT PRIMARY KEY,
+            author_id BIGINT NOT NULL,
+            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            content VARCHAR(2000) NOT NULL,
+            upvotes INT DEFAULT 1,
+            downvotes INT DEFAULT 1
+        );""",
     ]
 
     for query in queries:
