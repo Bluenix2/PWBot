@@ -71,12 +71,12 @@ class PWBot(commands.Bot):
             commands.CheckFailure
         )
         if isinstance(error, ignored_errors):
-            return
+            print(f'Ignoring error: {error}')
 
         if isinstance(error, commands.CommandInvokeError):
             original = error.original
             if isinstance(original, discord.HTTPException):
-                return
+                print(f'Unexpected HTTPException: {original}')
 
             tb = ''.join(traceback.format_exception(
                 type(original), original, original.__traceback__
