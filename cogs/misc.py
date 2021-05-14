@@ -50,9 +50,8 @@ class Misc(commands.Cog):
         """
         Send a message as the bot. The first word can be a channel to send in that channel.
         """
-        await ctx.message.delete()
-        words = text.split(' ')
 
+        words = text.split(' ')
         try:
             channel = await commands.TextChannelConverter().convert(
                 ctx, words[0]
@@ -61,6 +60,16 @@ class Misc(commands.Cog):
             channel = ctx.channel
         else:
             words = words[1:]
+
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            if channel != ctx.channel:
+                # We only want to announce this if it won't ruin the show
+                await ctx.send(
+                    'Failed to delete your message,' +
+                    f'still continuing with sending the message to {channel.mention}'
+                )
 
         await channel.send(' '.join(words), allowed_mentions=discord.AllowedMentions.none())
 
