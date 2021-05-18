@@ -37,14 +37,14 @@ class Context(commands.Context):
     @property
     def db(self):
         """Cached database connection"""
-        return self._db if self._db else self.pool
+        return self._db or self.pool
 
     async def _acquire(self, timeout):
         if self._db is None:
             self._db = await self.pool.acquire(timeout=timeout)
         return self._db
 
-    async def acquire(self, timeout=300.0):
+    def acquire(self, timeout=300.0):
         """Acquires a database connection from the pool.
         Implements both ::
 
