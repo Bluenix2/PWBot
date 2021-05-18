@@ -86,6 +86,16 @@ def init():
         """ALTER SEQUENCE tag_ids OWNED BY tags.id;""",
         """CREATE UNIQUE INDEX IF NOT EXISTS tags_name_idx ON tags (name);""",
         """CREATE INDEX IF NOT EXISTS tag_content_id_idx ON tags (content_id);""",
+        """CREATE TABLE IF NOT EXISTS bugs (
+            id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  -- Just to have a primary key
+            name TEXT NOT NULL,
+            message_link TEXT,
+            info TEXT,
+            created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
+            archived BOOLEAN DEFAULT FALSE
+        );
+        """,
+        """CREATE INDEX IF NOT EXISTS bugs_archived_idx ON bugs (archived);""",
     ]
 
     for query in queries:
