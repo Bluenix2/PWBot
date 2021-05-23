@@ -22,6 +22,7 @@ class Settings:
         self.log_channel = settings.pop('log_channel')
 
         self.report_message = settings.pop('report_message', 0)
+        self.report_player_channel = settings.pop('report_player_channel')
         self.report_category = settings.pop('report_category')
         self.report_status_channel = settings.pop('report_status_channel')
 

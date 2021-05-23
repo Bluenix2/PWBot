@@ -469,6 +469,50 @@ class ReportManager(_BaseManager):
     async def on_raw_reaction_add(self, payload):
         await self.on_reaction(payload)
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        """Automatically move messages into their reports"""
+
+        if message.channel.id != self.bot.settings.report_player_channel:
+            return
+        # Ignore the bot itself
+        if message.author.bot:
+            return
+
+        open_channel = await self.get_open_by_author(message.author.id)
+        if open_channel:
+            destination = self.bot.get_channel(open_channel)
+        else:
+            # create_ticket returns the channel and the ticket record, we want the channel
+            destination = (await self._create_ticket(message.author, None))[0]
+
+        webhook = None
+        for wh in await destination.webhooks():
+            if wh.user.id == self.bot.user.id:  # Look for the webhook we created
+                webhook = wh
+
+        # Create a new webhook if none exists
+        webhook = webhook or await destination.create_webhook(
+            name=f'Mimic {message.author.display_name} in report'
+        )
+
+        # Create a list of files, or None if the list is empty
+        files = [await attachment.to_file() for attachment in message.attachments] or None
+
+        await webhook.send(
+            message.content,
+            username=message.author.display_name,
+            avatar_url=message.author.avatar_url,
+            files=files
+        )
+
+        await message.delete()  # Delete the original message
+
+        # Ping the user in the report to remind them of it
+        msg = await self.bot.http.send_message(destination.id, message.author.mention)
+        await asyncio.sleep(10)
+        await self.bot.http.delete_message(destination.id, msg['id'])
+
     @commands.group(invoke_without_command=True)
     async def report(self, ctx, *, issue=None):
         """Open a report. Parent command for report ticket management."""
