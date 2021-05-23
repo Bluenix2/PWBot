@@ -159,7 +159,8 @@ class _BaseManager(commands.Cog):
     async def _create_ticket(self, author, issue, *, prefix=None, conn=None):
         conn = conn or self.bot.pool  # We expect to be in a cog
 
-        issue = issue.strip('<>')
+        # If issue is None
+        issue = issue.strip('<>') if isinstance(issue, str) else issue
         ticket_id = await conn.fetchval("SELECT nextval('ticket_id');")
 
         overwrites = {
