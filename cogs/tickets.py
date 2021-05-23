@@ -1,3 +1,4 @@
+import asyncio
 import enum
 import io
 import os
@@ -122,10 +123,12 @@ class _BaseManager(commands.Cog):
 
         open_channel = await self.get_open_by_author(payload.user_id)
         if open_channel:
-            return await self.bot.http.send_message(
+            msg = await self.bot.http.send_message(
                 open_channel, '<@{0}> you already have an open {1} in here.'.format(
                     payload.user_id, self.ticket_type.name
                 ))
+            await asyncio.sleep(10)
+            return await self.bot.http.delete_message(open_channel, msg['id'])
 
         await self._create_ticket(payload.member, None)
 
