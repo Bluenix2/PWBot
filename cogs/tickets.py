@@ -306,6 +306,32 @@ class _BaseManager(commands.Cog):
             reason='Closing ticket #{0} because: {1}'.format(record['id'], reason)
         )
 
+    async def _generate_opened_embed(self, embed, author):
+        tickets = await self.bot.pool.fetch(
+            'SELECT * FROM tickets WHERE author_id=$1 AND type=$2',
+            author.id, self.ticket_type.value
+        )
+
+        for ticket in tickets:
+            # Craft the message link
+            link = 'https://discord.com/channels/431073730828173312/'
+            link += f'{self.status_channel}/'
+            link += str(ticket['status_message_id'])
+
+            # Craft the field name
+            name = (self.ticket_type.name[0].upper() + self.ticket_type.name[1:])
+            name += f" #{ticket['id']}"
+            if ticket['issue']:
+                name += f" - {ticket['issue'][:235]}"
+
+            embed.add_field(
+                name=name,
+                value=f"[Message link!]({link})",
+                inline=False
+            )
+
+        return tickets
+
 
 class TicketManager(_BaseManager):
     """Cog managing all normal tickets for help."""
@@ -338,6 +364,18 @@ class TicketManager(_BaseManager):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         await self.on_reaction(payload)
+
+    @commands.command()
+    @is_mod()
+    async def tickets(self, ctx, user: discord.Member):
+        """Get all tickets opened by a specific user."""
+
+        embed = discord.Embed(title=f"Tickets opened by {user}", colour=Colour.light_blue())
+        tickets = await self._generate_opened_embed(embed, user)
+
+        embed.set_footer(text=f'{user} has opened {len(tickets)} tickets.')
+
+        await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
     async def ticket(self, ctx, *, issue=None):
@@ -517,6 +555,18 @@ class ReportManager(_BaseManager):
         msg = await self.bot.http.send_message(destination.id, message.author.mention)
         await asyncio.sleep(10)
         await self.bot.http.delete_message(destination.id, msg['id'])
+
+    @commands.command()
+    @is_mod()
+    async def reports(self, ctx, user: discord.Member):
+        """Get all reports opened by a specific user."""
+
+        embed = discord.Embed(title=f"Reports opened by {user}", colour=Colour.light_blue())
+        reports = await self._generate_opened_embed(embed, user)
+
+        embed.set_footer(text=f'{user} has opened {len(reports)} reports.')
+
+        await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
     async def report(self, ctx, *, issue=None):
