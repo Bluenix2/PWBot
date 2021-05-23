@@ -343,6 +343,10 @@ class TicketManager(_BaseManager):
     async def ticket(self, ctx, *, issue=None):
         """Open a ticket or send a help message. Parent command for ticket management."""
         if issue:  # Aid users in opening tickets
+            # Ignore moderators, so it isn't accidentally used
+            if ctx.author.guild_permissions.manage_roles:
+                return
+
             return await ctx.invoke(self.ticket_open, issue=issue)
 
         await ctx.send_tag('ticket')
@@ -517,6 +521,10 @@ class ReportManager(_BaseManager):
     @commands.group(invoke_without_command=True)
     async def report(self, ctx, *, issue=None):
         """Open a report. Parent command for report ticket management."""
+        # Ignore moderators, so it isn't accidentally used
+        if ctx.author.guild_permissions.manage_roles:
+            return
+
         await ctx.invoke(self.report_open, issue=issue)
 
     @report.command(name='open')
