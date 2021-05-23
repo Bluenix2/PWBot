@@ -67,7 +67,7 @@ class Misc(commands.Cog):
             if channel != ctx.channel:
                 # We only want to announce this if it won't ruin the show
                 await ctx.send(
-                    'Failed to delete your message,' +
+                    'Failed to delete your message, ' +
                     f'still continuing with sending the message to {channel.mention}'
                 )
 
