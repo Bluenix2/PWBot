@@ -39,7 +39,6 @@ def init():
             id SMALLINT PRIMARY KEY,
             channel_id BIGINT UNIQUE NOT NULL,
             author_id BIGINT NOT NULL,
-            type SMALLINT,
             state SMALLINT DEFAULT 0,
             status_message_id BIGINT,
             issue VARCHAR
@@ -96,6 +95,15 @@ def init():
         );
         """,
         """CREATE INDEX IF NOT EXISTS bugs_archived_idx ON bugs (archived);""",
+        """CREATE TABLE IF NOT EXISTS reports (
+            id SMALLINT PRIMARY KEY,
+            channel_id BIGINT UNIQUE NOT NULL,
+            author_id BIGINT NOT NULL,
+            state SMALLINT DEFAULT 0
+        );
+        """,
+        """CREATE SEQUENCE IF NOT EXISTS report_id OWNED BY reports.id;""",
+        """CREATE INDEX IF NOT EXISTS reports_duplicate_idx ON reports (author_id, state);""",
     ]
 
     for query in queries:
@@ -129,6 +137,7 @@ def migrate():
             upvotes INT DEFAULT 1,
             downvotes INT DEFAULT 1
         );""",
+        """ALTER TABLE tickets DROP COLUMN type"""
     ]
 
     for query in queries:
