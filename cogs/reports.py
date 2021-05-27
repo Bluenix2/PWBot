@@ -169,7 +169,8 @@ class ReportManager(commands.Cog):
     async def report(self, ctx, *, issue=None):
         """Open a report. Parent command for report ticket management."""
         # Ignore moderators, so it isn't accidentally used
-        if ctx.author.guild_permissions.manage_roles:
+        if isinstance(ctx.author, discord.Member) and \
+                ctx.author.guild_permissions.manage_roles:
             return
 
         await ctx.invoke(self.report_open, issue=issue)
@@ -179,7 +180,8 @@ class ReportManager(commands.Cog):
         """Open a report ticket."""
         author = ctx.author
         if user:
-            if ctx.author.guild_permissions.manage_roles:
+            if isinstance(ctx.author, discord.Member) and \
+                    ctx.author.guild_permissions.manage_roles:
                 author = user
             else:
                 return  # Doesn't have permission to open a report as someone

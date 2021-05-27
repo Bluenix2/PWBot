@@ -238,7 +238,8 @@ class TicketManager(commands.Cog):
         """Open a ticket or send a help message. Parent command for ticket management."""
         if issue:  # Aid users in opening tickets
             # Ignore moderators, so it isn't accidentally used
-            if ctx.author.guild_permissions.manage_roles:
+            if isinstance(ctx.author, discord.Member) and \
+                    ctx.author.guild_permissions.manage_roles:
                 return
 
             return await ctx.invoke(self.ticket_open, issue=issue)
