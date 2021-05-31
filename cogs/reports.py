@@ -1,11 +1,22 @@
 import asyncio
 import enum
-import string
+import io
+import os
+import re
+import zipfile
 
 import discord
 from discord.ext import commands
 
 from cogs.utils import Colour, is_mod
+
+# Regex to match a link, see comments for example
+re_link = re.compile(
+    r'(?:https?:\/\/)?' +  # https://
+    r'(?:www\.)?' +  # www.
+    r'[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}' +  # youtube.com
+    r'(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)'  # /watch?v=123
+)
 
 
 def report_only():
@@ -32,6 +43,8 @@ class ReportManager(commands.Cog):
         self.bot = bot
 
         self._category = None
+        self._evidence_channel = None
+        self._status_channel = None
 
         self.open_message = '\n'.join((
             'Thank you for reporting, please provide all the evidence.',
@@ -50,6 +63,22 @@ class ReportManager(commands.Cog):
         if not self._category:
             self._category = self.bot.get_channel(self.bot.settings.report_category)
         return self._category
+
+    @property
+    def evidence_channel(self) -> discord.TextChannel:
+        if not self._evidence_channel:
+            self._evidence_channel = self.bot.get_channel(
+                self.bot.settings.report_evidence_channel
+            )
+        return self._evidence_channel
+
+    @property
+    def status_channel(self):
+        if not self._status_channel:
+            self._status_channel = self.bot.get_channel(
+                self.bot.settings.report_status_channel
+            )
+        return self._status_channel
 
     async def get_open_by_author(self, author_id):
         return await self.bot.pool.fetchval(
@@ -91,6 +120,20 @@ class ReportManager(commands.Cog):
                 description=self.open_message,
                 colour=Colour.light_blue(),
             )
+        )
+
+        embed = discord.Embed(
+            title=f"Report #{record['id']}",
+            colour=Colour.cyan()
+        )
+
+        embed.set_author(name=author, icon_url=author.avatar_url)
+
+        message = await self.status_channel.send(embed=embed)
+
+        await conn.execute(
+            'UPDATE reports SET status_message_id=$1 WHERE id=$2',
+            message.id, record['id']
         )
 
         return channel, record
@@ -199,17 +242,106 @@ class ReportManager(commands.Cog):
 
         await ctx.send(f'Opened report in {channel.mention}.')
 
+    async def _lock_channel(self, channel):
+        await channel.send('Locked the channel. Saving evidence, this may take a while.')
+
+        overwrites = {
+            channel.guild.default_role: discord.PermissionOverwrite(
+                read_messages=False
+            ),
+            self.bot.user: discord.PermissionOverwrite(
+                read_messages=True
+            )
+        }
+        await channel.edit(
+            overwrites=overwrites,
+            reason='Locking report while downloading evidence.'
+        )
+
+    async def _gather_evidence(self, channel):
+        """Find all attachments and links in a channel"""
+
+        attachments, links = [], []  # Short for declaring two lists
+        async for message in channel.history(limit=None, oldest_first=True):
+            links.extend(re.findall(re_link, message.content))
+            attachments.extend(message.attachments)
+
+        memory = io.BytesIO()
+        if attachments:
+            archive = zipfile.ZipFile(memory, 'a', zipfile.ZIP_DEFLATED, False)
+
+            for i, attach in enumerate(attachments):
+                archive.writestr(
+                    'attachment-' + str(i) + os.path.splitext(attachments[i].filename)[1],
+                    await attach.read()
+                )
+            archive.close()
+
+            memory.seek(0)
+
+        return memory if attachments else None, links
+
     @report.command(name='close')
     @report_only()
     @is_mod()
     async def report_close(self, ctx, *, reason=''):
         """Close the report. The reason should be a summary."""
 
-        query = 'UPDATE reports SET state=$1 WHERE channel_id=$2'
-        await ctx.db.execute(query, ReportState.closed.value, ctx.channel.id)
+        query = 'SELECT * from reports WHERE channel_id=$1;'
+        record = await ctx.db.fetchrow(query, ctx.channel.id)
+
+        if not record:
+            return
+
+        query = 'UPDATE reports SET state=$1 WHERE channel_id=$2;'
+        await ctx.db.execute(query, ReportState.closed.value, record['channel_id'])
+
+        # For older reports before this change that don't have a status message
+        try:
+            record['status_message_id']
+        except KeyError:
+            return await ctx.channel.delete(
+                reason='Closing report #{0}'.format(record['id'])
+            )
+
+        await self._lock_channel(ctx.channel)
+
+        message = await self.status_channel.fetch_message(record['status_message_id'])
+        embed = message.embeds[0]
+
+        embed.description = reason
+        embed.colour = Colour.apricot()
+
+        archive, links = await self._gather_evidence(ctx.channel)
+
+        if links:
+            embed.add_field(
+                name='Links',
+                value='\n'.join(links),
+                inline=False
+            )
+
+        if archive:
+            evidence = await self.evidence_channel.send(
+                f"evidence-{record['id']}.zip",
+                file=discord.File(archive, filename=f"evidence-{record['id']}.zip")
+            )
+
+            embed.add_field(
+                name='Attachments',
+                value=f'[Jump!]({evidence.jump_url})',
+                inline=False
+            )
+
+        embed.set_footer(
+            text=f'{ctx.author} ({ctx.author.id})',
+            icon_url=ctx.author.avatar_url
+        )
+
+        await message.edit(embed=embed)
 
         await ctx.channel.delete(
-            reason='Closing report because: {0}'.format(reason)
+            reason='Closing report #{0}'.format(record['id'])
         )
 
 

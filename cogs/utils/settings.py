@@ -18,13 +18,13 @@ class Settings:
         self.ticket_message = settings.pop('ticket_message', 0)
         self.ticket_category = settings.pop('ticket_category')
         self.ticket_status_channel = settings.pop('ticket_status_channel')
-
-        self.log_channel = settings.pop('log_channel')
+        self.ticket_log_channel = settings.pop('ticket_log_channel')
 
         self.report_message = settings.pop('report_message', 0)
         self.report_player_channel = settings.pop('report_player_channel')
         self.report_category = settings.pop('report_category')
         self.report_status_channel = settings.pop('report_status_channel')
+        self.report_evidence_channel = settings.pop('report_evidence_channel')
 
         self.suggestions_channel = settings.pop('suggestions_channel')
         self.beta_channel = settings.pop('beta_channel')
