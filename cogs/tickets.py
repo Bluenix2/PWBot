@@ -81,7 +81,7 @@ class TicketManager(commands.Cog):
     @property
     def log_channel(self):
         if not self._log_channel:
-            self._log_channel = self.bot.get_channel(self.bot.settings.log_channel)
+            self._log_channel = self.bot.get_channel(self.bot.settings.ticket_log_channel)
         return self._log_channel
 
     async def get_open_by_author(self, author_id):
