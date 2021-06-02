@@ -297,9 +297,7 @@ class ReportManager(commands.Cog):
         await ctx.db.execute(query, ReportState.closed.value, record['channel_id'])
 
         # For older reports before this change that don't have a status message
-        try:
-            record['status_message_id']
-        except KeyError:
+        if record['status_message_id'] is None:
             return await ctx.channel.delete(
                 reason='Closing report #{0}'.format(record['id'])
             )
