@@ -1,9 +1,6 @@
 import asyncio
 import enum
-import io
-import os
 import re
-import zipfile
 
 import discord
 from discord.ext import commands
@@ -266,20 +263,7 @@ class ReportManager(commands.Cog):
             links.extend(re.findall(re_link, message.content))
             attachments.extend(message.attachments)
 
-        memory = io.BytesIO()
-        if attachments:
-            archive = zipfile.ZipFile(memory, 'a', zipfile.ZIP_DEFLATED, False)
-
-            for i, attach in enumerate(attachments):
-                archive.writestr(
-                    'attachment-' + str(i) + os.path.splitext(attachments[i].filename)[1],
-                    await attach.read()
-                )
-            archive.close()
-
-            memory.seek(0)
-
-        return memory if attachments else None, links
+        return attachments, links
 
     @report.command(name='close')
     @report_only()
@@ -310,25 +294,26 @@ class ReportManager(commands.Cog):
         embed.description = reason
         embed.colour = Colour.apricot()
 
-        archive, links = await self._gather_evidence(ctx.channel)
+        evidence, links = await self._gather_evidence(ctx.channel)
 
         if links:
             embed.add_field(
                 name='Links',
                 value='\n'.join(links),
-                inline=False
             )
 
-        if archive:
-            evidence = await self.evidence_channel.send(
-                f"evidence-{record['id']}.zip",
-                file=discord.File(archive, filename=f"evidence-{record['id']}.zip")
-            )
+        if evidence:
+            jumps = ''
+            for attachment in evidence:
+                msg = await self.evidence_channel.send(
+                    f"Evidence for **Report #{record['id']}**",
+                    file=await attachment.to_file()
+                )
+                jumps += f'[Jump: {attachment.filename}]({msg.jump_url})\n'
 
             embed.add_field(
                 name='Attachments',
-                value=f'[Jump!]({evidence.jump_url})',
-                inline=False
+                value=jumps,
             )
 
         embed.set_footer(
