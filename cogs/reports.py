@@ -4,6 +4,7 @@ import re
 
 import discord
 from discord.ext import commands
+from steam.steamid import steam64_from_url
 
 from cogs.utils import Colour, is_mod
 
@@ -258,10 +259,27 @@ class ReportManager(commands.Cog):
     async def _gather_evidence(self, channel):
         """Find all attachments and links in a channel"""
 
-        attachments, links = [], []  # Short for declaring two lists
+        attachments, found_links = [], []  # Short for declaring two lists
         async for message in channel.history(limit=None, oldest_first=True):
-            links.extend(re.findall(re_link, message.content))
+            # Make sure the regex doesn't end with a )
+            found_links.extend(
+                m[:-1] if m.endswith(')') else m for m in re.findall(re_link, message.content)
+            )
             attachments.extend(message.attachments)
+
+        steamids, links = set(), []
+        for link in found_links:
+            if 'steamcommunity' not in link:
+                links.append(link)
+            else:
+                # We're gonna handle these later
+                steamids.add(steam64_from_url(link))
+
+        for steamid in steamids:
+            if steamid is None:
+                continue
+
+            links.append(f'https://www.steamcommunity.com/profiles/{steamid}/')
 
         return attachments, links
 

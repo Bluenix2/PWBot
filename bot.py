@@ -20,6 +20,7 @@ initial_extensions = (
     'cogs.misc',
     'cogs.reports',
     'cogs.roles',
+    'cogs.steamid',
     'cogs.streams',
     'cogs.suggestions',
     'cogs.tags',
