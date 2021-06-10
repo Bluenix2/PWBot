@@ -27,7 +27,7 @@ class SteamID(commands.Cog):
             return
 
         await message.channel.send(
-            'Here are their permanent counterparts:\n' if not link else '' +
+            ('Here are their permanent counterparts:\n' if not link else '') +
             '\n'.join(f'<https://www.steamcommunity.com/profiles/{id_}/>' for id_ in steamids)
         )
 
