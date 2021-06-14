@@ -34,10 +34,14 @@ class SteamID(commands.Cog):
     @commands.command()
     async def steamid(self, ctx, *, link):
         """Get a permanent link to a steam profile."""
-        await self.handle_steam(ctx.message, link)
+        await self.handle_steam(ctx.message, [link])
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        # Ignore commands (specifically the steamid command above)
+        if message.content.startswith('?'):
+            return
+
         await self.handle_steam(message)
 
 
