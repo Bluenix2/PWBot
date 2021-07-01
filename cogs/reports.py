@@ -207,14 +207,14 @@ class ReportManager(commands.Cog):
         await self.bot.http.delete_message(destination.id, msg['id'])
 
     @commands.group(invoke_without_command=True)
-    async def report(self, ctx, *, issue=None):
+    async def report(self, ctx):
         """Open a report. Parent command for report ticket management."""
         # Ignore moderators, so it isn't accidentally used
         if isinstance(ctx.author, discord.Member) and \
                 ctx.author.guild_permissions.manage_roles:
             return
 
-        await ctx.invoke(self.report_open, issue=issue)
+        await ctx.invoke(self.report_open)
 
     @report.command(name='open', aliases=['openas'])
     async def report_open(self, ctx, user: discord.Member = None):
