@@ -50,6 +50,7 @@ class Settings:
         self.update_when_message = settings.pop(
             'update_when_message', 'The update was delayed because you asked for it.'
         )
+        self.fake_steam_links = settings.pop('fake_steam_links', [])
 
         # The dict should now be empty, if it's not then that
         # means that there are more keys in the settings json than

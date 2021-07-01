@@ -18,6 +18,7 @@ initial_extensions = (
     'cogs.logging',
     'cogs.meta',
     'cogs.misc',
+    'cogs.mod',
     'cogs.reports',
     'cogs.roles',
     'cogs.steamid',
