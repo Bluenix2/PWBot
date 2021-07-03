@@ -7,7 +7,7 @@ import zipfile
 import discord
 from discord.ext import commands
 
-from cogs.utils import Colour, is_mod
+from cogs.utils import Colour, is_mod, ignore_report_webhooks
 
 
 def ticket_only():
@@ -233,6 +233,7 @@ class TicketManager(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @ignore_report_webhooks()
     @commands.group(invoke_without_command=True)
     async def ticket(self, ctx, *, issue=None):
         """Open a ticket or send a help message. Parent command for ticket management."""
@@ -246,6 +247,7 @@ class TicketManager(commands.Cog):
 
         await ctx.send_tag('ticket')
 
+    @ignore_report_webhooks()
     @ticket.command(name='open')
     async def ticket_open(self, ctx, *, issue=None):
         """Open a help ticket."""

@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from steam.steamid import steam64_from_url
 
-from cogs.utils import Colour, is_mod
+from cogs.utils import Colour, is_mod, ignore_report_webhooks
 
 # Regex to match a link, see comments for example
 re_link = re.compile(
@@ -206,6 +206,7 @@ class ReportManager(commands.Cog):
         await asyncio.sleep(10)
         await self.bot.http.delete_message(destination.id, msg['id'])
 
+    @ignore_report_webhooks()
     @commands.group(invoke_without_command=True)
     async def report(self, ctx):
         """Open a report. Parent command for report ticket management."""

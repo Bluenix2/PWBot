@@ -16,3 +16,15 @@ def is_trusted():
             ctx.author.guild_permissions.manage_messages
 
     return commands.check(predicate)
+
+
+def ignore_report_webhooks():
+    async def predicate(ctx):
+        if ctx.message.webhook_id:
+            return False
+
+        if ctx.channel.id == ctx.bot.settings.report_player_channel:
+            return False
+
+        return True
+    return commands.check(predicate)
