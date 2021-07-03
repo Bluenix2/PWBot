@@ -211,7 +211,11 @@ class TicketManager(commands.Cog):
             user.id
         )
 
-        for ticket in tickets:
+        to_display = tickets
+        if len(tickets) > 25:
+            to_display = tickets[:25]
+
+        for ticket in to_display:
             # Craft the message link
             link = 'https://discord.com/channels/431073730828173312/'
             link += f'{self.status_channel.id}/'
@@ -228,7 +232,11 @@ class TicketManager(commands.Cog):
                 inline=False
             )
 
-        embed.set_footer(text=f'{user} has opened {len(tickets)} tickets.')
+        footer = f'{user} has opened {len(tickets)} tickets.'
+        if to_display is not tickets:
+            footer += 'Displaying only 25 in no particular order.'
+
+        embed.set_footer(text=footer)
 
         await ctx.send(embed=embed)
 
