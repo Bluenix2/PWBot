@@ -207,8 +207,8 @@ class TicketManager(commands.Cog):
         embed = discord.Embed(title=f"Tickets opened by {user}", colour=Colour.light_blue())
 
         tickets = await self.bot.pool.fetch(
-            'SELECT * FROM tickets WHERE author_id=$1 AND type=$2',
-            user.id, self.ticket_type.value
+            'SELECT * FROM tickets WHERE author_id=$1;',
+            user.id
         )
 
         for ticket in tickets:
@@ -218,8 +218,7 @@ class TicketManager(commands.Cog):
             link += str(ticket['status_message_id'])
 
             # Craft the field name
-            name = (self.ticket_type.name[0].upper() + self.ticket_type.name[1:])
-            name += f" #{ticket['id']}"
+            name = f"Ticket #{ticket['id']}"
             if ticket['issue']:
                 name += f" - {ticket['issue'][:235]}"
 
