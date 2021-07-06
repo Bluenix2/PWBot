@@ -1,6 +1,4 @@
-import asyncio
-
-import discord
+# Yes this is a mere copy of lfg.py, a rewrite of this whole bot is long overdue.
 from discord.ext import commands, tasks
 
 
@@ -24,12 +22,10 @@ class Streams(commands.Cog):
             return
 
         await channel.guild.chunk()
+        pins = await channel.pins()
 
         def check(msg):
-            if not isinstance(msg.author, discord.Member):
-                return True
-            permissions = msg.author.guild_permissions
-            return not permissions.manage_roles
+            return msg not in pins
 
         await channel.purge(limit=None, check=check)
 
