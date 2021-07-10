@@ -109,7 +109,7 @@ class PWBot(commands.Bot):
                 self.dispatch('command_completion', ctx)
         elif ctx.invoked_with:  # This is edited to first try to send a tag
             try:
-                await ctx.send_tag(ctx.invoked_with)
+                await ctx.send_tag(ctx.invoked_with.lower())
             except commands.errors.CommandNotFound:
                 exc = commands.errors.CommandNotFound(
                     'Command or tag "{}" is not found'.format(ctx.invoked_with)
