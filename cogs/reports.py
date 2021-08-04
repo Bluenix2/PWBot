@@ -287,6 +287,7 @@ class ReportManager(commands.Cog):
     @report.command(name='close')
     @report_only()
     @is_mod()
+    @commands.max_concurrency(1, per=commands.cooldowns.BucketType.guild, wait=True)
     async def report_close(self, ctx, *, reason=''):
         """Close the report. The reason should be a summary."""
 

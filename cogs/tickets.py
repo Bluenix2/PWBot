@@ -336,6 +336,7 @@ class TicketManager(commands.Cog):
     @ticket.command(name='close')
     @ticket_only()
     @is_mod()
+    @commands.max_concurrency(1, per=commands.cooldowns.BucketType.guild, wait=True)
     async def ticket_close(self, ctx, *, reason=None):
         """Close the ticket and create an archive. The reason should be a summary."""
 
