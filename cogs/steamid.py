@@ -26,10 +26,12 @@ class SteamID(commands.Cog):
         if not steamids:
             return
 
-        await message.channel.send(
-            ('Here are their permanent counterparts:\n' if not link else '') +
-            '\n'.join(f'<https://www.steamcommunity.com/profiles/{id_}/>' for id_ in steamids)
+        content = 'Here are their permanent counterparts:\n' if not link else ''
+        content += '\n'.join(
+            f'<https://www.steamcommunity.com/profiles/{id_}/>' for id_ in steamids if id_
         )
+
+        await message.channel.send(content)
 
     @commands.command()
     async def steamid(self, ctx, *, link):
@@ -39,7 +41,8 @@ class SteamID(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         # Ignore commands (specifically the steamid command above)
-        if message.content.startswith('?'):
+        if message.content.startswith('?') or \
+                message.channel.id == self.bot.settings.report_player_channel:
             return
 
         await self.handle_steam(message)
