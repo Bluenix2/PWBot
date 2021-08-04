@@ -1,4 +1,3 @@
-import asyncio
 import re
 
 import discord
@@ -38,8 +37,8 @@ class AutoMod(commands.Cog):
         if not isinstance(message.author, discord.Member):  # In DMs
             return
 
-        # Ignore moderators
-        if not message.author.guild_permissions.manage_roles:
+        # Ignore moderators and bots
+        if message.author.guild_permissions.manage_roles or message.author.bot:
             return
 
         if message.webhook_id:  # This was sent by a webhook
