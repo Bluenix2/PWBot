@@ -127,7 +127,7 @@ class Tags(commands.Cog):
 
         await ctx.acquire()
 
-        content_id = self._get_content_id(name)
+        content_id = await self._get_content_id(name)
         if not content_id:
             return await ctx.send('That is not an existing tag!')
 
