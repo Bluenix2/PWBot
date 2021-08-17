@@ -1,5 +1,6 @@
 import asyncio
 import enum
+import os
 import re
 
 import discord
@@ -320,20 +321,40 @@ class ReportManager(commands.Cog):
             embed.add_field(
                 name='Links',
                 value='\n'.join(links),
+                inline=False
             )
 
         if evidence:
             jumps = ''
             for attachment in evidence:
+                # Embed fields cannot exceed 1024 characters, so we need to split
+                # the jump URLs before this happens.
+                if len(jumps) > 800:
+                    embed.add_field(
+                        name='Attachments',
+                        value=jumps,
+                        inline=False
+                    )
+                    jumps = ''
+
+                name = (
+                    f"report-evidence-{record['id']}" +
+                    os.path.splitext(attachment.filename)[1]
+                )
+                await attachment.save(name)
+
                 msg = await self.evidence_channel.send(
                     f"Evidence for **Report #{record['id']}**",
-                    file=await attachment.to_file()
+                    file=discord.File(name, filename=attachment.filename)
                 )
                 jumps += f'[Jump: {attachment.filename}]({msg.jump_url})\n'
+
+                os.remove(name)
 
             embed.add_field(
                 name='Attachments',
                 value=jumps,
+                inline=False
             )
 
         embed.set_footer(

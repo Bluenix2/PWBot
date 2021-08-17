@@ -1,6 +1,5 @@
 import asyncio
 import enum
-import io
 import os
 import zipfile
 
@@ -303,35 +302,30 @@ class TicketManager(commands.Cog):
 
     async def _generate_log(self, channel, record):
         """Create a log archive with transcript and attachments."""
-        messages = ["""Transcript of ticket {0} "{1}" opened by user {2}:\n""".format(
-            record['id'], record['issue'], record['author_id']
-        )]
+        transcript = f"transcript-{record['id']}-{record['issue']}.txt"
+        with open(transcript, 'a+') as f:
+            f.write("""Transcript of ticket {0} "{1}" opened by user {2}:\n""".format(
+                record['id'], record['issue'], record['author_id']
+            ))
 
-        attachments = []
-        async for message in channel.history(limit=None, oldest_first=True):
-            messages.append(
-                "[{0}] {1.author} ({1.author.id}){2}: {1.content}".format(
-                    message.created_at.strftime('%Y %b %d %H:%M:%S'),
-                    message, ' (attachment)' if message.attachments else '',
+            attachments = []
+            async for message in channel.history(limit=None, oldest_first=True):
+                f.write(
+                    "[{0}] {1.author} ({1.author.id}){2}: {1.content}".format(
+                        message.created_at.strftime('%Y %b %d %H:%M:%S'),
+                        message, ' (attachment)' if message.attachments else '',
+                    )
                 )
-            )
-            attachments.extend(message.attachments)
+                attachments.extend(message.attachments)
 
-        memory = io.BytesIO()
-        archive = zipfile.ZipFile(memory, 'a', zipfile.ZIP_DEFLATED, False)
+        files = []
 
-        archive.writestr('transcript.txt', '\n'.join(messages))
+        for i, attach in enumerate(attachments):
+            name = 'attachment-' + str(i) + os.path.splitext(attach.filename)[1]
+            await attach.save(name)
+            files.append(name)
 
-        for index in range(len(attachments)):
-
-            archive.writestr(
-                'attachment-' + str(index) + os.path.splitext(attachments[index].filename)[1],
-                await attachments[index].read()
-            )
-        archive.close()
-
-        memory.seek(0)
-        return memory
+        return files
 
     @ticket.command(name='close')
     @ticket_only()
@@ -364,22 +358,44 @@ class TicketManager(commands.Cog):
             reason='Locking ticket while creating logs as to not disrupt.'
         )
 
-        archive = await self._generate_log(ctx.channel, record)
-
-        issue = '-' + record['issue'] if record['issue'] else ''
-        filename = f"log-{record['id']}{issue}.zip"
-        log = discord.File(archive, filename=filename)
-
-        # We send the file name so that it's easily searched in discord
-        log_message = await self.log_channel.send(filename, file=log)
-
         message = await self.status_channel.fetch_message(record['status_message_id'])
         embed = message.embeds[0]
 
         embed.description = reason
         embed.colour = Colour.apricot()
 
-        embed.add_field(name='Log', value=f'[Jump!]({log_message.jump_url})')
+        files = await self._generate_log(ctx.channel, record)
+        jumps = ''
+        for attachment in files[1:]:  # The log comes afterwards
+            # Embed fields cannot exceed 1024 characters, so we need to split
+            # the jump URLs before this happens.
+            if len(jumps) > 800:
+                embed.add_field(
+                    name='Attachments',
+                    value=jumps,
+                    inline=False
+                )
+                jumps = ''
+
+            msg = await self.log_channel.send(
+                f"Attachment from **Ticket #{record['id']}**",
+                file=discord.File(attachment, filename=attachment)
+            )
+            jumps += f'[Jump: {attachment}]({msg.jump_url})\n'
+
+            os.remove(attachment)
+
+        embed.add_field(
+            name='Attachments',
+            value=jumps,
+            inline=False
+        )
+
+        transcript = await self.log_channel.send(
+            f"Transcription from **Ticket #{record['id']}**",
+            file=discord.File(files[0], filename=files[0])
+        )
+        embed.add_field(name='Log', value=f'[Jump!]({transcript.jump_url})')
 
         embed.set_footer(
             text=f'{ctx.author} ({ctx.author.id})',
