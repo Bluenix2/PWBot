@@ -1,7 +1,6 @@
 import asyncio
 import enum
 import os
-import zipfile
 
 import discord
 from discord.ext import commands
