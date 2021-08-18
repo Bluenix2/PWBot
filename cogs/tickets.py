@@ -317,7 +317,7 @@ class TicketManager(commands.Cog):
                 )
                 attachments.extend(message.attachments)
 
-        files = []
+        files = [transcript]
 
         for i, attach in enumerate(attachments):
             name = 'attachment-' + str(i) + os.path.splitext(attach.filename)[1]
