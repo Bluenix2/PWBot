@@ -398,6 +398,7 @@ class TicketManager(commands.Cog):
             file=discord.File(files[0], filename=files[0])
         )
         embed.add_field(name='Log', value=f'[Jump!]({transcript.jump_url})')
+        os.remove(files[0])
 
         embed.set_footer(
             text=f'{ctx.author} ({ctx.author.id})',
