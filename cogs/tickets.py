@@ -310,7 +310,7 @@ class TicketManager(commands.Cog):
             attachments = []
             async for message in channel.history(limit=None, oldest_first=True):
                 f.write(
-                    "[{0}] {1.author} ({1.author.id}){2}: {1.content}".format(
+                    "[{0}] {1.author} ({1.author.id}){2}: {1.content}\n".format(
                         message.created_at.strftime('%Y %b %d %H:%M:%S'),
                         message, ' (attachment)' if message.attachments else '',
                     )
