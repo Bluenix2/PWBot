@@ -301,7 +301,7 @@ class TicketManager(commands.Cog):
 
     async def _generate_log(self, channel, record):
         """Create a log archive with transcript and attachments."""
-        transcript = f"transcript-{record['id']}-{record['issue']}.txt"
+        transcript = f"transcript-{record['id']}.txt"
         with open(transcript, 'a+') as f:
             f.write("""Transcript of ticket {0} "{1}" opened by user {2}:\n""".format(
                 record['id'], record['issue'], record['author_id']
@@ -320,7 +320,7 @@ class TicketManager(commands.Cog):
         files = [transcript]
 
         for i, attach in enumerate(attachments):
-            name = 'attachment-' + str(i) + os.path.splitext(attach.filename)[1]
+            name = f"attachment{str(i)}-{record['id']}" + os.path.splitext(attach.filename)[1]
             await attach.save(name)
             files.append(name)
 
