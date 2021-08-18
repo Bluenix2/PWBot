@@ -12,7 +12,6 @@ from cogs import meta, utils
 
 initial_extensions = (
     'cogs.admin',
-    'cogs.bugs',
     'cogs.lfg',
     'cogs.lobby',
     'cogs.logging',
@@ -26,7 +25,6 @@ initial_extensions = (
     'cogs.suggestions',
     'cogs.tags',
     'cogs.tickets',
-    'cogs.weather',
 )
 
 
