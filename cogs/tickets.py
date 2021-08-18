@@ -362,6 +362,9 @@ class TicketManager(commands.Cog):
         embed.description = reason
         embed.colour = Colour.apricot()
 
+        ticket = 'Ticket #{}{}'.format(
+            record['id'], ' - {}'.format(record['issue']) if record['issue'] else ''
+        )
         files = await self._generate_log(ctx.channel, record)
         jumps = ''
         for attachment in files[1:]:  # The log comes afterwards
@@ -376,7 +379,7 @@ class TicketManager(commands.Cog):
                 jumps = ''
 
             msg = await self.log_channel.send(
-                f"Attachment from **Ticket #{record['id']}**",
+                f'Attachment from **{ticket}**',
                 file=discord.File(attachment, filename=attachment)
             )
             jumps += f'[Jump: {attachment}]({msg.jump_url})\n'
@@ -390,7 +393,7 @@ class TicketManager(commands.Cog):
         )
 
         transcript = await self.log_channel.send(
-            f"Transcription from **Ticket #{record['id']}**",
+            f"Transcription from **{ticket}**",
             file=discord.File(files[0], filename=files[0])
         )
         embed.add_field(name='Log', value=f'[Jump!]({transcript.jump_url})')
