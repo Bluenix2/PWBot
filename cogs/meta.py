@@ -14,7 +14,7 @@ class PWBotHelp(commands.HelpCommand):
     def generate_brief(self, help_doc):
         """Generate a brief from the help doc string."""
         # Quite useless function, but good if we want to change the functionality.
-        return help_doc.split('.')[0]
+        return help_doc.split('.')[0] if help_doc else ''
 
     async def send_bot_help(self, mapping):
         bot = self.context.bot
