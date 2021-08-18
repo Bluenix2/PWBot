@@ -386,11 +386,12 @@ class TicketManager(commands.Cog):
 
             os.remove(attachment)
 
-        embed.add_field(
-            name='Attachments',
-            value=jumps,
-            inline=False
-        )
+        if jumps:  # There's some jump URLs to send
+            embed.add_field(
+                name='Attachments',
+                value=jumps,
+                inline=False
+            )
 
         transcript = await self.log_channel.send(
             f"Transcription from **{ticket}**",
