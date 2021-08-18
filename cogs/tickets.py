@@ -342,14 +342,12 @@ class TicketManager(commands.Cog):
         query = 'UPDATE tickets SET state=$1 WHERE channel_id=$2'
         await ctx.db.execute(query, TicketState.closed.value, record['channel_id'])
 
-        await ctx.send('Locked the channel. Creating logs, this may take a while.')
+        await ctx.send('Creating logs please do not send any messages, this may take a while.')
 
         overwrites = {
             ctx.guild.default_role: discord.PermissionOverwrite(
-                read_messages=False
-            ),
-            self.bot.user: discord.PermissionOverwrite(
-                read_messages=True
+                read_messages=True,
+                send_messages=False
             )
         }
         await ctx.channel.edit(
