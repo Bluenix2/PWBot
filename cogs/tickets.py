@@ -303,8 +303,9 @@ class TicketManager(commands.Cog):
         """Create a log archive with transcript and attachments."""
         transcript = f"transcript-{record['id']}.txt"
         with open(transcript, 'a+') as f:
-            f.write("""Transcript of ticket {0} "{1}" opened by user {2}:\n""".format(
-                record['id'], record['issue'], record['author_id']
+            f.write("""Transcript of ticket {0}{1} opened by user {2}:\n""".format(
+                record['id'], (' "' + record['issue'] + '"') if record['issue'] else '',
+                record['author_id']
             ))
 
             attachments = []
