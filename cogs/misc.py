@@ -57,7 +57,15 @@ class Misc(commands.Cog):
                 ctx, words[0]
             )
         except commands.BadArgument:
-            channel = ctx.channel
+            try:
+                channel = await commands.MemberConverter().convert(
+                    ctx, words[0]
+                )
+            except commands.BadArgument:
+                # It is not a channel or a member
+                channel = ctx.channel
+            else:
+                words = words[1:]
         else:
             words = words[1:]
 
