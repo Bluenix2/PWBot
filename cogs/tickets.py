@@ -345,17 +345,6 @@ class TicketManager(commands.Cog):
 
         await ctx.send('Creating logs please do not send any messages, this may take a while.')
 
-        overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(
-                read_messages=True,
-                send_messages=False
-            )
-        }
-        await ctx.channel.edit(
-            overwrites=overwrites,
-            reason='Locking ticket while creating logs as to not disrupt.'
-        )
-
         message = await self.status_channel.fetch_message(record['status_message_id'])
         embed = message.embeds[0]
 
