@@ -4,6 +4,7 @@ import csv
 import discord
 from discord.ext import commands
 
+from cogs.utils import is_mod
 
 class Suggestions(commands.Cog):
     """Cog for handling the suggestions voting, isolated for easy unloading."""
@@ -32,7 +33,7 @@ class Suggestions(commands.Cog):
             print(message.content)
 
     @commands.command()
-    @commands.is_owner()
+    @is_mod()
     async def suggestions(self, ctx, message: discord.Message = None):
         """Save and dump all recent suggestions since last time,
         can be overriden with the message argument to dump
