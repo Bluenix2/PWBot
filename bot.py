@@ -14,7 +14,6 @@ initial_extensions = (
     'cogs.admin',
     'cogs.lfg',
     'cogs.lobby',
-    'cogs.logging',
     'cogs.meta',
     'cogs.misc',
     'cogs.mod',
