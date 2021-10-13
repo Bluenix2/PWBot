@@ -40,6 +40,9 @@ class SteamID(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.author.bot:
+            return
+
         # Ignore commands (specifically the steamid command above)
         if message.content.startswith('?') or \
                 message.channel.id == self.bot.settings.report_player_channel:
