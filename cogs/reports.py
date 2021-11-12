@@ -258,16 +258,30 @@ class ReportManager(commands.Cog):
             reason='Locking report while downloading evidence.'
         )
 
-    async def _gather_evidence(self, channel):
+    async def _gather_evidence(self, channel, record):
         """Find all attachments and links in a channel"""
-
+        transcript = f"report-{record['id']}.txt"
         attachments, found_links = [], []  # Short for declaring two lists
-        async for message in channel.history(limit=None, oldest_first=True):
-            # Make sure the regex doesn't end with a )
-            found_links.extend(
-                m[:-1] if m.endswith(')') else m for m in re.findall(re_link, message.content)
-            )
-            attachments.extend(message.attachments)
+
+        with open(transcript, 'a+') as f:
+            f.write("""Transcript of report {0} opened by user {1}:\n""".format(
+                record['id'], record['author_id']
+            ))
+
+            async for message in channel.history(limit=None, oldest_first=True):
+                f.write(
+                    "[{0}] {1.author} ({1.author.id}){2}: {1.content}\n".format(
+                        message.created_at.strftime('%Y %b %d %H:%M:%S'),
+                        message, ' (attachment)' if message.attachments else '',
+                    )
+                )
+
+                # Make sure the regex doesn't end with a )
+                found_links.extend(
+                    m[:-1] if m.endswith(')') else
+                    m for m in re.findall(re_link, message.content)
+                )
+                attachments.extend(message.attachments)
 
         steamids, links = set(), []
         for link in found_links:
@@ -283,7 +297,7 @@ class ReportManager(commands.Cog):
 
             links.append(f'https://www.steamcommunity.com/profiles/{steamid}/')
 
-        return attachments, links
+        return transcript, attachments, links
 
     @report.command(name='close')
     @report_only()
@@ -315,7 +329,20 @@ class ReportManager(commands.Cog):
         embed.description = reason
         embed.colour = Colour.apricot()
 
-        evidence, links = await self._gather_evidence(ctx.channel)
+        transcript, evidence, links = await self._gather_evidence(ctx.channel, record)
+
+        transcript_link = await self.evidence_channel.send(
+            f"Transcription for **Report #{record['id']}**",
+            file=discord.File(transcript)
+        )
+
+        os.remove(transcript)
+
+        embed.add_field(
+            name='Transcription',
+            value=f'[Jump to message]({transcript_link.jump_url})',
+            inline=False
+        )
 
         if links:
             embed.add_field(
