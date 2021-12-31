@@ -8,13 +8,14 @@ The Project Winter bot
 
 This is the required version.
 
-2. **Set up venv**
+2. **Install Poetry**
 
-Simply do `python3 -m venv venv`
+Poetry will be used to manage dependencies and assure that the code will work with the dependancies.
+Installation can be done with `pip install poetry`.
 
 3. **Install dependencies**
 
-`pip install -U -r requirements.txt`
+To install the dependencies simply run `poetry install`.
 
 4. **Create the database in PostgreSQL**
 
@@ -24,7 +25,7 @@ CREATE ROLE pwbot WITH LOGIN PASSWORD 'yourpw';
 CREATE DATABASE pwbot OWNER pwbot;
 ```
 
-4. **Set up configuration**
+5. **Set up configuration**
 
 Create a new file, `config.py` in the root directory, 
 and use the following template:
@@ -43,11 +44,5 @@ in the json file.
 
 Name the Google Sheets API key json file `gsheets.json` and place it under cogs.
 
-## Requirements
-
-- Python 3
-- discord.py
-- asyncpg
-- click
-- flake8
-- dateutil
+6. **Starting the bot**
+To start the bot you start the postgres database then run `poetry run python launch.py`
