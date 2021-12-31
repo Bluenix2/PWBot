@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pwbot"
+version = "0.1.0"
+description = "The Project Winter Discord bot."
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = "^1.7.3"
+click = "^8.0.3"
+asyncpg = "^0.25.0"
+python-dateutil = "^2.8.2"
+pygsheets = "^2.0.5"
+steam = "^1.2.0"
+config = "^0.5.1"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
