@@ -2,7 +2,7 @@
 name = "pwbot"
 version = "0.1.0"
 description = "The Project Winter Discord bot."
-authors = ["Your Name <you@example.com>"]
+authors = ["Bluenix <bluenixdev@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
