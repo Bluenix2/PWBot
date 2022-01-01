@@ -10,7 +10,7 @@ This is the required version.
 
 2. **Install Poetry**
 
-Poetry will be used to manage dependencies and assure that the code will work with the dependancies.
+Poetry will be used to manage dependencies and assure that the code will work with the dependencies.
 Installation can be done with `pip install poetry`.
 
 3. **Install dependencies**
