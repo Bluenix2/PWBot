@@ -54,10 +54,11 @@ class Misc(commands.Cog):
 
         url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
 
-        useful = {
+        useful_info = {
             "confidence": "Confidence",
             "tier": "Tier",
             "bestReportedTier": "Best Reported Tier",
+            "total": "Reviews",
         }
 
         fields = dict()
@@ -68,11 +69,11 @@ class Misc(commands.Cog):
             async with session.get(url) as response:
                 payload = await response.json()
 
-                for key in useful:
+                for key in useful_info:
                     if isinstance(payload[key], str):
-                        fields[useful[key]] = payload[key]
+                        fields[useful_info[key]] = payload[key].title()
                     else:
-                        fields[useful[key]] = str(payload[key])
+                        fields[useful_info[key]] = str(payload[key]).title()
 
         for key, value in zip(fields.keys(), fields.values()):
             embed.add_field(name=key, value=value, inline=False)
