@@ -46,7 +46,6 @@ class Misc(commands.Cog):
         useful_info = {
             "confidence": "Confidence",
             "tier": "Tier",
-            "bestReportedTier": "Best Reported Tier",
             "total": "Reviews",
         }
 
