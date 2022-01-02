@@ -110,13 +110,12 @@ class Misc(commands.Cog):
         for key, value in self.proton_pw["data"].items():
             embed.add_field(name=key, value=value, inline=False)
 
-        match delta_time_str:
-            case "0":
-                embed.set_footer(text="Last updated now.")
-            case "1":
-                embed.set_footer(text="Last updated 1 minute ago.")
-            case _:
-                embed.set_footer(text=f"Last updated {delta_time_str} minutes ago.")
+        if delta_time_str == "0":
+            embed.set_footer(text="Last updated now.")
+        if delta_time_str == "1":
+            embed.set_footer(text="Last updated 1 minute ago.")
+        else:
+            embed.set_footer(text=f"Last updated {delta_time_str} minutes ago.")
 
         await ctx.send(embed=embed)
 
