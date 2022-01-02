@@ -8,7 +8,6 @@ from cogs.utils import Colour, is_trusted
 
 import aiohttp
 
-import json
 
 class Misc(commands.Cog):
     """Miscellaneous code and features, for the fun of it."""
@@ -72,7 +71,6 @@ class Misc(commands.Cog):
             embed.add_field(name=key, value=value, inline=False)
 
         await ctx.send(embed=embed)
-
 
     @commands.group(invoke_without_command=True, hidden=True)
     @is_trusted()
