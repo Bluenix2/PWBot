@@ -65,7 +65,7 @@ class Misc(commands.Cog):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 payload = await response.json()
-                fields = {useful_info[key]: str(payload[key]) for key in useful_info}
+                fields = {useful_info[key]: str(payload[key]).title() for key in useful_info}
 
         for key, value in zip(fields.keys(), fields.values()):
             embed.add_field(name=key, value=value, inline=False)
