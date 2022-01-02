@@ -21,7 +21,7 @@ class Misc(commands.Cog):
 
     @tasks.loop(hours=1.0)
     async def query_protondb(self):
-        """Query the ProtonDB api for Project Winter data once every 2 hours"""
+        """Query the ProtonDB api for Project Winter."""
 
         self.proton_pw = dict()
 
