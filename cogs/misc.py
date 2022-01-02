@@ -61,19 +61,12 @@ class Misc(commands.Cog):
             "total": "Reviews",
         }
 
-        fields = dict()
-
         embed = Embed(title="Project Winter Proton Statistics", colour=Colour.red())
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 payload = await response.json()
-
-                for key in useful_info:
-                    if isinstance(payload[key], str):
-                        fields[useful_info[key]] = payload[key].title()
-                    else:
-                        fields[useful_info[key]] = str(payload[key]).title()
+                fields = {useful_info[key]: str(payload[key]) for key in useful_info}
 
         for key, value in zip(fields.keys(), fields.values()):
             embed.add_field(name=key, value=value, inline=False)
