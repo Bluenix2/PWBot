@@ -60,7 +60,10 @@ class Misc(commands.Cog):
             "total": "Reviews",
         }
 
-        embed = Embed(title="Project Winter Proton Statistics", colour=Colour.red())
+        embed = Embed(
+            title="Project Winter Proton Statistics",
+            colour=Colour.red()
+        )
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
