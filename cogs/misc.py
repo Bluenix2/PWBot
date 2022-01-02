@@ -23,7 +23,7 @@ class Misc(commands.Cog):
     async def query_protondb(self):
         """Query the ProtonDB api for Project Winter."""
 
-        self.proton_pw = dict()
+        temp_protondb = dict()
 
         url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
 
@@ -41,7 +41,7 @@ class Misc(commands.Cog):
             "platinum": 0xB4C7DC
         }
 
-        self.proton_pw["colour"] = discord.Colour(colours[payload["tier"]])
+        temp_protondb["colour"] = discord.Colour(colours[payload["tier"]])
 
         # Extract useful infomation from payload
 
@@ -51,8 +51,10 @@ class Misc(commands.Cog):
             "total": "Reviews",
         }
 
-        self.proton_pw["data"] = {useful_info[key]: str(payload[key]).title() for key in useful_info}
-        self.proton_pw["time"] = time.time()
+        temp_protondb["data"] = {useful_info[key]: str(payload[key]).title() for key in useful_info}
+        temp_protondb["time"] = time.time()
+
+        self.proton_pw = temp_protondb
 
     @commands.command(name="8ball")
     async def _8ball(self, ctx, *, question=None):
