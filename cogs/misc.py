@@ -2,7 +2,7 @@ import random
 
 import discord
 from discord import Embed
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 from cogs.utils import Colour, is_trusted
 
@@ -14,6 +14,43 @@ class Misc(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.proton_pw = None
+        self.query_protondb.start()
+
+    @tasks.loop(hours=2.0)
+    async def query_protondb(self):
+        """Query the ProtonDB api for Project Winter data once every 2 hours"""
+
+        self.proton_pw = dict()
+
+        url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                payload = await response.json()
+
+        # Select colour associated with tier
+
+        colours = {
+            "borked": 0xFF0000,
+            "bronze": 0xCD7F32,
+            "silver": 0xC0C0C0,
+            "gold": 0xCFB53B,
+            "platinum": 0xB4C7DC
+        }
+
+        self.proton_pw["colour"] = discord.Colour(colours[payload["tier"]])
+
+        # Extract useful infomation from payload
+
+        useful_info = {
+            "confidence": "Confidence",
+            "tier": "Tier",
+            "bestReportedTier": "Best Reported Tier",
+            "total": "Reviews",
+        }
+
+        self.proton_pw["data"] = {useful_info[key]: str(payload[key]).title() for key in useful_info}
 
     @commands.command(name="8ball")
     async def _8ball(self, ctx, *, question=None):
@@ -49,39 +86,16 @@ class Misc(commands.Cog):
 
     @commands.command(name="proton")
     async def proton(self, ctx):
-        """Retrieve protonDB stats for Project Winter."""
+        """Retrieve ProtonDB stats for Project Winter."""
 
-        url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                payload = await response.json()
-
-        colours = {
-            "borked": 0xFF0000,
-            "bronze": 0xCD7F32,
-            "silver": 0xC0C0C0,
-            "gold": 0xCFB53B,
-            "platinum": 0xB4C7DC
-        }
-
-        colour = discord.Colour(colours[payload["tier"]])
-
-        useful_info = {
-            "confidence": "Confidence",
-            "tier": "Tier",
-            "bestReportedTier": "Best Reported Tier",
-            "total": "Reviews",
-        }
-
-        fields = {useful_info[key]: str(payload[key]).title() for key in useful_info}
+        # Construct an embed with queried data
 
         embed = Embed(
             title="Project Winter Proton Statistics",
-            colour=colour
+            colour=self.proton_pw["colour"]
         )
 
-        for key, value in fields.items():
+        for key, value in self.proton_pw["data"].items():
             embed.add_field(name=key, value=value, inline=False)
 
         await ctx.send(embed=embed)
