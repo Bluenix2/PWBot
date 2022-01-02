@@ -1,4 +1,6 @@
 import random
+import time
+from datetime import datetime
 
 import discord
 from discord import Embed
@@ -17,7 +19,7 @@ class Misc(commands.Cog):
         self.proton_pw = None
         self.query_protondb.start()
 
-    @tasks.loop(hours=2.0)
+    @tasks.loop(hours=1.0)
     async def query_protondb(self):
         """Query the ProtonDB api for Project Winter data once every 2 hours"""
 
@@ -50,6 +52,7 @@ class Misc(commands.Cog):
         }
 
         self.proton_pw["data"] = {useful_info[key]: str(payload[key]).title() for key in useful_info}
+        self.proton_pw["time"] = time.time()
 
     @commands.command(name="8ball")
     async def _8ball(self, ctx, *, question=None):
@@ -87,6 +90,12 @@ class Misc(commands.Cog):
     async def proton(self, ctx):
         """Retrieve ProtonDB stats for Project Winter."""
 
+        delta_time = time.time() - self.proton_pw["time"]
+        delta_time_str = datetime.fromtimestamp(delta_time).strftime('%M')
+
+        if delta_time_str[0] == "0":
+            delta_time_str = delta_time_str[0]
+
         # Construct an embed with queried data
 
         embed = Embed(
@@ -96,6 +105,14 @@ class Misc(commands.Cog):
 
         for key, value in self.proton_pw["data"].items():
             embed.add_field(name=key, value=value, inline=False)
+
+        match delta_time_str:
+            case "0":
+                embed.set_footer(text="Last updated now.")
+            case "1":
+                embed.set_footer(text="Last updated 1 minute ago.")
+            case _:
+                embed.set_footer(text=f"Last updated {delta_time_str} minutes ago.")
 
         await ctx.send(embed=embed)
 
