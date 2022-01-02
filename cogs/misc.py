@@ -1,10 +1,14 @@
 import random
 
 import discord
+from discord import Embed
 from discord.ext import commands
 
 from cogs.utils import Colour, is_trusted
 
+import aiohttp
+
+import json
 
 class Misc(commands.Cog):
     """Miscellaneous code and features, for the fun of it."""
@@ -43,6 +47,38 @@ class Misc(commands.Cog):
         await ctx.send(
             random.choices(tuple(outcomes.keys()), tuple(outcomes.values()))[0]
         )
+
+    @commands.command(name="proton")
+    async def proton(self, ctx):
+        """Retrieve proton stats for Project Winter."""
+
+        url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
+
+        useful = {
+            "confidence": "Confidence",
+            "tier": "Tier",
+            "bestReportedTier": "Best Reported Tier",
+        }
+
+        fields = dict()
+
+        embed = Embed(title="Project Winter Proton Statistics", colour=Colour.red())
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                payload = await response.json()
+
+                for key in useful:
+                    if isinstance(payload[key], str):
+                        fields[useful[key]] = payload[key]
+                    else:
+                        fields[useful[key]] = str(payload[key])
+
+        for key, value in zip(fields.keys(), fields.values()):
+            embed.add_field(name=key, value=value, inline=False)
+
+        await ctx.send(embed=embed)
+
 
     @commands.group(invoke_without_command=True, hidden=True)
     @is_trusted()
