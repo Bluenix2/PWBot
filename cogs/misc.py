@@ -90,6 +90,10 @@ class Misc(commands.Cog):
     async def proton(self, ctx):
         """Retrieve ProtonDB stats for Project Winter."""
 
+        if self.proton_pw is None:
+            await ctx.send("The proton data is None, it is likely the bot failed to get ProtonDB statistics.")
+            return
+
         delta_time = time.time() - self.proton_pw["time"]
         delta_time_str = datetime.fromtimestamp(delta_time).strftime('%M')
 
