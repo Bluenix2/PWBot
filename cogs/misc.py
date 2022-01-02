@@ -53,6 +53,20 @@ class Misc(commands.Cog):
 
         url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                payload = await response.json()
+
+        colours = {
+            "borked": 0xFF0000,
+            "bronze": 0xCD7F32,
+            "silver": 0xC0C0C0,
+            "gold": 0xCFB53B,
+            "platinum": 0xB4C7DC
+        }
+
+        colour = discord.Colour(colours[payload["tier"]])
+
         useful_info = {
             "confidence": "Confidence",
             "tier": "Tier",
@@ -60,15 +74,12 @@ class Misc(commands.Cog):
             "total": "Reviews",
         }
 
+        fields = {useful_info[key]: str(payload[key]).title() for key in useful_info}
+
         embed = Embed(
             title="Project Winter Proton Statistics",
-            colour=Colour.red()
+            colour=colour
         )
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                payload = await response.json()
-                fields = {useful_info[key]: str(payload[key]).title() for key in useful_info}
 
         for key, value in fields.items():
             embed.add_field(name=key, value=value, inline=False)
