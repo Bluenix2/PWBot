@@ -84,7 +84,7 @@ class Misc(commands.Cog):
             random.choices(tuple(outcomes.keys()), tuple(outcomes.values()))[0]
         )
 
-    @commands.command(name="proton")
+    @commands.command(name="proton", aliases=["protondb"])
     async def proton(self, ctx):
         """Retrieve ProtonDB stats for Project Winter."""
 
