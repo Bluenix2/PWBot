@@ -49,7 +49,7 @@ class Misc(commands.Cog):
 
     @commands.command(name="proton")
     async def proton(self, ctx):
-        """Retrieve proton stats for Project Winter."""
+        """Retrieve protonDB stats for Project Winter."""
 
         url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
 
