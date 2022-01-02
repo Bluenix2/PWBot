@@ -70,7 +70,7 @@ class Misc(commands.Cog):
                 payload = await response.json()
                 fields = {useful_info[key]: str(payload[key]).title() for key in useful_info}
 
-        for key, value in zip(fields.keys(), fields.values()):
+        for key, value in fields.items():
             embed.add_field(name=key, value=value, inline=False)
 
         await ctx.send(embed=embed)
