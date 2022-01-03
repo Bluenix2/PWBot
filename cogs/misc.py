@@ -19,6 +19,9 @@ class Misc(commands.Cog):
         self.proton_pw = None
         self.query_protondb.start()
 
+    def cog_unload(self):
+        self.query_protondb.cancel()
+
     @tasks.loop(hours=1.0)
     async def query_protondb(self):
         """Query the ProtonDB api for Project Winter."""
