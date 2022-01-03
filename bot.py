@@ -50,7 +50,7 @@ class PWBot(commands.Bot):
             self.pool = loop.run_until_complete(asyncpg.create_pool(config.postgresql))
         except Exception:
             print('Failed set up PostgreSQL pool, exiting')
-            return
+            raise
 
         for extension in initial_extensions:
             try:
