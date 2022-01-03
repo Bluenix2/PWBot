@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  bot:
+    build: .
+    volumes:
+      - ".:/workspace"
+
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pwbot
+    ports:
+      - "5432:5432"
