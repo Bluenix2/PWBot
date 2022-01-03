@@ -99,11 +99,7 @@ class Misc(commands.Cog):
             await ctx.send("The proton data is None, it is likely the bot failed to get ProtonDB statistics.")
             return
 
-        delta_time = time.time() - self.proton_pw["time"]
-        delta_time_str = datetime.fromtimestamp(delta_time).strftime('%M')
-
-        if delta_time_str[0] == "0":
-            delta_time_str = delta_time_str[0]
+        delta_time = int(datetime.fromtimestamp(time.time() - self.proton_pw["time"]).strftime('%M'))
 
         # Construct an embed with queried data
 
@@ -115,12 +111,12 @@ class Misc(commands.Cog):
         for key, value in self.proton_pw["data"].items():
             embed.add_field(name=key, value=value, inline=False)
 
-        if delta_time_str == "0":
+        if not delta_time:
             embed.set_footer(text="Last updated now.")
-        if delta_time_str == "1":
+        elif delta_time == 1:
             embed.set_footer(text="Last updated 1 minute ago.")
         else:
-            embed.set_footer(text=f"Last updated {delta_time_str} minutes ago.")
+            embed.set_footer(text=f"Last updated {delta_time} minutes ago.")
 
         await ctx.send(embed=embed)
 
