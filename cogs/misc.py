@@ -1,9 +1,14 @@
 import random
+import time
+from datetime import datetime
 
 import discord
-from discord.ext import commands
+from discord import Embed
+from discord.ext import commands, tasks
 
 from cogs.utils import Colour, is_trusted
+
+import aiohttp
 
 
 class Misc(commands.Cog):
@@ -11,6 +16,50 @@ class Misc(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.proton_pw = None
+        self.query_protondb.start()
+
+    def cog_unload(self):
+        self.query_protondb.cancel()
+
+    @tasks.loop(hours=1.0)
+    async def query_protondb(self):
+        """Query the ProtonDB api for Project Winter."""
+
+        temp_protondb = dict()
+
+        url = "https://www.protondb.com/api/v1/reports/summaries/774861.json"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                payload = await response.json()
+
+        # Select colour associated with tier
+
+        colours = {
+            "borked": 0xFF0000,
+            "bronze": 0xCD7F32,
+            "silver": 0xC0C0C0,
+            "gold": 0xCFB53B,
+            "platinum": 0xB4C7DC
+        }
+
+        temp_protondb["colour"] = discord.Colour(colours[payload["tier"]])
+
+        # Extract useful infomation from payload
+
+        useful_info = {
+            "confidence": "Confidence",
+            "tier": "Tier",
+            "total": "Reviews",
+        }
+
+        temp_protondb["data"] = {
+            useful_info[key]: str(payload[key]).title() for key in useful_info
+        }
+        temp_protondb["time"] = time.time()
+
+        self.proton_pw = temp_protondb
 
     @commands.command(name="8ball")
     async def _8ball(self, ctx, *, question=None):
@@ -43,6 +92,40 @@ class Misc(commands.Cog):
         await ctx.send(
             random.choices(tuple(outcomes.keys()), tuple(outcomes.values()))[0]
         )
+
+    @commands.command(name="proton", aliases=["protondb"])
+    async def proton(self, ctx):
+        """Retrieve ProtonDB stats for Project Winter."""
+
+        if self.proton_pw is None:
+            await ctx.send(
+                "The proton data is None, it is likely the \
+                bot failed to get ProtonDB statistics."
+            )
+            return
+
+        delta_time = int(
+            datetime.fromtimestamp(time.time() - self.proton_pw["time"]).strftime('%M')
+        )
+
+        # Construct an embed with queried data
+
+        embed = Embed(
+            title="Project Winter Proton Statistics",
+            colour=self.proton_pw["colour"]
+        )
+
+        for key, value in self.proton_pw["data"].items():
+            embed.add_field(name=key, value=value, inline=False)
+
+        if not delta_time:
+            embed.set_footer(text="Last updated now.")
+        elif delta_time == 1:
+            embed.set_footer(text="Last updated 1 minute ago.")
+        else:
+            embed.set_footer(text=f"Last updated {delta_time} minutes ago.")
+
+        await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True, hidden=True)
     @is_trusted()
