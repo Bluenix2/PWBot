@@ -54,7 +54,9 @@ class Misc(commands.Cog):
             "total": "Reviews",
         }
 
-        temp_protondb["data"] = {useful_info[key]: str(payload[key]).title() for key in useful_info}
+        temp_protondb["data"] = {
+            useful_info[key]: str(payload[key]).title() for key in useful_info
+        }
         temp_protondb["time"] = time.time()
 
         self.proton_pw = temp_protondb
@@ -96,10 +98,15 @@ class Misc(commands.Cog):
         """Retrieve ProtonDB stats for Project Winter."""
 
         if self.proton_pw is None:
-            await ctx.send("The proton data is None, it is likely the bot failed to get ProtonDB statistics.")
+            await ctx.send(
+                "The proton data is None, it is likely the \
+                bot failed to get ProtonDB statistics."
+            )
             return
 
-        delta_time = int(datetime.fromtimestamp(time.time() - self.proton_pw["time"]).strftime('%M'))
+        delta_time = int(
+            datetime.fromtimestamp(time.time() - self.proton_pw["time"]).strftime('%M')
+        )
 
         # Construct an embed with queried data
 
