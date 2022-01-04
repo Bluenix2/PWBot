@@ -7,4 +7,4 @@ RUN pip install poetry
 RUN poetry install
 
 COPY . .
-CMD ["poetry", "run", "python", "launcher.py"]
+CMD ["poetry", "run", "python", "-u", "launcher.py"]
