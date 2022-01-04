@@ -4,6 +4,8 @@ The Project Winter bot
 
 ## Running
 
+We recommend Method 1 for deployment as it is much more basic to follow meaning it is so much faster to deploy. Method 2 is also viable for deployment however it is aimed more for development, thats not to say Method 1 can not be used for development.
+
 ### Method 1
 
 1. **Install docker and docker-compose**
