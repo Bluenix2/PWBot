@@ -1,16 +1,21 @@
 version: "3.9"
 
 services:
-  bot:
-    build: .
+  postgres:
+    image: postgres:14
     volumes:
-      - ".:/workspace"
-
-  database:
-    image: postgres
+      - ./pg_data/:/var/lib/postgresql/data:rw
     environment:
+      - POSTGRES_DB=pwbot
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=pwbot
+      - PGDATA=/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  bot:
+    build: .
+    depends_on:
+      - postgres
+    volumes:
+      - .:/workspace:rw
