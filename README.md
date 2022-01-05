@@ -4,79 +4,67 @@ The Project Winter bot
 
 ## Running
 
-We recommend Method 1 for deployment as it is much more basic to follow meaning it is so much faster to deploy. Method 2 is also viable for deployment however it is aimed more for development, thats not to say Method 1 can not be used for development.
+Docker is recommended for deployment and development as it means that all requirements and
+dependencies stay the same, but the bot runs perfectly fine without it.
 
-### Method 1
+1. **Set up configuration**
 
-1. **Install docker and docker-compose**
-
-View [docker](https://www.docker.com/) and [docker compose](https://docs.docker.com/compose/install/)
-
-2. **Set up configuration**
-
-Create a new file, `config.py` in the root directory, 
-and use the following template:
+Create a new file, `config.py` in the root directory, and use the following template:
 
 ```py
 client_id = 0  # Bot's client ID
 token = ''  # Bot's token
-postgresql = 'postgresql://postgres:postgres@database/pwbot'  # Your PostgreSQL info from above
+postgresql = 'postgresql://postgres:postgres@postgres/pwbot'  # Your PostgreSQL info
 weather_key = '' # Your weather api key
 ```
 
-Additionally a json file named `settings.json` will be needed.
-This allows the bot to save certain data past restart
+Additionally a json file named `settings.json` will be needed. This allows the bot to save
+certain data past restart
 
-See `cogs/utils/settings.py` for keys which need to be defined
-in the json file.
+See `cogs/utils/settings.py` for keys which need to be defined in the json file.
 
 Name the Google Sheets API key json file `gsheets.json` and place it under cogs.
 
-3. **Starting the bot**
+2. **Install dependencies**
 
-To start the bot you start the postgres database then run `docker-compose up` or any variations such as `sudo docker-compose up` or `docker compose up`
+If you use plan on using Docker you can skip this step.
 
-### Method 2
+Poetry is used to manage dependencies, it can be installed with `pip install poetry`.
+Then install the real project dependencies with `poetry install`.
 
-1. **Get Python 3**
-
-This is the required version.
-
-2. **Install Poetry**
-
-Poetry will be used to manage dependencies and assure that the code will work with the dependencies.
-Installation can be done with `pip install poetry`.
-
-3. **Install dependencies**
-
-To install the dependencies simply run `poetry install`.
-
-4. **Create the database in PostgreSQL**
-
-You will need PostgreSQL installed and then type this in the `psql` tool:
+Lastly, you will need PostgreSQL installed and type this into the `psql` tool:
 ```
 CREATE ROLE pwbot WITH LOGIN PASSWORD 'yourpw';
 CREATE DATABASE pwbot OWNER pwbot;
 ```
 
-5. **Set up configuration**
-
-Create a new file, `config.py` in the root directory, 
-and use the following template:
-
-```py
-client_id = 0  # Bot's client ID
-token = ''  # Bot's token
-postgresql = 'postgresql://pwbot:yourpw@localhost/pwbot'  # Your PostgreSQL info from above
+Make sure to adjust the `postgresql` variable in `config.py`. It should most likely be:
+```python
+postgresql = 'postgresql://pwbot:yourpw@localhost/pwbot'
 ```
 
-Additionally a json file named `settings.json` will be needed.
-This allows the bot to save certain data past restart
+3. **Starting the bot**
 
-See `cogs/utils/settings.py` for keys which need to be defined
-in the json file.
+Using Docker, simply start the bot with `docker-compose up` (or any variatons such as
+`sudo docker-compose up` or `docker compose up`).
 
-Name the Google Sheets API key json file `gsheets.json` and place it under cogs.
+Without Docker, make sure PostgreSQL is running then execute `poetry run python launcher.py`
 
-6. **Starting the bot**
-To start the bot you start the postgres database then run `poetry run python launch.py`
+4. **Creating database tables**
+
+When the bot starts and is able to connect to the database, open another able process before
+running any commands. Run the following command:
+```python
+# For Docker (replace `pwbot_bot_1` with container name)
+docker exec -it pwbot_bot_1 poetry run python launcher.py database init
+# For non-Docker setup
+poetry run python launcher.py database init
+```
+
+When later upgrading run the migrate script with:
+```python
+# For Docker (replace `pwbot_bot_1` with container name)
+docker exec -it pwbot_bot_1 poetry run python launcher.py database migrate
+# For non-Docker setup
+poetry run python launcher.py database migrate
+```
