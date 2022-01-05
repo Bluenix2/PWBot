@@ -24,10 +24,11 @@ class PWBotHelp(commands.HelpCommand):
             title='All commands',
             colour=Colour.light_blue(),
         )
+
         for command in all_commands:
             embed.add_field(
                 name=self.get_command_signature(command),
-                value=command.brief or self.generate_brief(command.help),
+                value=command.brief or self.generate_brief(command.help) or '*missing*',
                 inline=False
             )
 
