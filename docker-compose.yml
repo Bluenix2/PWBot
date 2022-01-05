@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:14
+    volumes:
+      - ./pg_data/:/var/lib/postgresql/data:rw
+    environment:
+      - POSTGRES_DB=pwbot
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  bot:
+    build: .
+    depends_on:
+      - postgres
+    volumes:
+      - .:/workspace:rw
