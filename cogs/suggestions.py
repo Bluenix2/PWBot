@@ -26,7 +26,7 @@ class Suggestions(commands.Cog):
         except discord.errors.NotFound:
             return
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def dump(self, ctx):
         suggestions = self.bot.get_channel(self.bot.settings.suggestions_channel)
         async for message in suggestions.history(limit=None, after=763599102734106634):
