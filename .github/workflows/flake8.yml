@@ -1,0 +1,20 @@
+name: flake8
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install poetry
+      run: |
+        pip install -U pip poetry
+        poetry install
+    - name: Analyse code for with flake8
+      run: |
+        poetry run python -m flake8 .
