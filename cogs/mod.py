@@ -1,17 +1,7 @@
-import re
-
 import discord
 from discord.ext import commands
 
 from cogs.utils import is_mod
-
-# Regex to match a link with '.ru'
-russian_link = re.compile(
-    r'(?:https?:\/\/)?' +
-    r'(?:www\.)?' +
-    r'[-a-zA-Z0-9@:%._\+~#=]{1,256}\.ru' +
-    r'(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)'
-)
 
 
 class AutoMod(commands.Cog):
@@ -44,19 +34,19 @@ class AutoMod(commands.Cog):
         if message.webhook_id:  # This was sent by a webhook
             return
 
-        match = re.search(russian_link, message.content)
         found = None
         for link in self.bot.settings.fake_steam_links:
             if link in message.content:
                 found = link
+                break
 
-        if not (match or found):
+        if not found:
             return
 
         await message.delete()
         await message.channel.send(
-            'Because of a surge in fake steam links, '
-            'we have employed a blankey ban on `.ru` links.',
+            'This link has been registered as malicious, please contact the moderators '
+            'if you believe this is incorrect.',
             delete_after=5.0
         )
 
