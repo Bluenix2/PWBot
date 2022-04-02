@@ -43,8 +43,11 @@ class Settings:
 
         self.high5_emoji = settings.pop('high5_emoji')
         self.survivor_emoji = settings.pop('survivor_emoji')
+
         self.timed_out_role = settings.pop('timed_out_role')
         self.beta_role = settings.pop('beta_role')
+        self.streamer_roles = settings.pop('streamer_roles')
+
         self.pc_channel = settings.pop('pc_channel')
         self.xbox_channel = settings.pop('xbox_channel')
 

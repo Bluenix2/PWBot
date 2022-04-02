@@ -1,4 +1,5 @@
-import json
+import asyncio
+from datetime import datetime, timedelta, timezone
 
 import discord
 from discord.ext import commands, tasks
@@ -9,6 +10,9 @@ class Streams(commands.Cog):
 
     def __init__(self, bot):
         self._streams_channel = None
+
+        self.streamers = {}
+        self.announcement_lock = asyncio.Lock()
 
         self.bot = bot
 
@@ -49,21 +53,21 @@ class Streams(commands.Cog):
         if not data.get('t') == 'PRESENCE_UPDATE':
             return
 
-        print('status changed', data['d']['activities'])
-
         d = data['d']
 
         guild = self.bot.get_guild(d['guild_id'])
-        if guild:
-            member = guild.get_member(d['user']['id'])
-            if member:
-                # on_socket_raw_receive is dispatched before any other event is,
-                # which means that this member object hasn't been affected by this
-                # event. We can take advantage of discord.py's cache while
-                # narrowing it down to knowing that the presence changed.
-                for activity in member.activities:
-                    if isinstance(activity, discord.Streaming):
-                        return  # Already streaming before this event
+        if not guild:
+            guild = await self.bot.fetch_guild(d['guild_id'])
+
+        member = guild.get_member(d['user']['id'])
+        if not member:
+            member = await guild.fetch_member(d['user']['id'])
+
+        for role_id in [role.id for role in member.roles]:
+            if role_id in self.bot.settings.streamer_roles:
+                break
+        else:
+            return  # Not a streamer we want to announce
 
         stream_url = None
         for activity in d['activities']:
@@ -72,10 +76,25 @@ class Streams(commands.Cog):
                 break
 
         if stream_url is None:
+            self.streamers.pop(d['user']['id'], None)
             return
 
+        # If we miss a presence update where the streamer stops streaming,
+        # we should more-or-less recover as good as possible.
+        if (
+            d['user']['id'] in self.streamers and (
+                self.streamers[d['user']['id']] + timedelta(hours=1)
+                < datetime.now(timezone.utc)
+            )
+        ):
+            return  # Already announced this stream
+
+        self.streamers[d['user']['id']] = datetime.now(timezone.utc)
+
         await self.streams_channel.send(
-            self.bot.settings.stream_announcement.format(user=d['user']['id'], url=stream_url)
+            self.bot.settings.stream_announcement.format(
+                user=d['user']['id'], url=stream_url
+            )
         )
 
 
