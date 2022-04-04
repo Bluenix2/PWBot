@@ -63,6 +63,14 @@ class Streams(commands.Cog):
 
         await channel.purge(limit=None, check=check)
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.channel != self.streams_channel:
+            return
+
+        if message.channel.is_news():
+            await message.publish()
+
     # Thanks to how discord.py works, we want need to dig deep to get the
     # actual information we're looking for. We could get this information using
     # on_member_update() event but we won't know whether the status changed or
