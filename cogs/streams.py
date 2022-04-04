@@ -13,6 +13,7 @@ class Streams(commands.Cog):
 
         self.streamers = {}
         self.announcement_lock = asyncio.Lock()
+        self.guilds = {}
 
         self.bot = bot
 
@@ -26,6 +27,23 @@ class Streams(commands.Cog):
 
     def cog_unload(self):
         self.clear_channel.cancel()
+
+    async def grab_guild(self, guild_id: int) -> discord.Guild:
+        """Get or fetch the guild by its ID.
+
+        This method houses a custom cache for guilds if possible because during
+        testing the discord.py cache was not always complete.
+        """
+        guild = self.guilds.get(guild_id)
+        if guild:
+            return guild
+
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            guild = await self.bot.fetch_guild(guild_id)
+
+        self.guilds[guild_id] = guild
+        return guild
 
     @tasks.loop(hours=168.0)
     async def clear_channel(self):
@@ -55,9 +73,7 @@ class Streams(commands.Cog):
 
         d = data['d']
 
-        guild = self.bot.get_guild(d['guild_id'])
-        if not guild:
-            guild = await self.bot.fetch_guild(d['guild_id'])
+        guild = await self.grab_guild(d['guild_id'])
 
         member = guild.get_member(d['user']['id'])
         if not member:
