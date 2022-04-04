@@ -109,7 +109,7 @@ class Streams(commands.Cog):
 
         await self.streams_channel.send(
             self.bot.settings.stream_announcement.format(
-                user=d['user']['id'], url=stream_url
+                user=d['user'], url=stream_url
             )
         )
 
