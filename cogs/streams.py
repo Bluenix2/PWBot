@@ -113,8 +113,7 @@ class Streams(commands.Cog):
                 await guild.chunk()
                 member = guild.get_member(d['user']['id'])
                 if not member:
-                    print(f"ERROR: Couldn't find member {d['user']['id']} to post alert")
-                    return  # There's no way for us to continue
+                    member = await guild.fetch_member(d['user']['id'])
 
         for role_id in [role.id for role in member.roles]:
             if role_id in self.bot.settings.streamer_roles:
