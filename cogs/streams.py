@@ -13,7 +13,9 @@ class Streams(commands.Cog):
 
         self.streamers = {}
         self.announcement_lock = asyncio.Lock()
+
         self.guilds = {}
+        self.chunk_lock = asyncio.Lock()
 
         self.bot = bot
 
@@ -83,18 +85,6 @@ class Streams(commands.Cog):
 
         d = data['d']
 
-        guild = await self.grab_guild(d['guild_id'])
-
-        member = guild.get_member(d['user']['id'])
-        if not member:
-            member = await guild.fetch_member(d['user']['id'])
-
-        for role_id in [role.id for role in member.roles]:
-            if role_id in self.bot.settings.streamer_roles:
-                break
-        else:
-            return  # Not a streamer we want to announce
-
         stream_url = None
         for activity in d['activities']:
             if activity.get('type') == 1 and activity.get('state') == 'Project Winter':
@@ -114,6 +104,23 @@ class Streams(commands.Cog):
             )
         ):
             return  # Already announced this stream
+
+        guild = await self.grab_guild(d['guild_id'])
+
+        async with self.chunk_lock:
+            member = guild.get_member(d['user']['id'])
+            if not member:
+                await guild.chunk()
+                member = guild.get_member(d['user']['id'])
+                if not member:
+                    print(f"ERROR: Couldn't find member {d['user']['id']} to post alert")
+                    return  # There's no way for us to continue
+
+        for role_id in [role.id for role in member.roles]:
+            if role_id in self.bot.settings.streamer_roles:
+                break
+        else:
+            return  # Not a streamer we want to announce
 
         self.streamers[d['user']['id']] = datetime.now(timezone.utc)
 
