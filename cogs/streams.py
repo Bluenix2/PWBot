@@ -92,42 +92,42 @@ class Streams(commands.Cog):
                 break
 
         if stream_url is None:
-            self.streamers.pop(d['user']['id'], None)
             return
 
-        # If we miss a presence update where the streamer stops streaming,
-        # we should more-or-less recover as good as possible.
-        if (
-            d['user']['id'] in self.streamers and (
-                self.streamers[d['user']['id']] + timedelta(hours=1)
-                < datetime.now(timezone.utc)
-            )
-        ):
-            return  # Already announced this stream
+        async with self.announcement_lock:
+            # If we miss a presence update where the streamer stops streaming,
+            # we should more-or-less recover as good as possible.
+            if (
+                d['user']['id'] in self.streamers and (
+                    self.streamers[d['user']['id']] + timedelta(hours=1)
+                    < datetime.now(timezone.utc)
+                )
+            ):
+                return  # Already announced this stream
 
-        guild = await self.grab_guild(d['guild_id'])
+            guild = await self.grab_guild(d['guild_id'])
 
-        async with self.chunk_lock:
-            member = guild.get_member(d['user']['id'])
-            if not member:
-                await guild.chunk()
+            async with self.chunk_lock:
                 member = guild.get_member(d['user']['id'])
                 if not member:
-                    member = await guild.fetch_member(d['user']['id'])
+                    await guild.chunk()
+                    member = guild.get_member(d['user']['id'])
+                    if not member:
+                        member = await guild.fetch_member(d['user']['id'])
 
-        for role_id in [role.id for role in member.roles]:
-            if role_id in self.bot.settings.streamer_roles:
-                break
-        else:
-            return  # Not a streamer we want to announce
+            for role_id in [role.id for role in member.roles]:
+                if role_id in self.bot.settings.streamer_roles:
+                    break
+            else:
+                return  # Not a streamer we want to announce
 
-        self.streamers[d['user']['id']] = datetime.now(timezone.utc)
+            self.streamers[d['user']['id']] = datetime.now(timezone.utc)
 
-        await self.streams_channel.send(
-            self.bot.settings.stream_announcement.format(
-                user=d['user'], url=stream_url
+            await self.streams_channel.send(
+                self.bot.settings.stream_announcement.format(
+                    user=d['user'], url=stream_url
+                )
             )
-        )
 
 
 def setup(bot):
