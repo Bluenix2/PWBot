@@ -34,6 +34,7 @@ class Settings:
         self.automod_channel = settings.pop('automod_channel')
         self.lfg_channel = settings.pop('lfg_channel')
         self.streams_channel = settings.pop('streams_channel')
+        self.stream_announcement_channel = settings.pop('stream_announcement_channel')
 
         self.role_channel = settings.pop('role_channel')
         self.pings_message = settings.pop('pings_message', 0)

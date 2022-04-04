@@ -22,7 +22,9 @@ class Streams(commands.Cog):
     @property
     def streams_channel(self) -> discord.TextChannel:
         if not self._streams_channel:
-            self._streams_channel = self.bot.get_channel(self.bot.settings.streams_channel)
+            self._streams_channel = self.bot.get_channel(
+                self.bot.settings.stream_announcement_channel
+            )
         return self._streams_channel
 
     def cog_unload(self):
