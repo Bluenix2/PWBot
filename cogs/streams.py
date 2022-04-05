@@ -125,7 +125,8 @@ class Streams(commands.Cog):
         await self.streams_channel.send(
             self.bot.settings.stream_announcement.format(
                 user=user, url=stream_url
-            )
+            ),
+            allowed_mentions=discord.AllowedMentions(roles=True)
         )
 
 
