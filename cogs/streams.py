@@ -19,7 +19,9 @@ class Streams(commands.Cog):
 
         self.bot = bot
 
-        self.clear_channel.start()
+        # TODO: Uncomment this and reload the bot to start cleaning. Because of
+        # deployment issues I don't want to clear the channel again
+        #     self.clear_channel.start()
 
     @property
     def streams_channel(self) -> discord.TextChannel:
@@ -95,13 +97,10 @@ class Streams(commands.Cog):
             return
 
         async with self.announcement_lock:
-            # If we miss a presence update where the streamer stops streaming,
-            # we should more-or-less recover as good as possible.
             if (
                 d['user']['id'] in self.streamers and (
-                    self.streamers[d['user']['id']] + timedelta(hours=1)
-                    < datetime.now(timezone.utc)
-                )
+                    datetime.now(timezone.utc) - self.streamers[d['user']['id']]
+                ) < timedelta(hours=12)
             ):
                 return  # Already announced this stream
 
