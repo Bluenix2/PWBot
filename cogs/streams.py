@@ -1,8 +1,11 @@
 import asyncio
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import discord
 from discord.ext import commands, tasks
+
+from cogs.utils import is_trusted
 
 
 class Streams(commands.Cog):
@@ -125,6 +128,32 @@ class Streams(commands.Cog):
         await self.streams_channel.send(
             self.bot.settings.stream_announcement.format(
                 user=user, url=stream_url
+            ),
+            allowed_mentions=discord.AllowedMentions(roles=True)
+        )
+
+    @commands.command(hidden=True)
+    @is_trusted()
+    async def announce(self, ctx, member: discord.Member, stream_url: Optional[str]):
+        if stream_url is None:
+            for activity in member.activities:
+                if (
+                        isinstance(activity, discord.Streaming)
+                        and activity.game == 'Project Winter'
+                ):
+                    stream_url = activity.url
+                    break
+
+        if stream_url is None:
+            await ctx.send('Could not detect streaming URL, please include a URL.')
+            return
+
+        async with self.announcement_lock:
+            self.streamers[member.id] = datetime.now(timezone.utc)
+
+        await self.streams_channel.send(
+            self.bot.settings.stream_announcement.format(
+                user={'id': member.id}, url=stream_url
             ),
             allowed_mentions=discord.AllowedMentions(roles=True)
         )
