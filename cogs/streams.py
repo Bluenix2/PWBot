@@ -88,7 +88,7 @@ class Streams(commands.Cog):
 
         d = data['d']
         user = d['user']
-        user_id = user['id']
+        user_id = int(user['id'])
 
         stream_url = None
         for activity in d['activities']:
@@ -112,7 +112,7 @@ class Streams(commands.Cog):
                 print(f"{user_id} is already announced ({delta})")
                 return  # Already announced this stream
 
-            guild = await self.grab_guild(d['guild_id'])
+            guild = await self.grab_guild(int(d['guild_id']))
 
             member = guild.get_member(user_id)
             if not member:
