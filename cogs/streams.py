@@ -87,18 +87,20 @@ class Streams(commands.Cog):
             return
 
         d = data['d']
+        user = d['user']
+        user_id = user['id']
 
         stream_url = None
         for activity in d['activities']:
-            if activity.get('type') == 1 and activity.get('state') == 'Project Winter':
-                stream_url = activity.get('url')
+            if activity.get('type') == 1:
+                print(f"{user_id} is streaming {activity.get('state')}")
+                if activity.get('state') == 'Project Winter':
+                    print(f'Continuing because {user_id} is streaming Project Winter')
+                    stream_url = activity.get('url')
                 break
 
         if stream_url is None:
             return
-
-        user = d['user']
-        user_id = user['id']
 
         async with self.announcement_lock:
             if (
@@ -106,6 +108,8 @@ class Streams(commands.Cog):
                     datetime.now(timezone.utc) - self.streamers[user_id]
                 ) < timedelta(hours=12)
             ):
+                delta = datetime.now(timezone.utc) - self.streamers[user_id]
+                print(f"{user_id} is already announced ({delta})")
                 return  # Already announced this stream
 
             guild = await self.grab_guild(d['guild_id'])
@@ -119,8 +123,10 @@ class Streams(commands.Cog):
 
             for role_id in [role.id for role in member.roles]:
                 if role_id in self.bot.settings.streamer_roles:
+                    print(f'{user_id} is a streamer ({role_id})')
                     break
             else:
+                print(f'{user_id} is not a streamer; ignoring...')
                 return  # Not a streamer we want to announce
 
             self.streamers[user_id] = datetime.now(timezone.utc)
