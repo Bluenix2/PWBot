@@ -20,9 +20,7 @@ class Streams(commands.Cog):
 
         self.bot = bot
 
-        # TODO: Uncomment this and reload the bot to start cleaning. Because of
-        # deployment issues I don't want to clear the channel again
-        #     self.clear_channel.start()
+        self.clear_channel.start()
 
     @property
     def streams_channel(self) -> discord.TextChannel:
