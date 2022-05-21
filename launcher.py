@@ -105,6 +105,15 @@ def init():
         """,
         """CREATE SEQUENCE IF NOT EXISTS report_id OWNED BY reports.id;""",
         """CREATE INDEX IF NOT EXISTS reports_duplicate_idx ON reports (author_id, state);""",
+        """CREATE TABLE IF NOT EXISTS suggestions (
+            message_id BIGINT PRIMARY KEY,
+            author_id BIGINT NOT NULL,
+            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            content VARCHAR(2000) NOT NULL,
+            upvotes INT DEFAULT 1,
+            downvotes INT DEFAULT 0,
+            reached INT DEFAULT 1
+        );""",
     ]
 
     for query in queries:
@@ -130,16 +139,8 @@ def migrate():
     conn = run(asyncpg.connect(config.postgresql))
 
     queries = [
-        """CREATE TABLE IF NOT EXISTS suggestions (
-            message_id BIGINT PRIMARY KEY,
-            author_id BIGINT NOT NULL,
-            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            content VARCHAR(2000) NOT NULL,
-            upvotes INT DEFAULT 1,
-            downvotes INT DEFAULT 1
-        );""",
-        """ALTER TABLE tickets DROP COLUMN type;""",
-        """ALTER TABLE reports ADD status_message_id BIGINT;""",
+        """ALTER TABLE suggestions ALTER COLUMN downvotes SET DEFAULT 0;""",
+        """ALTER TABLE suggestions ADD COLUMN reached INT DEFAULT 1;""",
     ]
 
     for query in queries:

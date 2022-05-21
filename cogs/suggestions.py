@@ -1,5 +1,6 @@
-from io import StringIO, BytesIO
 import csv
+from contextlib import suppress
+from io import StringIO, BytesIO
 
 import discord
 from discord.ext import commands
@@ -23,6 +24,7 @@ class Suggestions(commands.Cog):
 
         try:
             await message.add_reaction('\N{THUMBS UP SIGN}')
+            await message.add_reaction('\N{THINKING FACE}')
             await message.add_reaction('\N{THUMBS DOWN SIGN}')
         except discord.errors.NotFound:
             return
@@ -45,42 +47,61 @@ class Suggestions(commands.Cog):
 
         dump = StringIO()
         writer = csv.writer(dump)
+        writer.writerow(['Sent At', 'Message Content', 'Author', 'Votes', 'People Reached'])
 
         async for message in suggestions.history(
             limit=None, after=message
         ):
 
-            upvotes = 1
-            downvotes = 1
+            # We assume the author upvotes themselves (why else would they send
+            # the suggestion)...
+            upvotes = set([message.author])
+            downvotes = set()
+            thinking = set()
 
             for reaction in message.reactions:
                 if reaction.emoji == '\N{THUMBS UP SIGN}':
-                    upvotes = len(await reaction.users().flatten())
+                    upvotes.union(await reaction.users().flatten())
+                elif reaction.emoji == '\N{THINKING FACE}':
+                    thinking.union(await reaction.users().flatten())
                 elif reaction.emoji == '\N{THUMBS DOWN SIGN}':
-                    downvotes = len(await reaction.users().flatten())
+                    downvotes.union(await reaction.users().flatten())
+
+            with suppress(KeyError):
+                upvotes.remove(self.bot.user)
+            with suppress(KeyError):
+                thinking.remove(self.bot.user)
+            with suppress(KeyError):
+                downvotes.remove(self.bot.user)
+
+            reached = upvotes | thinking | downvotes
 
             sent_at = discord.utils.snowflake_time(message.id)
             await ctx.db.execute(
                 """
                     INSERT INTO suggestions (
-                        message_id, author_id, sent_at, content, upvotes, downvotes
+                        message_id, author_id, sent_at, content, upvotes, downvotes, reached
                     ) VALUES (
-                        $1, $2, $3, $4, $5, $6
+                        $1, $2, $3, $4, $5, $6, $7
                     ) ON CONFLICT ON CONSTRAINT suggestions_pkey DO
                     UPDATE SET
-                        content = $4, upvotes = $5, downvotes = $6
+                        content = $4, upvotes = $5, downvotes = $6,
+                        reached = $7
                     WHERE
                         suggestions.message_id = $1;
                 """, message.id, message.author.id,
                 sent_at, message.content,
-                upvotes, downvotes
-                )
+                len(upvotes), len(downvotes), len(reached)
+            )
 
             writer.writerow([
                 sent_at.isoformat(),
                 message.content,
                 str(message.author),
-                upvotes, downvotes
+                # This will normalize the bot's effect on the score because it
+                # both upvotes and downvotes everything
+                len(upvotes) - len(downvotes),
+                len(reached)
             ])
 
         dump.seek(0)
