@@ -29,8 +29,8 @@ initial_extensions = (
 
 class PWBot(commands.Bot):
     def __init__(self):
-        intents = discord.Intents(guilds=True, messages=True, reactions=True,
-                                  bans=True, members=True, presences=True)
+        intents = discord.Intents.none()
+        intents.value = 46855
         allowed_mentions = discord.AllowedMentions(everyone=False, users=True, roles=False)
         super().__init__(command_prefix='?', fetch_offline_members=False,
                          help_command=meta.PWBotHelp(command_attrs={
