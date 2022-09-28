@@ -242,22 +242,6 @@ class ReportManager(commands.Cog):
 
         await ctx.send(f'Opened report in {channel.mention}.')
 
-    async def _lock_channel(self, channel):
-        await channel.send('Locked the channel. Saving evidence, this may take a while.')
-
-        overwrites = {
-            channel.guild.default_role: discord.PermissionOverwrite(
-                read_messages=False
-            ),
-            self.bot.user: discord.PermissionOverwrite(
-                read_messages=True
-            )
-        }
-        await channel.edit(
-            overwrites=overwrites,
-            reason='Locking report while downloading evidence.'
-        )
-
     async def _gather_evidence(self, channel, record):
         """Find all attachments and links in a channel"""
         transcript = f"report-{record['id']}.txt"
@@ -321,7 +305,9 @@ class ReportManager(commands.Cog):
                 reason='Closing report #{0}'.format(record['id'])
             )
 
-        await self._lock_channel(ctx.channel)
+        await ctx.send(
+            'Saving evidence; please do not send any messages, this may take a while.'
+        )
 
         message = await self.status_channel.fetch_message(record['status_message_id'])
         embed = message.embeds[0]
