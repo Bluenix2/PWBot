@@ -61,11 +61,11 @@ class Suggestions(commands.Cog):
 
             for reaction in message.reactions:
                 if reaction.emoji == '\N{THUMBS UP SIGN}':
-                    upvotes.union(await reaction.users().flatten())
+                    upvotes = upvotes.union(await reaction.users().flatten())
                 elif reaction.emoji == '\N{THINKING FACE}':
-                    thinking.union(await reaction.users().flatten())
+                    thinking = thinking.union(await reaction.users().flatten())
                 elif reaction.emoji == '\N{THUMBS DOWN SIGN}':
-                    downvotes.union(await reaction.users().flatten())
+                    downvotes = downvotes.union(await reaction.users().flatten())
 
             with suppress(KeyError):
                 upvotes.remove(self.bot.user)
