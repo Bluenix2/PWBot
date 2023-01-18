@@ -19,9 +19,7 @@ initial_extensions = (
     'cogs.mod',
     'cogs.reports',
     'cogs.roles',
-    'cogs.steamid',
     'cogs.streams',
-    'cogs.suggestions',
     'cogs.tags',
     'cogs.tickets',
 )
